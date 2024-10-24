@@ -1,18 +1,13 @@
 <template>
-  <div>
-    <HeaderView />
-    <h1>Main View</h1>
-    <div style="min-height: 1500px"></div>
-    <FooterView />
-  </div>
+  <HeaderView />
+  <h1>게시글 목록</h1>
+  <FooterView />
 </template>
 
 <script>
 import HeaderView from "@/components/module/HeaderView.vue";
 import FooterView from "@/components/module/FooterView.vue";
-
 export default {
-  name: "MainView",
   components: {
     HeaderView,
     FooterView,
