@@ -1,0 +1,73 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+}
+
+.bottom-footer-container {
+  display: flex;
+  justify-content: space-around;
+  min-width: 100%;
+  max-width: 1400px;
+  min-height: 200px;
+  padding-top: 30px;
+  margin-bottom: 60px;
+}
+
+.bottom-footer-container > .bottom-footer-company-info-sector {
+  display: inline-block;
+}
+
+.bottom-footer-container > .bottom-footer-company-info-sector > ul {
+  list-style-type: none;
+}
+
+.bottom-footer-container > .bottom-footer-icons-sector {
+  display: flex;
+  max-height: 100px;
+  align-items: center;
+  margin-top: 150px;
+  color: #757575;
+}
+
+.bottom-footer-container > .bottom-footer-icons-sector div {
+  margin-left: 12px;
+}
+
+.bottom-footer-container
+  > .bottom-footer-company-info-sector
+  > .bottom-footer-company-info-ul
+  li {
+  display: flex;
+  color: #757575;
+}
+
+.bottom-footer-company-info-ul {
+  padding: 0;
+  list-style-type: none;
+}
+
+.bottom-footer-company-info-ul li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.bottom-footer-company-info-ul li span {
+  margin-right: 20px; /* span과 p 사이의 간격 */
+}
+
+body > header > div.bottom-footer-company-info-sector > ul > li > div {
+  width: 300px;
+  text-align: start;
+  margin-left: 35px;
+}
+
+body > header.bottom-footer-container > div.page-logo > h1 > a {
+  text-decoration: none;
+}
+
+#app > div > footer > div.bottom-footer-icons-sector > div:nth-child(1) {
+  color: #4d4040;
+}
