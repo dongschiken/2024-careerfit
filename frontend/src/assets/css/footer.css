@@ -14,15 +14,15 @@
   margin-bottom: 60px;
 }
 
-.bottom-footer-container > .bottom-footer-company-info-sector {
+.bottom-footer-company-info-sector {
   display: inline-block;
 }
 
-.bottom-footer-container > .bottom-footer-company-info-sector > ul {
+.bottom-footer-company-info-sector > ul {
   list-style-type: none;
 }
 
-.bottom-footer-container > .bottom-footer-icons-sector {
+.bottom-footer-icons-sector {
   display: flex;
   max-height: 100px;
   align-items: center;
@@ -30,7 +30,7 @@
   color: #757575;
 }
 
-.bottom-footer-container > .bottom-footer-icons-sector div {
+.bottom-footer-icons-sector div {
   margin-left: 12px;
 }
 
@@ -89,4 +89,12 @@ div.bottom-footer-icons-sector > div:nth-child(1) {
 .page-logo > h1 > a {
   text-decoration: none;
   color: #ff7f32;
+}
+
+div > footer > div {
+  display: flex;
+  min-width: 1200px;
+  max-width: 1200px;
+  align-items: center;
+  justify-content: space-between;
 }

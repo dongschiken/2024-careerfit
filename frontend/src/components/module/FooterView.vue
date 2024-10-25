@@ -1,5 +1,6 @@
 <template>
   <footer class="bottom-footer-container">
+    <div class="bottom-layout-container">
     <div class="page-logo">
       <h1><router-link to="/">CAREER FIT</router-link></h1>
     </div>
@@ -80,6 +81,7 @@
           ></path>
         </svg>
       </div>
+    </div>
     </div>
   </footer>
 </template>

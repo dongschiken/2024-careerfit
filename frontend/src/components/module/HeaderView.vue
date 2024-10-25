@@ -1,6 +1,7 @@
 <template>
   <div class="header-container">
-    <div class="header-nav-title">
+    <div class="header-layout-container">
+      <div class="header-nav-title">
       <router-link to="/">CAREER FIT</router-link>
     </div>
     <div class="header-nav-menu-group">
@@ -28,6 +29,7 @@
           <router-link to="/user/join">회원가입</router-link>
         </button>
       </div>
+    </div>
     </div>
   </div>
 </template>

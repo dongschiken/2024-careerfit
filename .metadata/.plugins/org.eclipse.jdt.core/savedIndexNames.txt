@@ -78,7 +78,6 @@ INDEX VERSION 1.134+C:\SSAFY\2024-careerfit\.metadata\.plugins\org.eclipse.jdt.c
 2670916386.index
 2814540746.index
 3664426098.index
-1965174767.index
 4231258061.index
 2209809774.index
 3709672054.index
