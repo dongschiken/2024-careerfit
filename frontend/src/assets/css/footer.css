@@ -68,6 +68,25 @@ body > header.bottom-footer-container > div.page-logo > h1 > a {
   text-decoration: none;
 }
 
-#app > div > footer > div.bottom-footer-icons-sector > div:nth-child(1) {
+div.bottom-footer-icons-sector > div:nth-child(1) {
   color: #4d4040;
+}
+
+.bottom-footer-container {
+  border-top: 1px solid grey;
+}
+.bottom-footer-menu-group {
+  display: flex;
+  margin-bottom: 100px;
+  margin-top: 15px;
+}
+.bottom-footer-menu-group div {
+  margin-right: 20px;
+}
+.bottom-footer-company-info-sector > .bottom-footer-menu-group {
+  color: #757575;
+}
+.page-logo > h1 > a {
+  text-decoration: none;
+  color: #ff7f32;
 }
