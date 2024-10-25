@@ -18,8 +18,16 @@
       </div>
     </div>
     <div class="header-nav-login-group">
-      <div><button id="loginBtn">로그인</button></div>
-      <div><button id="joinBtn">회원가입</button></div>
+      <div>
+        <button id="loginBtn">
+          <router-link to="/user/login">로그인</router-link>
+        </button>
+      </div>
+      <div>
+        <button id="joinBtn">
+          <router-link to="/user/join">회원가입</router-link>
+        </button>
+      </div>
     </div>
   </div>
 </template>
