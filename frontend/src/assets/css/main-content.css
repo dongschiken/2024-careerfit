@@ -1,0 +1,159 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+.main-intro {
+  text-align: left;
+  margin-left: 9rem;
+  margin-top: 10rem;
+  min-width: 400px;
+  max-width: 400px;
+}
+.main-intro > div > h2 {
+  color: #000000;
+}
+.main-intro > div:nth-child(2) {
+  color: #757575;
+}
+.main-container {
+  display: flex;
+  justify-content: center;
+}
+.highlight-orange {
+  color: #ff7f32;
+}
+.main-container > .main-layout-container {
+  min-width: 1200px;
+  max-width: 1200px;
+}
+.main-intro-small {
+  margin-top: 50px;
+}
+.main-intro-small {
+  font-size: 20px;
+}
+.main-ai-chatbot {
+  position: fixed;
+  top: 200px;
+  right: 80px;
+  border: none;
+  border-radius: 31px;
+  background: #ff7f32;
+  color: white;
+  padding: 12px;
+  font-weight: bold;
+  box-shadow: 0px 1px 5px gray;
+  cursor: pointer;
+  width: 50px;
+  height: 40px;
+}
+.main-board-group {
+  margin-top: 400px;
+}
+
+.comunity-header {
+  background-color: #d7e3e1; /* 기본 배경색 */
+  border-radius: 15px; /* 둥근 모서리 */
+  width: 390px; /* 박스 너비 */
+  height: 90px; /* 박스 높이 */
+  display: flex;
+  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: center; /* 가로 중앙 정렬 */
+  background-image: linear-gradient(45deg, #c0d0ce 25%, transparent 25%),
+    linear-gradient(-45deg, #c0d0ce 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #c0d0ce 75%),
+    linear-gradient(-45deg, transparent 75%, #c0d0ce 75%);
+  background-size: 60px 60px; /* 체크 무늬 크기 설정 (더 크게) */
+  background-position: 0 0, 0 30px, 30px -30px, -30px 0px; /* 패턴의 위치 조정 */
+}
+.comunity-header-text {
+  font-size: 24px; /* 글자 크기 */
+  font-weight: bold; /* 굵은 글자 */
+  color: #000000; /* 글자 색상 */
+  margin-right: 115px;
+}
+
+.main-board-group {
+  display: flex;
+  justify-content: space-evenly;
+}
+.profile-img > img {
+  width: 23px;
+  height: 23px;
+  border: 1px solid #d4d3d3;
+  border-radius: 100%;
+}
+.profile-img {
+  margin-left: 0;
+}
+
+div.main-container
+  > div
+  > div.main-board-group
+  > div:nth-child(1)
+  > div.main-board-content-group
+  > div.main-board-content-layout
+  > div.main-board-content-left
+  > div.profile-img {
+  margin-left: 0;
+}
+
+.main-board-content-left {
+  display: flex;
+}
+.main-board-content-group {
+  margin-top: 30px;
+}
+.main-board-content-left div {
+  margin-left: 6px;
+}
+.main-board-content-left div {
+  margin-left: 6px;
+}
+.main-board-content-left > .date-time {
+  margin-left: 20px;
+}
+.main-board-content-group {
+  border-bottom: 1.5px solid rgb(192, 191, 191);
+}
+.material-icon > img {
+  width: 23px;
+  height: 23px;
+}
+.main-board-content-group {
+  display: flex;
+  flex-direction: column;
+}
+.main-board-content-right {
+  display: flex;
+}
+.main-board-content-right > .material-icon {
+  display: flex;
+}
+.main-board-content-right > .material-icon > div {
+  padding-top: 2px;
+  margin-left: 6px;
+}
+
+div.main-container
+  > div
+  > div.main-board-group
+  > div:nth-child(1)
+  > div.main-board-content-group
+  > div.main-board-content-right
+  > div:nth-child(2) {
+  margin-left: 13px;
+}
+.main-board-content-layout {
+  display: flex;
+  justify-content: space-between;
+}
+
+.main-board-content-right > .material-icon:nth-child(1) {
+  margin-right: 15px;
+}
+.contents {
+  padding-bottom: 20px;
+  padding-top: 30px;
+  text-align: start;
+}

@@ -1,3 +1,18 @@
+<<<<<<< HEAD
+INDEX VERSION 1.134+C:\careerfit\.metadata\.plugins\org.eclipse.jdt.core
+4135140116.index
+1865797976.index
+709049365.index
+1499157546.index
+502439137.index
+550791907.index
+4072192850.index
+1404364418.index
+1988664012.index
+683570996.index
+135949474.index
+210630467.index
+=======
 INDEX VERSION 1.134+C:\2024-careerfit\.metadata\.plugins\org.eclipse.jdt.core
 2618336845.index
 3371701146.index
@@ -20,6 +35,7 @@ INDEX VERSION 1.134+C:\2024-careerfit\.metadata\.plugins\org.eclipse.jdt.core
 1126165420.index
 3479634738.index
 345245243.index
+<<<<<<< HEAD
 3709672054.index
 3503527565.index
 3312279773.index
@@ -33,7 +49,15 @@ INDEX VERSION 1.134+C:\2024-careerfit\.metadata\.plugins\org.eclipse.jdt.core
 1599743070.index
 3632715211.index
 1762373011.index
+>>>>>>> 34d5bbf183f5a3f7fee32e814bfd272e6f9ce380
 1965174767.index
+=======
+3814817713.index
+1021818439.index
+2670916386.index
+2814540746.index
+3664426098.index
+>>>>>>> 82f580297ff85661830d834bbbc9204dd8f6db21
 4231258061.index
 3788819577.index
 521652664.index
