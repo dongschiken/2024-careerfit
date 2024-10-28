@@ -2,9 +2,10 @@
   margin: 0px;
   padding: 0px;
 }
+
 .header-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   min-width: 1400px;
   max-width: 100%;
@@ -15,16 +16,14 @@
   border-bottom: 1px solid grey;
   background-color: #ffffff;
 }
-.header-container > .header-nav-menu-group {
+.header-nav-menu-group {
   display: flex;
   margin-right: 400px;
 }
-.header-container > .header-nav-login-group {
+.header-nav-login-group {
   display: flex;
-  margin-right: 150px;
 }
-.header-container > .header-nav-title {
-  margin-left: 150px;
+.header-nav-title {
   font-size: 30px;
   font-weight: bold;
 }
@@ -33,7 +32,7 @@ div.header-nav-title > a {
   color: #ff7d29;
   text-decoration: none;
 }
-.header-container > .header-nav-menu-group > div > a {
+.header-nav-menu-group > div > a {
   text-decoration: none;
   color: #757575;
   font-weight: bold;
@@ -86,4 +85,14 @@ div.header-nav-menu-group > div:nth-child(3) {
 
 div.header-container > div.header-nav-menu-group > div:nth-child(3) > a {
   margin-top: 3px;
+}
+
+.header-layout-container {
+  display: flex;
+  justify-content: space-between;
+  min-width: 1200px;
+  max-width: 1200px;
+}
+.header-nav-menu-group {
+  margin-top: 10px;
 }
