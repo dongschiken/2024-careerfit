@@ -55,5 +55,6 @@ export default {
   min-height: 1200px;
   margin: 0 auto; /* 좌우 마진을 auto로 설정하여 중앙 정렬 */
   padding: 0 20px; /* 선택적: 양쪽에 약간의 패딩 추가 */
+  /* 수정 */
 }
 </style>
