@@ -8,9 +8,9 @@
 </template>
 
 <script>
-import HeaderView from "@/components/module/HeaderView.vue";
-import FooterView from "@/components/module/FooterView.vue";
-import MainContentView from "@/components/main/MainContentView.vue";
+import HeaderView from "@/components/module/MainHeader.vue";
+import FooterView from "@/components/module/MainFooter.vue";
+import MainContentView from "@/components/main/MainContent.vue";
 
 export default {
   name: "MainView",

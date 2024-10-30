@@ -112,7 +112,7 @@
           </div>
         </div>
       </div>
-      <div class="main-health-ranking-group">헬스장 랭킹</div>
+      <!-- <div class="main-health-ranking-group">헬스장 랭킹</div> -->
     </div>
   </div>
 </template>

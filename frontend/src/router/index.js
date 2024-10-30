@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import MainView from "@/views/MainView.vue";
-import BoardListView from "@/components/board/BoardListView.vue";
+import BoardListView from "@/components/board/BoardContent.vue";
 import LoginView from "@/components/user/LoginView.vue";
 import JoinView from "@/components/user/JoinView.vue";
 
