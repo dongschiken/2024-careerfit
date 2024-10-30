@@ -4,7 +4,7 @@
 </template>
 
 <script>
-import HeaderView from "@/components/module/HeaderView.vue";
+import HeaderView from "@/components/module/MainHeader.vue";
 export default {
   components: {
     HeaderView,
