@@ -7,7 +7,6 @@
     <main class="board-main-group">게시글 10개</main>
     <footer class="board-footer-group">페이징 처리</footer>
   </div>
-
   <FooterView />
 </template>
 
