@@ -10,15 +10,17 @@
       </div>
       <div class="board-content-header-menu">
         <div class="board-content-header-menu-write">
-          <button id="write-btn">
-            <div class="wirte-btn-group">
-              <img
-                src="../../assets/img/edit_square_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
-                alt=""
-              />
-              <router-link to="">글작성</router-link>
-            </div>
-          </button>
+          <router-link to="/write">
+            <button id="write-btn">
+              <div class="wirte-btn-group">
+                <img
+                  src="../../assets/img/edit_square_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
+                  alt=""
+                />
+                글작성
+              </div>
+            </button>
+          </router-link>
         </div>
         <div class="board-content-header-menu-category">
           <div><button>스터디 & 모임</button></div>

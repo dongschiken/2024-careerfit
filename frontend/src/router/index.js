@@ -3,6 +3,7 @@ import MainView from "@/views/MainView.vue";
 import BoardListView from "@/components/board/BoardContent.vue";
 import LoginView from "@/components/user/LoginView.vue";
 import JoinView from "@/components/user/JoinView.vue";
+import BoardWrite from "@/components/board/BoardWrite.vue";
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: "/user/join",
     name: "join",
     component: JoinView,
+  },
+  {
+    path: "/write",
+    name: "write",
+    component: BoardWrite,
   },
 ];
 
