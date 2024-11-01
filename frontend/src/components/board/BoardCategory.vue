@@ -2,6 +2,13 @@
   <div v-for="n in 10" :key="n" class="board-content-list-group">
     <div class="board-content-left">
       <div class="board-content-title">제 스펙에 연봉 얼마가 적당한가요?</div>
+      <div class="board-content-content">
+        <p class="ellipsis">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci sunt
+          dignissimos unde officiis sapiente commodi, obcaecati repellat ex
+          similique hic.
+        </p>
+      </div>
       <div class="user-profile-group">
         <div class="user-profile-img">
           <img src="../../assets/img/snoopy.png" alt="" />
@@ -43,6 +50,20 @@
 </template>
 
 <style lang="css">
+.board-content-content > .ellipsis {
+  max-width: 400px;
+  min-width: 400px;
+  max-height: 36px;
+  min-height: 36px;
+  margin-top: 60px;
+  text-align: start;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* 표시할 줄 수 */
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  font-weight: 400;
+}
 .board-content-list-group {
   display: flex;
   margin-top: 35px;
@@ -53,7 +74,7 @@
 }
 .user-profile-group {
   display: flex;
-  padding-top: 84px;
+  padding-top: 37px;
 }
 .user-profile-group:hover {
   cursor: pointer;
@@ -61,6 +82,7 @@
 .board-content-title {
   margin-top: 15px;
   font-size: 19px;
+  text-align: start;
 }
 .user-profile-img > img {
   width: 35px;
@@ -80,11 +102,12 @@
 }
 .board-content-right > .board-content-right-img > img {
   margin-top: 20px;
-  width: 150px;
-  height: 140px;
+  width: 160px;
+  height: 150px;
+  border-radius: 10px;
 }
 .board-content-right-footer {
-  margin-top: 10px;
+  margin-top: 52px;
   display: flex;
 }
 .board-content-right-footer > span > img {
