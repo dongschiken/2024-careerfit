@@ -37,9 +37,7 @@
         </button>
       </div>
     </div>
-    <div class="reserve">
-      ⓒ (주)peach Corp. All rights reserved.
-    </div>
+    <div class="reserve">ⓒ (주)peach Corp. All rights reserved.</div>
   </div>
 </template>
 
@@ -59,7 +57,7 @@ export default {
       console.log("로그인 시도:", this.formData);
     },
     handleSignup() {
-      this.$router.push('/user/join');
+      this.$router.push("/user/join");
     },
     handleKakaoLogin() {
       console.log("카카오 로그인 클릭");
@@ -89,7 +87,7 @@ export default {
 
 .login-title {
   text-align: center;
-  color: #FF7D29;
+  color: #ff7d29;
   font-size: 1.8rem;
   margin-bottom: 2.5rem;
 }
@@ -122,11 +120,11 @@ export default {
 }
 
 .login-input:focus {
-  border-color: #FF7D29;
+  border-color: #ff7d29;
 }
 
 .login-button {
-  background-color: #FF7D29;
+  background-color: #ff7d29;
   color: white;
   border: none;
   cursor: pointer;
@@ -135,7 +133,7 @@ export default {
 }
 
 .login-button:hover {
-  background-color: #FF7D29;
+  background-color: #ff7d29;
 }
 
 .login-question {

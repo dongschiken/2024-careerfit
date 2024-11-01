@@ -305,7 +305,7 @@ export default {
 .brand-title {
   font-size: 28px;
   font-weight: bold;
-  color: #FF7D29;
+  color: #ff7d29;
   margin-bottom: 12px;
 }
 
@@ -341,7 +341,7 @@ export default {
 }
 
 .input-field:focus {
-  border-color: #FF7D29;
+  border-color: #ff7d29;
   outline: none;
 }
 
@@ -351,7 +351,7 @@ export default {
   padding: 12px 16px;
   height: 46px;
   width: 89.5px;
-  background-color: #FF7D29;
+  background-color: #ff7d29;
   color: white;
   border: 1px solid #e0e0e0;
   border-radius: 10px;
@@ -366,12 +366,12 @@ export default {
 .check-verification-button:hover,
 .check-button:hover,
 .address-button:hover {
-  background-color: #FD8B51;
+  background-color: #fd8b51;
 }
 
 .join-button {
   padding: 14px;
-  background-color: #FF7D29;
+  background-color: #ff7d29;
   color: white;
   border: none;
   border-radius: 10px;
@@ -382,7 +382,7 @@ export default {
 }
 
 .join-button:hover {
-  background-color: #FD8B51;
+  background-color: #fd8b51;
 }
 
 .error-text {
