@@ -102,7 +102,7 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
 	`user_id`	INT	NOT NULL,
 	`email`	VARCHAR(320)	NOT NULL,
-	`password`	VARCHAR(20)	NOT NULL,
+	`password`	VARCHAR(200)	NOT NULL,
 	`name`	VARCHAR(15)	NOT NULL,
 	`nickname`	VARCHAR(20)	NOT NULL,
 	`profile_url`	VARCHAR(330)	NULL,
@@ -111,7 +111,7 @@ CREATE TABLE `user` (
 	`parcel_address`	VARCHAR(50)	NOT NULL,
 	`street_address`	VARCHAR(100)	NOT NULL,
 	`detail_address`	VARCHAR(100)	NULL,
-	`refresh_token`	VARCHAR(600)	NOT NULL,
+	`refresh_token`	VARCHAR(600) NULL,
 	`latitude`	DECIMAL(9,6)	NOT NULL,
 	`longitude`	DECIMAL(9,6)	NOT NULL,
 	`created_at`	TIMESTAMP	NOT NULL,
