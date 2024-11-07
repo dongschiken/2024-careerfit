@@ -22,13 +22,13 @@ import com.peach.careerfit.user.model.service.UserService;
 
 @RestController
 @RequestMapping("/api")
-public class UserController {
+public class UserRestController {
 
 	private final UserService userService;
 	private final AuthenticationManager authenticationManager;
 	private final JwtUtils jwtUtils;
 
-	public UserController(UserService userService, AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
+	public UserRestController(UserService userService, AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
 		this.userService = userService;
 		this.authenticationManager = authenticationManager;
 		this.jwtUtils = jwtUtils;

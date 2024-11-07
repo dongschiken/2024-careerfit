@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.peach.careerfit.board.model.dao.BoardDao">
+	<insert id="insertBoard" parameterType="Board">
+		INSERT INTO board 
+		(user_id, category_id, title, content, like_count, 
+		view_count, created_at, updated_at, address)
+		VALUES 
+		(#{userId}, #{categoryId}, #{title}, #{content},
+		#{likeCount}, #{viewCount}, #{createdAt}, #{updatedAt}, #{address})
+	</insert>
+	<insert id="" parameterType="BoardImg">
+		INSERT INTO board_img
+		(board_id, path, system_name, origin_name, main_whether)
+		VALUES
+		(#{boardId}, #{path}, #{systemName}, #{originName}, #{mainWhether})
+	</insert>
+</mapper>
