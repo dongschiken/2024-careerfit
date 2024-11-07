@@ -18,7 +18,7 @@
           <router-link to=""> 공지 </router-link>
         </div>
         <div>
-          <router-link to=""> 식단관리 </router-link>
+          <router-link to="/meal"> 식단관리 </router-link>
         </div>
       </div>
       <div class="header-nav-login-group">

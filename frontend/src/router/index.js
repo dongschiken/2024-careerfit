@@ -4,6 +4,7 @@ import BoardListView from "@/components/board/BoardContent.vue";
 import LoginView from "@/components/user/LoginView.vue";
 import JoinView from "@/components/user/JoinView.vue";
 import BoardWrite from "@/components/board/BoardWrite.vue";
+import MealPlan from "@/components/meal/MealPlan.vue";
 
 const routes = [
   {
@@ -30,6 +31,11 @@ const routes = [
     path: "/write",
     name: "write",
     component: BoardWrite,
+  },
+  {
+    path: "/meal",
+    name: "meal",
+    component: MealPlan,
   },
 ];
 
