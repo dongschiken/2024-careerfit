@@ -33,15 +33,6 @@ export default {
     triggerImageUpload() {
       this.$refs.imageInput.click();
     },
-    addText() {
-      const text = prompt("추가할 글 내용을 입력하세요:");
-      if (text) {
-        const editor = this.$refs.editor;
-        const textNode = document.createTextNode(text);
-        editor.appendChild(textNode);
-        editor.appendChild(document.createElement("br"));
-      }
-    },
     addImage(event) {
       const file = event.target.files[0];
       if (file) {
