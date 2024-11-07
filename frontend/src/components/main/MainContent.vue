@@ -11,7 +11,7 @@
         </div>
         <div class="main-ai-chatbot" id="chatbot">
           <svg
-            style="width: 40px; height: 43px"
+            style="width: 40px; height: 43px; margin-left: 5px"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
