@@ -98,7 +98,7 @@ public class JwtUtils {
      * secretKey를 사용하여 토큰에 서명
      */
     public String createJwt(int userId, String role, String email, String nickname, Long expiredMs) {
-        Date now = new Date();
+//        Date now = new Date();
 //        Date expiration = new Date(now.getTime() + ACCESS_TOKEN_VALIDATE);
     	return builder()
                 .claim("userId", userId)
