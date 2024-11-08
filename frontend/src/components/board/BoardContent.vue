@@ -23,9 +23,9 @@
           </router-link>
         </div>
         <div class="board-content-header-menu-category">
-          <div><button>스터디 & 모임</button></div>
+          <div><button>회사이야기</button></div>
           <div><button>헬스이야기</button></div>
-          <div><button>회사생활</button></div>
+          <div><button>식단인증</button></div>
         </div>
         <div class="board-content-header-menu-search">
           <div class="search-group">

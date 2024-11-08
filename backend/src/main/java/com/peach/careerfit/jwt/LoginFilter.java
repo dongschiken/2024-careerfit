@@ -39,10 +39,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
         // 클라이언트 요청에서 userEmail, password 추출
-        String userEmail = request.getParameter("userEmail");
+        String userEmail = request.getParameter("email");
         String password = obtainPassword(request);
         // 3번째 매개변수는 ROLE 값
-
+        
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userEmail, password);
 
         return authenticationManager.authenticate(authToken);
@@ -59,11 +59,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         GrantedAuthority auth = iterator.next();
         
         String role = auth.getAuthority();
-
-        String token = jwtUtils.createJwt(user.getUserId(), user.getRole(), user.getEmail(), user.getNickname(), 60*60*10L);
+        String token = jwtUtils.createJwt(user.getRole(), user.getEmail(), user.getNickname());
         response.addHeader("Authorization", "Bearer " + token); // Bearer_ 뒤에 띄어쓰기 한칸
     }
-
+    
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         response.setStatus(401); // 실패하면 401 응답
