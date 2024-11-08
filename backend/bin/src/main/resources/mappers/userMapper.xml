@@ -30,27 +30,4 @@
 		    ,#{streetAddress}, #{latitude}, #{longitude}, #{createdAt}, #{updatedAt}, #{role}, #{status}
 		)
 	</insert>
-	
-	<!-- 마이페이지 조회 -->
-	<select id="findById" parameterType="int" resultType="User">
-		SELECT * FROM users WHERE id = #{user_id}
-	</select>
-	
-	<!-- 회원 정보 변경 -->
-	<update id="updateUser" parameterType="map">
-		UPDATE user SET name = #{user.name},
-						nickname = #{user.nickname},
-						phone = #{user.phone},
-						post_code = #{user.post_code},
-						parcel_address = #{user.parcel_address},
-						street_address = #{user.street_address},
-						detail_address = #{user.detail_address}
-		WHERE id = #{user_id}
-	</update>
-	
-	<!-- 프로필 변경 -->
-	<update id="updateProfilePicture" parameterType="map">
-		UPDATE user SET profile_url = #{profile_url}
-		WHERE user_id = #{user_id}
-	</update>
 </mapper>

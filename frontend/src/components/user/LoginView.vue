@@ -2,7 +2,7 @@
   <HeaderView />
   <div class="login-page">
     <div class="login-container">
-      <h1 class="login-title">CAREER·FIT</h1>
+      <h1 class="login-title" @click="main">CAREER FIT</h1>
 
       <form class="login-form" @submit.prevent="handleLogin">
         <input
@@ -62,6 +62,9 @@ export default {
     handleKakaoLogin() {
       console.log("카카오 로그인 클릭");
     },
+    main() {
+      this.$router.push("/");
+    },
   },
 };
 </script>
@@ -90,6 +93,7 @@ export default {
   color: #ff7d29;
   font-size: 1.8rem;
   margin-bottom: 2.5rem;
+  cursor: pointer;
 }
 
 .login-form {
