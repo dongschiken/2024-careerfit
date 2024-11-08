@@ -1,80 +1,82 @@
 <template>
-  <MainHeader />
-  <div class="container">
-    <!-- Calendar Section -->
-    <div class="calendar">
-      <div class="calendar-header">
-        <button @click="prevMonth" class="nav-button">&lt;</button>
-        <h2>{{ currentYear }}.{{ currentMonth + 1 }}</h2>
-        <button @click="nextMonth" class="nav-button">&gt;</button>
-      </div>
-      <div class="days">
-        <div class="day" v-for="(day, index) in days" :key="index">
-          {{ day }}
+  <div>
+    <MainHeader />
+    <div class="container">
+      <!-- Calendar Section -->
+      <div class="calendar">
+        <div class="calendar-header">
+          <button @click="prevMonth" class="nav-button">&lt;</button>
+          <h2>{{ currentYear }}.{{ currentMonth + 1 }}</h2>
+          <button @click="nextMonth" class="nav-button">&gt;</button>
+        </div>
+        <div class="days">
+          <div class="day" v-for="(day, index) in days" :key="index">
+            {{ day }}
+          </div>
+        </div>
+        <div class="dates">
+          <!-- Spacer for the first weekday -->
+          <div
+            v-for="n in startDayOfMonth"
+            :key="'spacer-' + n"
+            class="spacer"
+          ></div>
+          <!-- Dates -->
+          <div
+            v-for="(date, index) in dates"
+            :key="index"
+            :class="[
+              'date',
+              { selected: isSelectedDate(date), today: isToday(date) },
+            ]"
+            @click="selectDate(date)"
+          >
+            {{ date.getDate() }}
+          </div>
         </div>
       </div>
-      <div class="dates">
-        <!-- Spacer for the first weekday -->
-        <div
-          v-for="n in startDayOfMonth"
-          :key="'spacer-' + n"
-          class="spacer"
-        ></div>
-        <!-- Dates -->
-        <div
-          v-for="(date, index) in dates"
-          :key="index"
-          :class="[
-            'date',
-            { selected: isSelectedDate(date), today: isToday(date) },
-          ]"
-          @click="selectDate(date)"
-        >
-          {{ date.getDate() }}
+
+      <!-- Meal Records -->
+      <div class="meal-records">
+        <div class="meal-card" v-for="(meal, index) in meals" :key="index">
+          <div class="meal-type">
+            <div>{{ meal.type }}</div>
+            <div class="meal-type-square"></div>
+          </div>
+          <div class="meal-details">{{ meal.details }}</div>
+          <div class="nutrients">{{ meal.nutrients }}</div>
         </div>
       </div>
     </div>
-
-    <!-- Meal Records -->
-    <div class="meal-records">
-      <div class="meal-card" v-for="(meal, index) in meals" :key="index">
-        <div class="meal-type">
-          <div>{{ meal.type }}</div>
-          <div class="meal-type-square"></div>
-        </div>
-        <div class="meal-details">{{ meal.details }}</div>
-        <div class="nutrients">{{ meal.nutrients }}</div>
-      </div>
+    <!-- Tabs -->
+    <div class="tabs">
+      <button
+        :class="{ active: selectedTab === 'meal' }"
+        @click="selectedTab = 'meal'"
+      >
+        식단 기록
+      </button>
+      <button
+        :class="{ active: selectedTab === 'exercise' }"
+        @click="selectedTab = 'exercise'"
+      >
+        운동 신체 기록
+      </button>
     </div>
-  </div>
-  <!-- Tabs -->
-  <div class="tabs">
-    <button
-      :class="{ active: selectedTab === 'meal' }"
-      @click="selectedTab = 'meal'"
-    >
-      식단 기록
-    </button>
-    <button
-      :class="{ active: selectedTab === 'exercise' }"
-      @click="selectedTab = 'exercise'"
-    >
-      운동 신체 기록
-    </button>
-  </div>
 
-  <!-- Detailed Meal Record -->
-  <div class="detailed-record" v-if="selectedTab === 'meal'">
-    <div
-      class="meal-detail"
-      v-for="(meal, index) in detailedMeals"
-      :key="index"
-    >
-      <img :src="meal.image" alt="Meal Image" />
-      <div class="meal-info">
-        <h4>{{ meal.type }}</h4>
-        <p>{{ meal.time }}</p>
-        <p>{{ meal.details }}</p>
+    <!-- Detailed Meal Record -->
+    <div class="detailed-record" v-if="selectedTab === 'meal'">
+      <div
+        class="meal-detail"
+        v-for="(meal, index) in detailedMeals"
+        :key="index"
+      >
+        <img :src="meal.image" alt="Meal Image" />
+        <div class="meal-info">
+          <h4>{{ meal.type }}</h4>
+          <p>{{ meal.time }}</p>
+          <p>{{ meal.details }}</p>
+        </div>
       </div>
     </div>
   </div>

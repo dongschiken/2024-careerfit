@@ -1,10 +1,10 @@
-import { createRouter, createWebHashHistory } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import MainView from "@/views/MainView.vue";
-import BoardListView from "@/components/board/BoardContent.vue";
 import LoginView from "@/components/user/LoginView.vue";
 import JoinView from "@/components/user/JoinView.vue";
 import BoardWrite from "@/components/board/BoardWrite.vue";
 import MealPlan from "@/components/meal/MealPlan.vue";
+import BoardContentView from "@/views/BoardContentView.vue";
 
 const routes = [
   {
@@ -15,7 +15,7 @@ const routes = [
   {
     path: "/board",
     name: "board",
-    component: BoardListView,
+    component: BoardContentView,
   },
   {
     path: "/user/login",
@@ -40,7 +40,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes,
 });
 
