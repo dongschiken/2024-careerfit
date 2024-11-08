@@ -38,12 +38,12 @@
             <div class="main-board-content-layout">
               <div class="main-board-content-left">
                 <div class="profile-img">
-                  <img src="../../assets/img/snoopy.png" alt="" />
+                  <img src="@/assets/img/snoopy.png" alt="" />
                 </div>
                 <div class="nickname">초대리</div>
                 <div class="material-icon">
                   <img
-                    src="../../assets/img/edit_square_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
+                    src="@/assets/img/edit_square_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
                     alt=""
                   />
                 </div>
@@ -52,14 +52,14 @@
               <div class="main-board-content-right">
                 <div class="material-icon">
                   <img
-                    src="../../assets/img/thumb_up_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
+                    src="@/assets/img/thumb_up_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
                     alt=""
                   />
                   <div>24</div>
                 </div>
                 <div class="material-icon">
                   <img
-                    src="../../assets/img/chat_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
+                    src="@/assets/img/chat_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
                     alt=""
                   />
                   <div>24</div>
@@ -80,12 +80,12 @@
             <div class="main-board-content-layout">
               <div class="main-board-content-left">
                 <div class="profile-img">
-                  <img src="../../assets/img/snoopy.png" alt="" />
+                  <img src="@/assets/img/snoopy.png" alt="" />
                 </div>
                 <div class="nickname">초대리</div>
                 <div class="material-icon">
                   <img
-                    src="../../assets/img/edit_square_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
+                    src="@/assets/img/edit_square_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
                     alt=""
                   />
                 </div>
@@ -94,14 +94,14 @@
               <div class="main-board-content-right">
                 <div class="material-icon">
                   <img
-                    src="../../assets/img/thumb_up_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
+                    src="@/assets/img/thumb_up_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
                     alt=""
                   />
                   <div>24</div>
                 </div>
                 <div class="material-icon">
                   <img
-                    src="../../assets/img/chat_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
+                    src="@/assets/img/chat_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
                     alt=""
                   />
                   <div>24</div>
@@ -117,10 +117,10 @@
   </div>
 </template>
 
-<script></script>
+<script setup></script>
 
 <style lang="css">
-@import url(../../assets/css/main-content.css);
+@import url(@/assets/css/main-content.css);
 .comunity-header-text > a {
   text-decoration: none;
   color: black;

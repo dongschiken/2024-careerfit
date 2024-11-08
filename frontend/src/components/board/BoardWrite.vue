@@ -1,28 +1,30 @@
 <template>
-  <HeaderView />
-  <div class="container">
-    <h2>게시글 작성</h2>
-    <div
-      ref="editor"
-      class="editor"
-      contenteditable="true"
-      placeholder="내용을 입력하거나 이미지를 추가하세요"
-    ></div>
+  <div>
+    <HeaderView />
+    <div class="container">
+      <h2>게시글 작성</h2>
+      <div
+        ref="editor"
+        class="editor"
+        contenteditable="true"
+        placeholder="내용을 입력하거나 이미지를 추가하세요"
+      ></div>
 
-    <div class="buttons">
-      <input
-        type="file"
-        accept="image/*"
-        @change="addImage"
-        ref="imageInput"
-        style="display: none"
-      />
-      <button @click="triggerImageUpload">이미지 추가</button>
+      <div class="buttons">
+        <input
+          type="file"
+          accept="image/*"
+          @change="addImage"
+          ref="imageInput"
+          style="display: none"
+        />
+        <button @click="triggerImageUpload">이미지 추가</button>
+      </div>
+
+      <button class="submit-btn" @click="submitPost">게시글 등록</button>
     </div>
-
-    <button class="submit-btn" @click="submitPost">게시글 등록</button>
+    <FooterView />
   </div>
-  <FooterView />
 </template>
 
 <script>
