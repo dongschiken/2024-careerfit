@@ -1,7 +1,7 @@
 <template>
   <div>
     <HeaderView />
-    <MainContentView />
+    <MainContent />
     <div style="min-height: 1500px"></div>
     <FooterView />
   </div>
@@ -10,14 +10,14 @@
 <script>
 import HeaderView from "@/components/module/MainHeader.vue";
 import FooterView from "@/components/module/MainFooter.vue";
-import MainContentView from "@/components/main/MainContent.vue";
+import MainContent from "@/components/main/MainContent.vue";
 
 export default {
   name: "MainView",
   components: {
     HeaderView,
     FooterView,
-    MainContentView,
+    MainContent,
   },
 };
 </script>
