@@ -9,7 +9,7 @@
   <div class="join-page">
     <div class="join-container">
       <div class="join-header">
-        <h1 class="brand-title">CAREER FIT</h1>
+        <h1 class="brand-title" @click="main">CAREER FIT</h1>
         <p class="join-desc">
           하나의 아이디로 CAREER FIT의 다양한 서비스를 이용해보세요.
         </p>
@@ -37,6 +37,33 @@
             </button>
           </div>
           <span class="error-text" v-if="errors.email">{{ errors.email }}</span>
+        </div>
+
+        <!-- 이메일 인증 코드 입력 -->
+        <div class="input-group">
+          <div class="input-with-button">
+            <input
+              type="text"
+              id="verificationCode"
+              v-model="formData.verificationCode"
+              class="input-field"
+              placeholder="인증 코드"
+              required
+            />
+            <button type="button" class="check-button" @click="verifyEmailCode">
+              인증 확인
+            </button>
+            <button
+              type="button"
+              class="check-button"
+              @click="resendEmailVerification"
+            >
+              재요청
+            </button>
+          </div>
+          <span class="error-text" v-if="errors.verificationCode">{{
+            errors.verificationCode
+          }}</span>
         </div>
 
         <!-- 비밀번호 필드 -->
@@ -162,6 +189,7 @@ export default {
     return {
       formData: {
         email: "",
+        verificationCode: "",
         password: "",
         passwordConfirm: "",
         nickname: "",
@@ -172,11 +200,13 @@ export default {
       },
       errors: {
         email: "",
+        verificationCode: "",
         password: "",
         passwordConfirm: "",
         nickname: "",
       },
       isDaumLoaded: false, // Daum API 로드 상태
+      isEmailVerified: false, // 이메일 인증 완료 여부
     };
   },
   mounted() {
@@ -194,19 +224,53 @@ export default {
   methods: {
     async sendEmailVerification() {
       try {
-        // 이메일을 인증하는 API 호출 로직
+        // 이메일 인증 코드 전송 API 호출 로직
         const response = await axios.post("API_URL_FOR_EMAIL_VERIFICATION", {
           email: this.formData.email,
         });
         // API 응답 처리
-        console.log("이메일 인증 요청 성공:", response);
+        console.log("이메일 인증 코드 전송 성공:", response);
+        // 인증 코드 전송 후 카운트다운 타이머 시작
+        this.startVerificationCodeTimer();
       } catch (error) {
-        console.error("이메일 인증 요청 실패:", error);
+        console.error("이메일 인증 코드 전송 실패:", error);
       }
+    },
+    async verifyEmailCode() {
+      try {
+        // 이메일 인증 코드 확인 API 호출 로직
+        const response = await axios.post(
+          "API_URL_FOR_EMAIL_CODE_VERIFICATION",
+          {
+            email: this.formData.email,
+            code: this.formData.verificationCode,
+          }
+        );
+        // API 응답 처리
+        if (response.data.isValid) {
+          console.log("이메일 인증 성공");
+          this.isEmailVerified = true;
+        } else {
+          this.errors.verificationCode = "인증 코드가 일치하지 않습니다.";
+        }
+      } catch (error) {
+        console.error("이메일 인증 코드 확인 실패:", error);
+      }
+    },
+    resendEmailVerification() {
+      // 이메일 인증 코드 재전송 로직
+      this.sendEmailVerification();
+    },
+    startVerificationCodeTimer() {
+      // 인증 코드 유효 시간 관리를 위한 타이머 작성
+      // (클라이언트 측에서 직접 처리하거나 서버에서 처리할 수 있음)
     },
     async checkNicknameDuplicate() {
       // 닉네임 중복 확인 로직
       console.log("닉네임 중복 확인:", this.formData.nickname);
+    },
+    main() {
+      this.$router.push("/");
     },
     searchAddress() {
       if (!this.isDaumLoaded) {
@@ -218,10 +282,13 @@ export default {
 
       new window.daum.Postcode({
         oncomplete: (data) => {
-          this.formData.postalCode = data.zonecode;
-          this.formData.parcelAddress = data.parcelAddress;
-          this.formData.streetAddress = data.streetAddress;
-          this.formData.detailAddress = ""; // 상세 주소 초기화
+          // 필수 필드에 값 할당
+          this.formData.postalCode = data.zonecode; // 우편번호
+          this.formData.parcelAddress = data.jibunAddress; // 지번 주소
+          this.formData.streetAddress = data.roadAddress; // 도로명 주소
+
+          // 상세 주소는 기본값으로 빈 문자열 설정 (사용자가 직접 입력)
+          this.formData.detailAddress = "";
         },
       }).open();
     },
@@ -230,6 +297,7 @@ export default {
       let isValid = true;
       this.errors = {
         email: "",
+        verificationCode: "",
         password: "",
         passwordConfirm: "",
         nickname: "",
@@ -239,6 +307,12 @@ export default {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(this.formData.email)) {
         this.errors.email = "올바른 이메일 형식이 아닙니다.";
+        isValid = false;
+      }
+
+      // 인증 코드 검증
+      if (this.formData.verificationCode.length !== 6) {
+        this.errors.verificationCode = "인증 코드가 올바르지 않습니다.";
         isValid = false;
       }
 
@@ -307,6 +381,7 @@ export default {
   font-weight: bold;
   color: #ff7d29;
   margin-bottom: 12px;
+  cursor: pointer;
 }
 
 .join-desc {
