@@ -51,11 +51,9 @@ public class UserRestController {
 		//
 		// JWT 토큰 생성
 		String token = jwtUtils.createJwt(
-				loginUser.getUserId(), // 실제로는 userId를 가져와야 합니다.
 				loginUser.getRole(),
 				loginUser.getEmail(),
-				loginUser.getNickname(),
-				JwtUtils.ACCESS_TOKEN_VALIDATE
+				loginUser.getNickname()
 				);
 		System.out.println("token"+token);
 		// 응답으로 토큰 전달
