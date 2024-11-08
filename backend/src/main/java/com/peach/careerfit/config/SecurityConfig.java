@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -77,8 +78,12 @@ public class SecurityConfig  {
         // static한 값들에 대해서도 경로를 지정해 줘야한다.
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/api/login/**", "/api/regist", "/api/login", "/error" , "/main", "/api/user/**", "/member/join", "/member/login").permitAll()
+        		.requestMatchers(HttpMethod.GET, "/api/board").permitAll()
                 .requestMatchers("/assets/**", "/js/**", "/img/**").permitAll() // 정적 리소스 접근 허용
                 .requestMatchers("/admin").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/board/", "/api/board/category").hasRole("USER")
+                .requestMatchers(HttpMethod.PUT, "/api/board/**").hasRole("USER")                
+                .requestMatchers(HttpMethod.DELETE, "/api/board/**").hasRole("USER")                                
                 .anyRequest().authenticated());
         
         http.cors((cors) -> cors.configurationSource(new CorsConfigurationSource() {

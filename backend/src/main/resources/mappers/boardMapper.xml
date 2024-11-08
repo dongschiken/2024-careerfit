@@ -11,10 +11,21 @@
 		(#{userId}, #{categoryId}, #{title}, #{content},
 		#{likeCount}, #{viewCount}, #{createdAt}, #{updatedAt}, #{address})
 	</insert>
-	<insert id="" parameterType="BoardImg">
+	<insert id="insertBoardImg" parameterType="BoardImg">
 		INSERT INTO board_img
 		(board_id, path, system_name, origin_name, main_whether)
 		VALUES
 		(#{boardId}, #{path}, #{systemName}, #{originName}, #{mainWhether})
 	</insert>
+	<select id="selectBoardAll" resultType="Board">
+		SELECT user_id, category_id, title, content, like_count, 
+		view_count, created_at, updated_at, address
+		FROM board
+	</select>
+		<select id="selectBoardById" resultType="Board">
+		SELECT user_id, category_id, title, content, like_count, 
+		view_count, created_at, updated_at, address
+		FROM board
+		WHERE board_id = #{boardId}
+	</select>
 </mapper>

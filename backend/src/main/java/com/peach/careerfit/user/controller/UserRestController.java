@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Date;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -55,15 +56,13 @@ public class UserRestController {
 		//
 		// JWT 토큰 생성
 		String token = jwtUtils.createJwt(
-				loginUser.getUserId(), // 실제로는 userId를 가져와야 합니다.
 				loginUser.getRole(),
 				loginUser.getEmail(),
-				loginUser.getNickname(),
-				JwtUtils.ACCESS_TOKEN_VALIDATE
+				loginUser.getNickname()
 				);
 		System.out.println("token"+token);
 		// 응답으로 토큰 전달
-		return ResponseEntity.ok(new JwtResponse(token));
+		return ResponseEntity.status(HttpStatus.OK).body(new JwtResponse(token));
 	}
 	
 	@PostMapping("/regist")
@@ -74,7 +73,7 @@ public class UserRestController {
 		user.setUpdatedAt(ld);
 		user.setStatus(1);
 		userService.registUser(user);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	
 	// 마이페이지 조회
@@ -82,9 +81,9 @@ public class UserRestController {
 	public ResponseEntity<User> getUserById(@PathVariable("user_id") int userId) {
 		User user = userService.getUserById(userId);
 		if(user != null) {
-			return ResponseEntity.ok(user);
+			return ResponseEntity.status(HttpStatus.OK).body(user);
 		}else {
-			return ResponseEntity.noContent().build();
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		}
 	}
 	
@@ -95,12 +94,12 @@ public class UserRestController {
 		try {
 			int result = userService.updateUser(userId, user);
 			if(result > 0) {
-				return ResponseEntity.ok("회원 정보가 성공적으로 수정되었습니다.");
+				return ResponseEntity.status(HttpStatus.OK).body("회원 정보가 성공적으로 수정되었습니다.");
 			} else {
-				return ResponseEntity.status(500).body("회원 정보 수정에 실패했습니다.");
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원 정보 수정에 실패했습니다.");
 			}
 		} catch (Exception e) {
-			return ResponseEntity.status(500).body("처리중 오료가 발생했습니다.");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("처리중 오료가 발생했습니다.");
 		}
 	}
 	
@@ -110,12 +109,12 @@ public class UserRestController {
 		try {
 			int result = userService.updateProfilePicture(userId, profileUrl);
 			if(result > 0) {
-				return ResponseEntity.ok("프로필 이미지가 성공적으로 변경되었습니다.");
+				return ResponseEntity.status(HttpStatus.OK).body("프로필 이미지가 성공적으로 변경되었습니다.");
 			} else {
-				return ResponseEntity.status(500).body("프로필 이미지 변경에 실패했습니다.");
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("프로필 이미지 변경에 실패했습니다.");
 			}
 		} catch (Exception e) {
-			return ResponseEntity.status(500).body("처리중 오류가 발생했습니다.");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("처리중 오류가 발생했습니다.");
 		}
 	}
 }
