@@ -39,9 +39,9 @@ public class MealRecordRestController {
 		mealRecord.setDate(date);
 		String token = jwtUtils.getAccessToken(request);
 		mealRecord.setUserId(jwtUtils.getUserIdFromToken(token));
-		System.out.println(mealRecord);
 		try {
 			List<MealRecord> mealRecords = mealRecordService.getMealRecordByUserId(mealRecord);
+			System.out.println(mealRecord);
 			if(mealRecords.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("해당 날짜의 회원의 식단기록이 없습니다.");
 			}
