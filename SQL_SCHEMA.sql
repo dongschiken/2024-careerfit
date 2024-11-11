@@ -21,7 +21,8 @@ CREATE TABLE `board` (
 	`view_count`	INT	NOT NULL,
 	`created_at`	TIMESTAMP	NOT NULL,
 	`updated_at`	TIMESTAMP	NOT NULL,
-	`address`	VARCHAR(255)	NULL
+	`address`	VARCHAR(255)	NULL,
+    `delete_whether` CHAR(9) NOT NULL DEFAULT 'N'
 );
 
 DROP TABLE IF EXISTS `board_category`;

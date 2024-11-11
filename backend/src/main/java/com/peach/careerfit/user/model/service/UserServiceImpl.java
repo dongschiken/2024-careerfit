@@ -36,4 +36,19 @@ public class UserServiceImpl implements UserService {
 	    user.setPassword(encodedPassword);
 		userMapper.insertUser(user);
 	}
+
+	@Override
+	public User getUserById(int userId) {
+		return userMapper.findById(userId);
+	}
+
+	@Override
+	public int updateUser(int userId, User user) {
+		return userMapper.updateUser(userId, user);
+	}
+
+	@Override
+	public int updateProfilePicture(int userId, String profileUrl) {
+		return userMapper.updateProfilePicture(userId, profileUrl);
+	}
 }

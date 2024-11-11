@@ -117,7 +117,7 @@
   </div>
 </template>
 
-<script></script>
+<script setup></script>
 
 <style lang="css">
 @import url(@/assets/css/main-content.css);

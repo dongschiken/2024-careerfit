@@ -1,43 +1,50 @@
 <template>
-  <HeaderView />
-  <div class="login-page">
-    <div class="login-container">
-      <h1 class="login-title">CAREER·FIT</h1>
+  <div>
+    <HeaderView />
+    <div class="login-page">
+      <div class="login-container">
+        <h1 class="login-title" @click="main">CAREER FIT</h1>
 
-      <form class="login-form" @submit.prevent="handleLogin">
-        <input
-          type="email"
-          v-model="formData.email"
-          class="form-element login-input"
-          placeholder="이메일"
-        />
-        <input
-          type="password"
-          v-model="formData.password"
-          class="form-element login-input"
-          placeholder="비밀번호"
-        />
-        <button type="submit" class="form-element login-button">로그인</button>
-      </form>
+        <form class="login-form" @submit.prevent="handleLogin">
+          <input
+            type="email"
+            v-model="formData.email"
+            class="form-element login-input"
+            placeholder="이메일"
+          />
+          <input
+            type="password"
+            v-model="formData.password"
+            class="form-element login-input"
+            placeholder="비밀번호"
+          />
+          <button type="submit" class="form-element login-button">
+            로그인
+          </button>
+        </form>
 
-      <p class="login-question">아직 회원이 아니세요?</p>
+        <p class="login-question">아직 회원이 아니세요?</p>
 
-      <div class="login-options">
-        <button class="form-element btn-member-signup" @click="handleSignup">
-          <span class="btn-icon"
-            ><img src="@/assets/regist-icon.png" alt="회원가입 아이콘"
-          /></span>
-          회원가입
-        </button>
-        <button class="form-element btn-kakao-login" @click="handleKakaoLogin">
-          <span class="btn-icon"
-            ><img src="@/assets/kakao-icon.png" alt=""
-          /></span>
-          카카오 로그인
-        </button>
+        <div class="login-options">
+          <button class="form-element btn-member-signup" @click="handleSignup">
+            <span class="btn-icon"
+              ><img src="@/assets/regist-icon.png" alt="회원가입 아이콘"
+            /></span>
+            회원가입
+          </button>
+          <button
+            class="form-element btn-kakao-login"
+            @click="handleKakaoLogin"
+          >
+            <span class="btn-icon"
+              ><img src="@/assets/kakao-icon.png" alt=""
+            /></span>
+            카카오 로그인
+          </button>
+        </div>
       </div>
+      <div class="reserve">ⓒ (주)peach Corp. All rights reserved.</div>
     </div>
-    <div class="reserve">ⓒ (주)peach Corp. All rights reserved.</div>
   </div>
 </template>
 
@@ -61,6 +68,9 @@ export default {
     },
     handleKakaoLogin() {
       console.log("카카오 로그인 클릭");
+    },
+    main() {
+      this.$router.push("/");
     },
   },
 };
@@ -90,6 +100,7 @@ export default {
   color: #ff7d29;
   font-size: 1.8rem;
   margin-bottom: 2.5rem;
+  cursor: pointer;
 }
 
 .login-form {

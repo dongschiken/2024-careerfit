@@ -5,6 +5,6 @@
 <mapper namespace="com.peach.careerfit.board.model.dao.BoardCategoryDao">
 	<insert id="insertBoardCategory">
 		INSERT INTO board_category (name, created_at, updated_at)
-		VALUES (#{name}, #{cretedAt}, #{updatedAt})
+		VALUES (#{name}, #{createdAt}, #{updatedAt})
 	</insert>
 </mapper>
