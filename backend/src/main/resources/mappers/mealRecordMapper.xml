@@ -3,7 +3,7 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.peach.careerfit.meal.model.dao.MealRecordDao">
-	<insert id="insertMealRecord">
+	<insert id="insertMealRecord" parameterType="MealRecord">
 		INSERT INTO meal_record (user_id, date, type, img, meal_time, content)
 		VALUES (#{userId}, #{date}, #{type}, #{img}, #{mealTime}, #{content})
 	</insert>
@@ -17,4 +17,20 @@
 		            WHEN type = '저녁' THEN 3
 				 END, meal_record_id;
 	</select>
+	
+	<update id="updateMealRecord" parameterType="MealRecord">
+		UPDATE meal_record
+		SET
+			type = #{type},
+			img = #{img},
+			meal_time = #{mealTime},
+			content = #{content}
+		WHERE meal_record_id = #{mealRecordId}
+	</update>
+	
+	<delete id="deleteMealRecord" parameterType="int">
+		DELETE FROM meal_record
+		WHERE meal_record_id = #{mealRecordId}
+	</delete>
+	
 </mapper>

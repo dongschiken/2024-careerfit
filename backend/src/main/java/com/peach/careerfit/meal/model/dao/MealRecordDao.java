@@ -10,4 +10,6 @@ import com.peach.careerfit.meal.model.dto.MealRecord;
 public interface MealRecordDao {
 	int insertMealRecord(MealRecord mealRecord);
 	List<MealRecord> selectMealRecordByUserId(MealRecord mealRecord);
+	int deleteMealRecord(int mealRecordId);
+	int updateMealRecord(MealRecord mealRecord);
 }
