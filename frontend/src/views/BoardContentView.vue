@@ -1,6 +1,6 @@
 <template>
-  <HeaderView />
   <div class="board-content-layout">
+    <HeaderView />
     <header class="board-header-group">
       <div class="board-content-header">
         <div class="board-content-header-text">
@@ -66,8 +66,8 @@
     <footer class="board-footer-group">
       <BoardPage />
     </footer>
+    <FooterView />
   </div>
-  <FooterView />
 </template>
 
 <script>
@@ -110,6 +110,6 @@ export default {
 };
 </script>
 
-<style lang="css">
+<style lang="css" scoped>
 @import url(@/assets/css/board-content.css);
 </style>

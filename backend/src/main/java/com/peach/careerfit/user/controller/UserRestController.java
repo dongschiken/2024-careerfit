@@ -44,6 +44,7 @@ public class UserRestController {
 		System.out.println("login");
 		System.out.println(loginRequest.getEmail());
 		System.out.println(loginRequest.getPassword());
+<<<<<<< HEAD
 		try {
 
 			// 사용자 인증 시도
@@ -68,6 +69,27 @@ public class UserRestController {
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("잘못된 이메일 또는 비밀번호입니다.");
 		}
+=======
+		// 사용자 인증 시도
+		Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
+				);
+		System.out.println(authentication);
+		System.out.println(11);
+		User loginUser = userService.findUserByEmail(loginRequest.getEmail());
+		
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		// JWT 토큰 생성
+		String token = jwtUtils.createJwt(
+				loginUser.getUserId(),
+				loginUser.getRole(),
+				loginUser.getEmail(),
+				loginUser.getNickname()
+				);
+		System.out.println("token"+token);
+		// 응답으로 토큰 전달
+		return ResponseEntity.status(HttpStatus.OK).body(new JwtResponse(token));
+>>>>>>> 2a69d1caed9493c610788204c81e79c3ea27afed
 	}
 
 	@PostMapping("/regist")
