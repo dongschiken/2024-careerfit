@@ -2,6 +2,7 @@ package com.peach.careerfit.user.model.dao;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.cglib.core.TinyBitSet;
 
 import com.peach.careerfit.user.model.dto.User;
 
@@ -18,4 +19,10 @@ public interface UserMapper {
 	
 	// 프로필 변경
 	int updateProfilePicture(@Param("user_id") int userId, @Param("profile_url") String profileUrl);
+
+	// 회원 탈퇴 (status :  0)
+	int updateUserStatus(@Param("user_id") int userId, @Param("status") int status);
+
+	// 유저 비밀번호 업데이트
+	int updateUserPassword(@Param("user_id") int userId, @Param("password") String password);
 }
