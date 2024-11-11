@@ -14,4 +14,13 @@ public interface UserService {
 	
 	// 프로필 변경
 	int updateProfilePicture(int userId, String profileUrl);
+
+	// 회원 탈퇴
+	boolean deactivateUser(int userId);
+	
+	// 비밀번호 변경
+	boolean checkCurrentPassword(int userId, String currentPassword);
+	boolean changePassword(int userId, String newPassword);
+	boolean isPasswordComplexEnough(String password);
+	void sendPasswordChangeEmail(int userId);
 }

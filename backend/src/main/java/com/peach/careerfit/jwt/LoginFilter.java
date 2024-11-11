@@ -3,6 +3,7 @@ package com.peach.careerfit.jwt;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,7 +38,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
      */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-
+    	
         // 클라이언트 요청에서 userEmail, password 추출
         String userEmail = request.getParameter("email");
         String password = obtainPassword(request);
@@ -50,6 +51,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+    	 // 테스트 모드 확인 (깃 올릴때 지우자)
+        String testMode = request.getHeader("Test-Mode");
+        if ("true".equals(testMode)) {
+            // 테스트 모드에서 기본 사용자 정보로 토큰 생성
+            String token = jwtUtils.createJwt("ROLE_USER", "testUser@example.com", "TestUser");
+            response.addHeader("Authorization", "Bearer " + token);
+            return;
+        }
+    	
     	String userEmail = authResult.getName();
     	User user = userMapper.findByUserEmail(userEmail);
 
