@@ -34,6 +34,11 @@
   </div>
 </template>
 
+<script setup>
+import { useTodosStore } from "@/stores/Todos";
+const store = useTodosStore();
+</script>
+
 <style lang="css">
 .pagination {
   min-width: 800px;
