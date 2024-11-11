@@ -76,7 +76,19 @@ public class JwtUtils {
         Claims claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
         return claims.getExpiration().before(new Date());
     }
-
+    
+    /**
+     * 내부로직에 의해 DOUBLE로 받아서 INTEGER타입으로 변환해줘야한다.
+     * @param token
+     * @return
+     */
+    public Integer getUserIdFromToken(String token) {
+        Claims claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+        Double userIdDouble = claims.get("userId", Double.class);
+        Integer userId = userIdDouble.intValue();
+        return userId; 
+    }
+    
     /**
      * access token을 추출하는 메서드
      */
@@ -91,10 +103,11 @@ public class JwtUtils {
     /**
      * 새로운 Access 토큰을 생성
      */
-    public String createJwt(String role, String email, String nickname) {
+    public String createJwt(Integer userId, String role, String email, String nickname) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + ACCESS_TOKEN_VALIDATE);
         return builder()
+        		.claim("userId", Integer.valueOf(userId))
                 .claim("role", role)
                 .claim("email", email)
                 .claim("nickname", nickname)
@@ -107,11 +120,11 @@ public class JwtUtils {
     /**
      * 새로운 refresh 토큰을 생성
      */
-    public String craeteRefreshToken(int userId, String role, String email, String nickname, Long expiredMs) {
+    public String craeteRefreshToken(Integer userId, String role, String email, String nickname, Long expiredMs) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + REFRESH_TOKEN_EXPIRE_TIME);   
     	return builder()
-                   .claim("userId", userId)
+                   .claim("userId", Integer.valueOf(userId))
                    .claim("role", role)
                    .claim("email", email)
                    .claim("nickname", nickname)
