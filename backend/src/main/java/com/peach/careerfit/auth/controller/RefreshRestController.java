@@ -27,10 +27,11 @@ public class RefreshRestController {
 	public ResponseEntity<Object> refreshToken(@RequestBody TokenRequest tokenRequest) {
 		String refreshToken = tokenRequest.getRefreshToken(); 
 		String userEmail = jwtUtils.getUserEmail(refreshToken);
+		int userId = jwtUtils.getUserIdFromToken(refreshToken);
 		if(!refreshTokenService.validateRefreshToken(userEmail, refreshToken)) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 리프레시 토큰입니다.");
 		}
-		String newAccessToken = jwtUtils.createJwt(refreshToken, userEmail, userEmail);
+		String newAccessToken = jwtUtils.createJwt(userId, refreshToken, userEmail, userEmail);
 		return ResponseEntity.status(HttpStatus.OK).body(new JwtResponse(newAccessToken));
 	}
 	
