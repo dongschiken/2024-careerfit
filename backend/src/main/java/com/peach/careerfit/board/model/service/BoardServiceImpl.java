@@ -9,10 +9,12 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.peach.careerfit.board.model.dao.BoardDao;
 import com.peach.careerfit.board.model.dto.Board;
+import com.peach.careerfit.board.model.dto.BoardImg;
 import com.peach.careerfit.user.model.dto.User;
 import com.peach.careerfit.user.model.service.UserService;
 
@@ -30,6 +32,7 @@ public class BoardServiceImpl implements BoardService {
     /**
      * 게시글 1개 생성 시 생성날짜와 최근업데이트 날짜를 동일하게 설정하고, 파일을 업로드.
      */
+    @Transactional
     @Override
     public int registBoard(Board board, String email, MultipartFile[] files) {
         board.setCreatedAt(LocalDateTime.now());
@@ -53,7 +56,10 @@ public class BoardServiceImpl implements BoardService {
 
 	@Override
 	public Board getBoardById(int boardId) {
-		return boardDao.selectBoardById(boardId);
+		Board board = boardDao.selectBoardById(boardId);
+		List<BoardImg> boardImgs = boardDao.selectBoardImgbyBoardId(boardId);
+		board.setBoardImgs(boardImgs);
+		return board;
 	}
     
     /**
@@ -84,5 +90,10 @@ public class BoardServiceImpl implements BoardService {
             // 필요한 경우 예외 처리 로직 추가
         }
     }
+
+	@Override
+	public int setBoardDeleteStatus(int boardId) {
+		return boardDao.updateBoardDeleteWhetherById(boardId);
+	}
 
 }

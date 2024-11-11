@@ -13,4 +13,6 @@ public interface BoardDao {
 	int insertBoardImg(BoardImg boardImg);
 	List<Board> selectBoardAll();
 	Board selectBoardById(int boardId);
+	int updateBoardDeleteWhetherById(int boardId);
+	List<BoardImg> selectBoardImgbyBoardId(int boardId);
 }

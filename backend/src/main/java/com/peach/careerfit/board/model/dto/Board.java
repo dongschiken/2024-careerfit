@@ -23,5 +23,6 @@ public class Board {
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;	
 	private String address;
+	private String deleteWhether;
 	private List<BoardImg> boardImgs;
 }

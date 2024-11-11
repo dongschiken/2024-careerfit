@@ -53,9 +53,9 @@ public class UserRestController {
 		User loginUser = userService.findUserByEmail(loginRequest.getEmail());
 		
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		//
 		// JWT 토큰 생성
 		String token = jwtUtils.createJwt(
+				loginUser.getUserId(),
 				loginUser.getRole(),
 				loginUser.getEmail(),
 				loginUser.getNickname()

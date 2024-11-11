@@ -10,4 +10,5 @@ public interface BoardService {
 	int registBoard(Board board, String email, MultipartFile[] files);
 	List<Board> getBoardList();
 	Board getBoardById(int boardId);
+	int setBoardDeleteStatus(int boardId);
 }
