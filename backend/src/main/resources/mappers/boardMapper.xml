@@ -28,7 +28,7 @@
 	</resultMap>
 
 
-	<insert id="insertBoard" parameterType="Board">
+	<insert id="insertBoard" parameterType="Board" >
 		INSERT INTO board
 		(user_id, category_id, title, content, like_count,
 		view_count, created_at, updated_at, address)
