@@ -2,9 +2,13 @@ package com.peach.careerfit.meal.model.service;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.peach.careerfit.meal.model.dto.MealRecord;
 
 public interface MealRecordService {
-	int registMealRecord(MealRecord mealRecord);
+	int registMealRecord(MealRecord mealRecord, MultipartFile file);
+	int setMealRecoard(MealRecord mealRecord, MultipartFile file);
+	int removeMealRecord(int mealRecordId);
 	List<MealRecord> getMealRecordByUserId(MealRecord mealRecord);
 }

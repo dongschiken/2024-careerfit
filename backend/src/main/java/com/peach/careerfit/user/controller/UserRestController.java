@@ -38,7 +38,7 @@ public class UserRestController {
 		this.authenticationManager = authenticationManager;
 		this.jwtUtils = jwtUtils;
 	}
-
+	
 	@PostMapping("/login")
 	public ResponseEntity<Object> getUser(@RequestBody LoginRequest loginRequest) {
 		System.out.println("login");
