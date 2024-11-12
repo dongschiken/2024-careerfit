@@ -1,34 +1,41 @@
 package com.peach.careerfit.body.model.service;
 
-import java.time.LocalDate;
-
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.peach.careerfit.body.model.dao.BodyRecordDao;
 import com.peach.careerfit.body.model.dto.BodyRecord;
+import com.peach.careerfit.file.component.FileStorageComponent;
 
 @Service
 public class BodyRecordServiceImpl implements BodyRecordService{
-	private BodyRecordDao bodyRecordDao;
-	private static final int maxSize = 5 * 1024 * 1024;
-	
-	public BodyRecordServiceImpl(BodyRecordDao bodyRecordDao) {
+	private final BodyRecordDao bodyRecordDao;
+	private final FileStorageComponent fileStorageComponent;
+	private static final String type = "Body";
+	public BodyRecordServiceImpl(BodyRecordDao bodyRecordDao, FileStorageComponent fileStorageComponent) {
 		this.bodyRecordDao = bodyRecordDao;
+		this.fileStorageComponent = fileStorageComponent;
 	}
+	
 	@Override
 	public int registBodyRecord(BodyRecord bodyRecord, MultipartFile file) {
-		
+		String img = fileStorageComponent.saveFile(file, type);
+		bodyRecord.setImg(img);
 		return bodyRecordDao.insertBodyRecord(bodyRecord);
 	}
+	
 	@Override
 	public int setBodyRecord(BodyRecord bodyRecord, MultipartFile file) {
+		String img = fileStorageComponent.saveFile(file, type);
+		bodyRecord.setImg(img);
 		return bodyRecordDao.updateBodyRecord(bodyRecord);
 	}
+	
 	@Override
 	public int removeBodyRecord(int bodyRecordId) {
 		return bodyRecordDao.deleteBodyRecordById(bodyRecordId);
 	}
+	
 	@Override
 	public BodyRecord getBodyRecord(BodyRecord bodyRecord) {
 		return bodyRecordDao.selectBodyRecordByDate(bodyRecord);

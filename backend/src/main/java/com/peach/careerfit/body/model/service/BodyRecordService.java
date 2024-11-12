@@ -1,7 +1,5 @@
 package com.peach.careerfit.body.model.service;
 
-import java.time.LocalDate;
-
 import org.springframework.web.multipart.MultipartFile;
 
 import com.peach.careerfit.body.model.dto.BodyRecord;

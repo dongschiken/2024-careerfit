@@ -1,7 +1,5 @@
 package com.peach.careerfit.body.model.dao;
 
-import java.time.LocalDate;
-
 import org.apache.ibatis.annotations.Mapper;
 
 import com.peach.careerfit.body.model.dto.BodyRecord;

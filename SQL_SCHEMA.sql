@@ -71,7 +71,7 @@ DROP TABLE IF EXISTS `food`;
 
 CREATE TABLE `food` (
 	`food_id`	INT	NOT NULL,
-	`name`	VARCHAR(100)	NOT NULL,
+	`name`	VARCHAR(100) NOT NULL,
 	`kcal`	INT	NOT NULL,
 	`protein`	INT	NULL,
 	`fat`	INT	NULL,
@@ -102,7 +102,7 @@ DROP TABLE IF EXISTS `user`;
 
 CREATE TABLE `user` (
 	`user_id`	INT	NOT NULL,
-	`email`	VARCHAR(320)	NOT NULL,
+	`email`	VARCHAR(320)	NOT NULL UNIQUE,
 	`password`	VARCHAR(200)	NOT NULL,
 	`name`	VARCHAR(15)	NOT NULL,
 	`nickname`	VARCHAR(20)	NOT NULL,

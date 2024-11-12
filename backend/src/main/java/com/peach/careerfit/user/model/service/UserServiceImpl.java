@@ -1,8 +1,6 @@
 // UserService.java
 package com.peach.careerfit.user.model.service;
 
-import java.security.KeyStore.PrivateKeyEntry;
-
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
