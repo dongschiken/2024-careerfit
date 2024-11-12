@@ -86,7 +86,7 @@ public class JwtUtils {
         Claims claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
         Double userIdDouble = claims.get("userId", Double.class);
         Integer userId = userIdDouble.intValue();
-        return userId; 
+        return userId;
     }
     
     /**

@@ -1,9 +1,10 @@
 package com.peach.careerfit.meal.controller;
 
 import java.time.LocalDate;
+
 import java.util.List;
 
-import org.springframework.http.HttpStatus;import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,7 +53,7 @@ public class MealRecordRestController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Object> registMealRecord(@RequestPart(name="meal-record") MealRecord mealRecord, // JSON 데이터를 Java 객체로 받음
+	public ResponseEntity<Object> registMealRecord(@RequestPart(name="mealRecord") MealRecord mealRecord, // JSON 데이터를 Java 객체로 받음
 												   @RequestPart(name="file", required=false) MultipartFile file) {
 		try {
 			int status = mealRecordService.registMealRecord(mealRecord, file);
