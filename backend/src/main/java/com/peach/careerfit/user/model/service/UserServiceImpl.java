@@ -5,7 +5,9 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.peach.careerfit.file.component.FileStorageComponent;
 import com.peach.careerfit.user.model.dao.UserMapper;
 import com.peach.careerfit.user.model.dto.User;
 
@@ -15,11 +17,14 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JavaMailSender mailSender;
+    private final FileStorageComponent fileStorageComponent;
+    private static final String type = "UserProfile";
     
-    public UserServiceImpl(UserMapper userMapper, BCryptPasswordEncoder bCryptPasswordEncoder, JavaMailSender mailSender) {
+    public UserServiceImpl(UserMapper userMapper, BCryptPasswordEncoder bCryptPasswordEncoder, JavaMailSender mailSender, FileStorageComponent fileStorageComponent) {
         this.userMapper = userMapper;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.mailSender = mailSender;
+        this.fileStorageComponent = fileStorageComponent;
     }
 
     public User findUserByEmail(String email) {
@@ -56,9 +61,11 @@ public class UserServiceImpl implements UserService {
 		return userMapper.updateUser(userId, user);
 	}
 
+	// 프로필 이미지 변경
 	@Override
-	public int updateProfilePicture(int userId, String profileUrl) {
-		return userMapper.updateProfilePicture(userId, profileUrl);
+	public int updateProfilePicture(int userId, MultipartFile file) {
+		String img = fileStorageComponent.saveFile(file, type);
+		return userMapper.updateProfilePicture(userId, img);
 	}
 
 	// 회원 탈퇴 (status : 0)

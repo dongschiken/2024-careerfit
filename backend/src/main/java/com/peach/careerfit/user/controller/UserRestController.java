@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.peach.careerfit.jwt.JwtResponse;
 import com.peach.careerfit.jwt.JwtUtils;
@@ -111,9 +113,9 @@ public class UserRestController {
 	// 프로필 이미지 변경
 	@PutMapping("/user/{user_id}/profile-picture")
 	public ResponseEntity<String> updateProfilePicture(@PathVariable("user_id") int userId,
-			@RequestBody String profileUrl) {
+			@RequestParam("file") MultipartFile file) {
 		try {
-			int result = userService.updateProfilePicture(userId, profileUrl);
+			int result = userService.updateProfilePicture(userId, file);
 			if (result > 0) {
 				return ResponseEntity.status(HttpStatus.OK).body("프로필 이미지가 성공적으로 변경되었습니다.");
 			} else {
