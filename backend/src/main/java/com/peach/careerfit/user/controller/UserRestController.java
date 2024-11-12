@@ -39,6 +39,7 @@ public class UserRestController {
 		this.jwtUtils = jwtUtils;
 	}
 	
+	// 로그인
 	@PostMapping("/login")
 	public ResponseEntity<Object> getUser(@RequestBody LoginRequest loginRequest) {
 		System.out.println("login");
@@ -71,7 +72,8 @@ public class UserRestController {
 		}
 	}
 
-	@PostMapping("/regist")
+	// 회원가입
+	@PostMapping("/join")
 	public ResponseEntity<Object> doRegist(@RequestBody User user) {
 		System.out.println(user);
 		LocalDate ld = LocalDate.now();

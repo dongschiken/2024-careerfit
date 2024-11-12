@@ -16,7 +16,7 @@ public interface ChatRoomMapper {
 	// 채팅방 삭제
 	void deleteChatRoom(@Param("chat_room_id") int chatRoomId);
 
-	// 채팅방에 유저 추가
+	// 채팅방에 유저 추가 (채팅방 참여)
     void insertChatRoomUser(@Param("chatRoomId") int chatRoomId,
                             @Param("userId") int userId);	
 	
@@ -24,12 +24,14 @@ public interface ChatRoomMapper {
     int countChatRoomUser(@Param("chatRoomId") int chatRoomId, 
     					  @Param("userId") int userId);
     
-    // 채팅방에 유저 삭제
+    // 채팅방에 유저 삭제 (채팅방 나가기)
     void deleteChatRoomUser(@Param("chatRoomId") int chatRoomId, @Param("userId") int userId);
 
     // 채팅방 참여자 목록 조회
     List<ChatParticipantResponse> selectParticipantsByChatRoom(@Param("chatRoomId") int chatRoomId,
             @Param("offset") int offset,
             @Param("size") int size);
+    
+    // 메세지 전송
 }
 
