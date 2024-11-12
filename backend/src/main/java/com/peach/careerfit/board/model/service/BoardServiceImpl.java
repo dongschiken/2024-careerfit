@@ -11,7 +11,6 @@ import com.peach.careerfit.board.model.dao.BoardDao;
 import com.peach.careerfit.board.model.dto.Board;
 import com.peach.careerfit.board.model.dto.BoardImg;
 import com.peach.careerfit.file.component.FileStorageComponent;
-import com.peach.careerfit.user.model.service.UserService;
 
 @Service
 public class BoardServiceImpl implements BoardService {
@@ -27,15 +26,15 @@ public class BoardServiceImpl implements BoardService {
     /**
      * 게시글 1개 생성 시 생성날짜와 최근업데이트 날짜를 동일하게 설정하고, 파일을 업로드.
      */
-//    @Transactional
+    @Transactional
     @Override
     public int registBoard(Board board, List<MultipartFile> files) {
         board.setCreatedAt(LocalDateTime.now());
         board.setUpdatedAt(LocalDateTime.now());
-        int boardId = boardDao.insertBoard(board);
-        List<BoardImg> boardImgs = fileStorageComponent.saveFiles(files, boardId, BoardImg.class, type);
-        boardDao.insertBoardImgs(boardImgs);
-        return boardId;
+        int status = boardDao.insertBoard(board);
+        List<BoardImg> boardImgs = fileStorageComponent.saveFiles(files, board.getBoardId(), BoardImg.class, type);
+        if(!boardImgs.isEmpty()) boardDao.insertBoardImgs(boardImgs);
+        return status;
     }
 
 	@Override
@@ -50,7 +49,7 @@ public class BoardServiceImpl implements BoardService {
 		board.setBoardImgs(boardImgs);
 		return board;
 	}
-
+	
 	@Override
 	public int setBoardDeleteStatus(int boardId) {
 		return boardDao.updateBoardDeleteWhetherById(boardId);
@@ -59,6 +58,7 @@ public class BoardServiceImpl implements BoardService {
 	/**
 	 * 기존 이미지를 모두 삭제하고 새로운 이미지를 insert하는 형식
 	 */
+	@Transactional
 	@Override
 	public int setBoard(Board board, List<MultipartFile> files) {
 		List<BoardImg> boardImgs = fileStorageComponent.saveFiles(files, board.getBoardId(), BoardImg.class, type);
