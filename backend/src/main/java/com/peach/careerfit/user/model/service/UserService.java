@@ -1,5 +1,7 @@
 package com.peach.careerfit.user.model.service;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.peach.careerfit.user.model.dto.User;
 
 public interface UserService {
@@ -13,7 +15,7 @@ public interface UserService {
 	int updateUser(int userId, User user);
 	
 	// 프로필 변경
-	int updateProfilePicture(int userId, String profileUrl);
+	int updateProfilePicture(int userId, MultipartFile file);
 
 	// 회원 탈퇴
 	boolean deactivateUser(int userId);
