@@ -36,7 +36,7 @@ public class BoardRestController {
 		this.boardCategoryService = boardCategoryService;
 		this.jwtUtils = jwtUtils;
 	}
-
+	
 	@GetMapping("/{boardId}")
 	public ResponseEntity<Object> getBoardById(@PathVariable("boardId") int boardId) {
 		Board board = boardService.getBoardById(boardId);
@@ -51,6 +51,7 @@ public class BoardRestController {
 		}
 	}
 
+	// 페이징 처리
 	@GetMapping
 	public ResponseEntity<Object> getBoardList() {
 		List<Board> boards = boardService.getBoardList();
@@ -67,7 +68,7 @@ public class BoardRestController {
 
 	@PostMapping
 	public ResponseEntity<Object> Registboard(@RequestPart(value = "board") Board board,
-											  @RequestPart(value = "files") List<MultipartFile> files,
+											  @RequestPart(value = "files", required = false) List<MultipartFile> files,
 											  HttpServletRequest request) {
 		try {
 			String token = jwtUtils.getAccessToken(request);
@@ -86,7 +87,7 @@ public class BoardRestController {
 	}
 
 	@PostMapping("/category")
-	public ResponseEntity<Object> RegistBoardCategory(@RequestBody BoardCategory boardCategory) {
+	public ResponseEntity<Object> registBoardCategory(@RequestBody BoardCategory boardCategory) {
 		int status = boardCategoryService.registBoardCategory(boardCategory);
 		if (status == 0) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -103,9 +104,22 @@ public class BoardRestController {
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).body("게시글이 성공적으로 삭제되었습니다.");
 	}
 
-//	@PutMapping
-//	public ResponseEntity<Object> setBoard(@RequestBody Board board) {
-//		
-//	}
+	@PutMapping
+	public ResponseEntity<Object> setboard(@RequestPart(value = "board") Board board,
+										   @RequestPart(value = "files", required = false) List<MultipartFile> files,
+											  HttpServletRequest request) {
+		try {
+			String token = jwtUtils.getAccessToken(request);
+			board.setUserId(jwtUtils.getUserIdFromToken(token));
+			int status = boardService.setBoard(board, files);
+			if (status < 1) {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+		return ResponseEntity.status(HttpStatus.CREATED).body("리소스가 성공적으로 생성되었습니다.");
+	}
 
 }

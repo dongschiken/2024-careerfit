@@ -11,4 +11,5 @@ public interface BoardService {
 	List<Board> getBoardList();
 	Board getBoardById(int boardId);
 	int setBoardDeleteStatus(int boardId);
+	int setBoard(Board board, List<MultipartFile> files);
 }

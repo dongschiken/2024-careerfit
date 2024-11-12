@@ -51,20 +51,20 @@
 	<!-- 프로필 변경 -->
 	<update id="updateProfilePicture">
 		UPDATE user SET profile_url = #{profile_url}
-		WHERE user_id = #{user_id}
+		WHERE user_id = #{userId}
 	</update>
 	
 	<!-- 회원 탈퇴 (status : 0) -->
 	<update id="updateUserStatus">
 		UPDATE user
 		SET status = #{status}, updated_at = NOW()
-		WHERE user_id = #{user_id}
+		WHERE user_id = #{userId}
 	</update>
 	
 	<!-- 비밀번호 변경 -->
 	<update id="updateUserPassword">
 		UPDATE user
 		SET password = #{password}, updated_at = NOW()
-		WHERE user_id = #{user_id}
+		WHERE user_id = #{userId}
 	</update>
 </mapper>

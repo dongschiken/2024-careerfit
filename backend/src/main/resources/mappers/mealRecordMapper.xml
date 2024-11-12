@@ -9,7 +9,7 @@
 	</insert>
 	
 	<select id="selectMealRecordByUserId" parameterType="MealRecord" resultType="MealRecord">
-		SELECT meal_record_id, user_id, date, type, img, meal_time, content FROM meal_r
+		SELECT meal_record_id, user_id, date, type, img, meal_time, content FROM meal_record
 		WHERE user_id = #{userId} AND date = #{date}
 		ORDER BY case
 					WHEN type = '아침' THEN 1
