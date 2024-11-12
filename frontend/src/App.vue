@@ -4,6 +4,7 @@
     <nav>
       <RouterLink to="/">Home</RouterLink>
       <RouterLink :to="{ name: 'board' }">Board</RouterLink>
+      <RouterLink :to-="{ name : 'join' }">Join</RouterLink>
     </nav>
   </div>
 </template>
