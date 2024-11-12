@@ -39,7 +39,7 @@ DROP TABLE IF EXISTS `board_img`;
 CREATE TABLE `board_img` (
 	`board_img_id`	INT	NOT NULL,
 	`board_id`	INT	NOT NULL,
-	`path`	VARCHAR(30)	NOT NULL,
+	`path`	VARCHAR(100)	NOT NULL,
 	`system_name`	VARCHAR(300)	NOT NULL,
 	`origin_name`	VARCHAR(255)	NOT NULL,
 	`main_whether`	CHAR(1)	NOT NULL

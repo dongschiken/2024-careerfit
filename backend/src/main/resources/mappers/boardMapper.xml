@@ -42,7 +42,10 @@
 		INSERT INTO board_img
 		(board_id, path, system_name, origin_name, main_whether)
 		VALUES
-		(#{boardId}, #{path}, #{systemName}, #{originName}, #{mainWhether})
+	<foreach collection="boardImgs" item="BoardImg" separator=",">
+		(#{BoardImg.boardId}, #{BoardImg.path}, #{BoardImg.systemName},
+		 #{BoardImg.originName}, #{BoardImg.mainWhether})	
+	</foreach>
 	</insert>
 	
 	<select id="selectBoardAll" resultMap="BoardResultMap" >
