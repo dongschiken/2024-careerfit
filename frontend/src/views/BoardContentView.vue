@@ -1,6 +1,6 @@
 <template>
-  <HeaderView />
   <div class="board-content-layout">
+    <HeaderView />
     <header class="board-header-group">
       <div class="board-content-header">
         <div class="board-content-header-text">
@@ -66,8 +66,8 @@
     <footer class="board-footer-group">
       <BoardPage />
     </footer>
+    <FooterView />
   </div>
-  <FooterView />
 </template>
 
 <script>
@@ -78,29 +78,6 @@ import axios from "axios";
 import BoardPage from "@/components/board/BoardPage.vue";
 
 export default {
-  name: "BoardListView",
-  data() {
-    return {
-      boardList: [],
-    };
-  },
-  created() {
-    this.fetchBoardList();
-  },
-  methods: {
-    async fetchBoardList() {
-      this.loading = true;
-      try {
-        const response = await axios.get("https://api.example.com/boards");
-        this.boardList = response.data;
-      } catch (error) {
-        this.errorMessage = "데이터를 불러오는 중 오류가 발생했습니다.";
-        console.error(error);
-      } finally {
-        this.loading = false;
-      }
-    },
-  },
   components: {
     HeaderView,
     FooterView,
@@ -110,6 +87,6 @@ export default {
 };
 </script>
 
-<style lang="css">
+<style lang="css" scoped>
 @import url(@/assets/css/board-content.css);
 </style>

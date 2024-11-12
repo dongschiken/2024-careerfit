@@ -3,15 +3,13 @@ package com.peach.careerfit.user.model.dto;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public class CustomUserDetails implements UserDetails {
-
-    private final User user;
-
-    @Autowired
+	
+	private static final long serialVersionUID = 1L;
+	private final User user;
     public CustomUserDetails(User user) {
         this.user = user;
     }
@@ -20,7 +18,8 @@ public class CustomUserDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collection = new ArrayList<>();
         collection.add(new GrantedAuthority() {
-            @Override
+
+			@Override
             public String getAuthority() {
                 return user.getRole();
             }

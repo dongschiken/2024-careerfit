@@ -3,6 +3,7 @@ package com.peach.careerfit.jwt;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,7 +26,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
-    @Autowired
     public LoginFilter(AuthenticationManager authenticationManager, JwtUtils jwtUtils, UserMapper userMapper) {
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
@@ -37,7 +37,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
      */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-
+    	
         // 클라이언트 요청에서 userEmail, password 추출
         String userEmail = request.getParameter("email");
         String password = obtainPassword(request);
@@ -50,6 +50,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+    	
     	String userEmail = authResult.getName();
     	User user = userMapper.findByUserEmail(userEmail);
 
@@ -59,7 +60,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         GrantedAuthority auth = iterator.next();
         
         String role = auth.getAuthority();
-        String token = jwtUtils.createJwt(user.getRole(), user.getEmail(), user.getNickname());
+        String token = jwtUtils.createJwt(user.getUserId(), user.getRole(), user.getEmail(), user.getNickname());
         response.addHeader("Authorization", "Bearer " + token); // Bearer_ 뒤에 띄어쓰기 한칸
     }
     

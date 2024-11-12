@@ -3,7 +3,6 @@ package com.peach.careerfit.config;
 import java.util.Collections;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -34,8 +33,6 @@ public class SecurityConfig  {
     private final JwtUtils jwtUtils;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final UserMapper userMapper;
-
-    @Autowired
     public SecurityConfig(AuthenticationConfiguration authenticationConfiguration
     		, JwtUtils jwtUtils, UserMapper userMapper
     		) {
@@ -44,13 +41,8 @@ public class SecurityConfig  {
         this.userMapper = userMapper;
     }
 
-    // 필터를 등록하기 위한 매니저를 얻어오기 위해 Bean으로 등록
-//    @Bean
-//    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-//        return authenticationConfiguration.getAuthenticationManager();
-//    }
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
@@ -60,12 +52,12 @@ public class SecurityConfig  {
      * @return BCryptPasswordEncoder
      */
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+    BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf((auth) -> auth.disable()); // JWT 방식은 csrf 공격을 방어하지 않아도 된다.
         
         // Form 로그인 방식 disable
@@ -77,14 +69,15 @@ public class SecurityConfig  {
         // 경로별 인가 작업
         // static한 값들에 대해서도 경로를 지정해 줘야한다.
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/api/login/**", "/api/regist", "/api/login", "/error" , "/main", "/api/user/**", "/member/join", "/member/login").permitAll()
+        		.requestMatchers("/api/login/**", "/api/join", "/api/login", "/error" , "/main", "/api/user/**").permitAll()
         		.requestMatchers(HttpMethod.GET, "/api/board").permitAll()
                 .requestMatchers("/assets/**", "/js/**", "/img/**").permitAll() // 정적 리소스 접근 허용
                 .requestMatchers("/admin").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.POST, "/api/board/", "/api/board/category").hasRole("USER")
+                .requestMatchers(HttpMethod.POST, "/api/board", "/api/board/category").hasRole("USER")
                 .requestMatchers(HttpMethod.PUT, "/api/board/**").hasRole("USER")                
                 .requestMatchers(HttpMethod.DELETE, "/api/board/**").hasRole("USER")                                
                 .anyRequest().authenticated());
+//
         
         http.cors((cors) -> cors.configurationSource(new CorsConfigurationSource() {
             @Override
@@ -112,12 +105,11 @@ public class SecurityConfig  {
         );
         // 세션을 스테이트 리스 상태로 관리하기 위한 코드
         http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
         return http.build();
     }
 
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
+    WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().requestMatchers("/assets/**", "/js/**", "/img/**");
     }
 

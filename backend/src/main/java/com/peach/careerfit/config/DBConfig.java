@@ -5,6 +5,4 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @MapperScan(basePackages = {"com.peach.careerfit.**.model.dao"})
-public class DBConfig {
-
-}
+public class DBConfig {}

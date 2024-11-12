@@ -21,7 +21,8 @@ CREATE TABLE `board` (
 	`view_count`	INT	NOT NULL,
 	`created_at`	TIMESTAMP	NOT NULL,
 	`updated_at`	TIMESTAMP	NOT NULL,
-	`address`	VARCHAR(255)	NULL
+	`address`	VARCHAR(255)	NULL,
+    `delete_whether` CHAR(9) NOT NULL DEFAULT 'N'
 );
 
 DROP TABLE IF EXISTS `board_category`;
@@ -38,7 +39,7 @@ DROP TABLE IF EXISTS `board_img`;
 CREATE TABLE `board_img` (
 	`board_img_id`	INT	NOT NULL,
 	`board_id`	INT	NOT NULL,
-	`path`	VARCHAR(30)	NOT NULL,
+	`path`	VARCHAR(100)	NOT NULL,
 	`system_name`	VARCHAR(300)	NOT NULL,
 	`origin_name`	VARCHAR(255)	NOT NULL,
 	`main_whether`	CHAR(1)	NOT NULL
@@ -70,7 +71,7 @@ DROP TABLE IF EXISTS `food`;
 
 CREATE TABLE `food` (
 	`food_id`	INT	NOT NULL,
-	`name`	VARCHAR(100)	NOT NULL,
+	`name`	VARCHAR(100) NOT NULL,
 	`kcal`	INT	NOT NULL,
 	`protein`	INT	NULL,
 	`fat`	INT	NULL,
@@ -101,7 +102,7 @@ DROP TABLE IF EXISTS `user`;
 
 CREATE TABLE `user` (
 	`user_id`	INT	NOT NULL,
-	`email`	VARCHAR(320)	NOT NULL,
+	`email`	VARCHAR(320)	NOT NULL UNIQUE,
 	`password`	VARCHAR(200)	NOT NULL,
 	`name`	VARCHAR(15)	NOT NULL,
 	`nickname`	VARCHAR(20)	NOT NULL,

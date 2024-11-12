@@ -10,7 +10,11 @@ import com.peach.careerfit.board.model.dto.BoardImg;
 @Mapper
 public interface BoardDao {
 	int insertBoard(Board board);
-	int insertBoardImg(BoardImg boardImg);
+	int insertBoardImgs(List<BoardImg> boardImgs);
 	List<Board> selectBoardAll();
 	Board selectBoardById(int boardId);
+	int updateBoardDeleteWhetherById(int boardId);
+	List<BoardImg> selectBoardImgbyBoardId(int boardId);
+	int deleteBoardImgs(int boardId);
+	int updateBoard(Board board);
 }
