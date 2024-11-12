@@ -113,7 +113,6 @@ public class SecurityConfig  {
         );
         // 세션을 스테이트 리스 상태로 관리하기 위한 코드
         http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
         return http.build();
     }
 

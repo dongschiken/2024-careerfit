@@ -34,6 +34,68 @@
   </div>
 </template>
 
-<style lang="css" scoped>
-@import url(../../assets/css/board-page.css);
+<script setup></script>
+
+<style lang="css">
+.pagination {
+  min-width: 800px;
+  max-width: 800px;
+  display: flex;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  justify-content: space-between;
+}
+div > .next-btn {
+  width: 20px;
+  height: 20px;
+}
+div > .prev-btn {
+  width: 20px;
+  height: 20px;
+}
+.pagination a {
+  text-decoration: none;
+  color: #666;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.pagination .page-number:hover,
+.first:hover,
+.last:hover {
+  background-color: #ddd;
+}
+
+.next-prev-button:hover {
+  background-color: #ddd;
+}
+
+.pagination .prev,
+.pagination .next,
+.pagination .first,
+.pagination .last {
+  font-weight: bold;
+  color: #000;
+}
+
+.pagination .page-number.active {
+  font-weight: bold;
+  color: #000;
+}
+
+.pagination span {
+  color: #666;
+}
+.page-number {
+  margin: 5px 5px;
+}
+.next-prev-button {
+  display: flex;
+  align-content: end;
+  justify-content: end;
+  align-items: end;
+  text-align: end;
+}
 </style>
