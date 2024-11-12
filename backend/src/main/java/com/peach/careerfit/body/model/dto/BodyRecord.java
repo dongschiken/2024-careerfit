@@ -1,4 +1,4 @@
-package com.peach.careerfit.meal.model.dto;
+package com.peach.careerfit.body.model.dto;
 
 import java.time.LocalDate;
 
@@ -16,7 +16,7 @@ public class BodyRecord {
 	private int userId;
 	private LocalDate date;
 	private double weight;
-	private int skeletalMucle; // 골격근
+	private int skeletalMuscle; // 골격근
 	private int bodyFat;	   // 체지방
 	private String img;
 }
