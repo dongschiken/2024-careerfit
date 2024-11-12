@@ -119,7 +119,7 @@
 
 <script setup></script>
 
-<style lang="css">
+<style lang="css" scoped>
 @import url(@/assets/css/main-content.css);
 .comunity-header-text > a {
   text-decoration: none;
