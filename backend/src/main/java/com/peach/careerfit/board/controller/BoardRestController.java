@@ -19,6 +19,7 @@ import com.peach.careerfit.board.model.dto.BoardCategory;
 import com.peach.careerfit.board.model.service.BoardCategoryService;
 import com.peach.careerfit.board.model.service.BoardService;
 import com.peach.careerfit.jwt.JwtUtils;
+import com.peach.careerfit.user.model.dto.User;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -67,14 +68,12 @@ public class BoardRestController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Object> Registboard(@RequestPart(value = "board") Board board,
-											  @RequestPart(value = "files", required = false) List<MultipartFile> files,
+	public ResponseEntity<Object> Registboard(@RequestPart(name = "board") Board board,
+											  @RequestPart(name = "files", required = false) List<MultipartFile> files,
 											  HttpServletRequest request) {
 		try {
 			String token = jwtUtils.getAccessToken(request);
-			board.setUserId(jwtUtils.getUserIdFromToken(token));
-			System.out.println(files.size());
-			System.out.println(files);
+			board.setUser(User.builder().userId(jwtUtils.getUserIdFromToken(token)).build());
 			int status = boardService.registBoard(board, files);
 			if (status < 1) {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -110,7 +109,7 @@ public class BoardRestController {
 											  HttpServletRequest request) {
 		try {
 			String token = jwtUtils.getAccessToken(request);
-			board.setUserId(jwtUtils.getUserIdFromToken(token));
+			board.setUser(User.builder().userId(jwtUtils.getUserIdFromToken(token)).build());
 			int status = boardService.setBoard(board, files);
 			if (status < 1) {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

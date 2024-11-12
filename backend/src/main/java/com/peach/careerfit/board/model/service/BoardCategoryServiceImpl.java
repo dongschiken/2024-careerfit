@@ -3,6 +3,7 @@ package com.peach.careerfit.board.model.service;
 import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.peach.careerfit.board.model.dao.BoardCategoryDao;
 import com.peach.careerfit.board.model.dto.BoardCategory;
@@ -15,6 +16,7 @@ public class BoardCategoryServiceImpl implements BoardCategoryService{
 		this.boardCategoryDao = boardCategoryDao;
 	}
 	
+	@Transactional
 	@Override
 	public int registBoardCategory(BoardCategory boardCategory) {
 		boardCategory.setCreatedAt(LocalDateTime.now());
