@@ -6,9 +6,7 @@ export const useBoardStore = defineStore("board", () => {
   const boardList = ref([]); // 게시글 목록을 스토에서 관리
   const getBoardList = () => {
     axios.get(REST_API_URL).then((response) => {
-      console.log(response.data);
-      console.log(response.statusText);
-      console.dir(response);
+      boardList.value = response.data;
     });
   };
   return { boardList, getBoardList };

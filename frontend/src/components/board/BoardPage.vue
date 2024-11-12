@@ -36,6 +36,6 @@
 
 <script setup></script>
 
-<style lang="css">
+<style lang="css" scoped>
 @import url(@/assets/css/board-page.css);
 </style>

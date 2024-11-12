@@ -28,7 +28,7 @@
 	</resultMap>
 
 
-	<insert id="insertBoard" parameterType="Board" >
+	<insert id="insertBoard" parameterType="Board" useGeneratedKeys="true" keyProperty="boardId">
 		INSERT INTO board
 		(user_id, category_id, title, content, like_count,
 		view_count, created_at, updated_at, address)
@@ -38,7 +38,7 @@
 		#{createdAt}, #{updatedAt}, #{address})
 	</insert>
 	
-	<insert id="insertBoardImg" parameterType="BoardImg">
+	<insert id="insertBoardImgs" parameterType="BoardImg">
 		INSERT INTO board_img
 		(board_id, path, system_name, origin_name, main_whether)
 		VALUES
@@ -74,4 +74,6 @@
 		SET delete_whether = 'Y'
 		WHERE board_id = #{boardId}
 	</update>
+	
+	
 </mapper>

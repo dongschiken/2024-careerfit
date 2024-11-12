@@ -79,11 +79,13 @@
         </div>
       </div>
     </div>
+    <MainFooter />
   </div>
 </template>
 <script>
 import { ref, computed } from "vue";
 import MainHeader from "@/components/module/MainHeader.vue";
+import MainFooter from "@/components/module/MainFooter.vue";
 export default {
   setup() {
     const currentYear = ref(new Date().getFullYear());
@@ -204,6 +206,7 @@ export default {
   },
   components: {
     MainHeader,
+    MainFooter,
   },
 };
 </script>
@@ -211,13 +214,10 @@ export default {
 .container {
   display: flex;
   grid-template-columns: 1fr 2fr 1fr;
-  gap: 1rem;
-  padding: 1rem;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  min-width: 1200px;
-  max-width: 1200px;
+  margin-top: 40px;
 }
 
 .calendar {
@@ -296,6 +296,7 @@ export default {
   max-width: 430px;
   min-height: 333px;
   max-height: 333px;
+  margin-left: 40px;
 }
 div.container > div.meal-records > div {
   min-width: 430px;
@@ -344,6 +345,8 @@ div.container > div.meal-records > div {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  margin-top: 20px;
+  margin-bottom: 40px;
 }
 
 .meal-detail {

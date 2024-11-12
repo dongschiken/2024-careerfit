@@ -28,7 +28,7 @@ public class FileStorageComponent {
 		if (file.getSize() > maxSize) {
 			throw new IllegalArgumentException("파일 크기가 너무 큽니다. 최대 5MB 이하의 파일만 업로드할 수 있습니다.");
 		}
-		if (file.getOriginalFilename().length() < 0) {
+		if (file != null && file.getOriginalFilename().length() < 0) {
 			throw new IllegalArgumentException("파일의 실제 이름이 없습니다.");
 		}
 	}
@@ -89,6 +89,7 @@ public class FileStorageComponent {
 
 					// 리플렉션을 통해 필드에 값을 설정
 					dtoClass.getMethod("set" + type + "Id", int.class).invoke(dtoInstance, id);
+					System.out.println(type+"Id");
 					dtoClass.getMethod("setPath", String.class).invoke(dtoInstance, path);
 					dtoClass.getMethod("setSystemName", String.class).invoke(dtoInstance, systemName);
 					dtoClass.getMethod("setOriginName", String.class).invoke(dtoInstance, originName);
