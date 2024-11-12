@@ -69,7 +69,7 @@ public class FileStorageComponent {
 	 * @param type
 	 * @return
 	 */
-	public <T> List<T> saveFiles(MultipartFile[] files, int id, Class<T> dtoClass, String type) {
+	public <T> List<T> saveFiles(List<MultipartFile> files, int id, Class<T> dtoClass, String type) {
 		List<T> list = new ArrayList<>();
 		String subDir = new SimpleDateFormat("yyyy/MM/dd/HH/").format(new Date()).toString();
 		File dir = new File("c:/uploads/" + type + "/" + subDir);
@@ -80,16 +80,16 @@ public class FileStorageComponent {
 					// 파일 저장
 					String originName = file.getOriginalFilename();
 					String systemName = UUID.randomUUID().toString() + "_" + originName;
-					String fullPath = dir + systemName;
+					String path = dir.toString();
 
-					file.transferTo(new File(fullPath)); // 파일 저장 수행
+					file.transferTo(new File(path + systemName)); // 파일 저장 수행
 
 					// 제네릭 타입의 DTO 객체 생성 및 값 설정
 					T dtoInstance = dtoClass.getDeclaredConstructor().newInstance();
 
 					// 리플렉션을 통해 필드에 값을 설정
 					dtoClass.getMethod("set" + type + "Id", int.class).invoke(dtoInstance, id);
-					dtoClass.getMethod("setPath", String.class).invoke(dtoInstance, fullPath);
+					dtoClass.getMethod("setPath", String.class).invoke(dtoInstance, path);
 					dtoClass.getMethod("setSystemName", String.class).invoke(dtoInstance, systemName);
 					dtoClass.getMethod("setOriginName", String.class).invoke(dtoInstance, originName);
 					if(count < 1) {

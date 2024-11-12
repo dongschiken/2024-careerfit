@@ -66,17 +66,20 @@ public class BoardRestController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Object> Registboard(@RequestPart("board") Board board,
-											  @RequestPart("files") MultipartFile[] files,
+	public ResponseEntity<Object> Registboard(@RequestPart(value = "board") Board board,
+											  @RequestPart(value = "files") List<MultipartFile> files,
 											  HttpServletRequest request) {
 		try {
 			String token = jwtUtils.getAccessToken(request);
 			board.setUserId(jwtUtils.getUserIdFromToken(token));
+			System.out.println(files.size());
+			System.out.println(files);
 			int status = boardService.registBoard(board, files);
 			if (status < 1) {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body("리소스가 성공적으로 생성되었습니다.");

@@ -11,7 +11,6 @@ import com.peach.careerfit.board.model.dao.BoardDao;
 import com.peach.careerfit.board.model.dto.Board;
 import com.peach.careerfit.board.model.dto.BoardImg;
 import com.peach.careerfit.file.component.FileStorageComponent;
-import com.peach.careerfit.user.model.dto.User;
 import com.peach.careerfit.user.model.service.UserService;
 
 @Service
@@ -32,11 +31,12 @@ public class BoardServiceImpl implements BoardService {
      */
     @Transactional
     @Override
-    public int registBoard(Board board, MultipartFile[] files) {
+    public int registBoard(Board board, List<MultipartFile> files) {
         board.setCreatedAt(LocalDateTime.now());
         board.setUpdatedAt(LocalDateTime.now());
         int boardId = boardDao.insertBoard(board);
         List<BoardImg> boardImgs = fileStorageComponent.saveFiles(files, boardId, BoardImg.class, type);
+        boardDao.insertBoardImg(boardImgs);
         return boardId;
     }
 
