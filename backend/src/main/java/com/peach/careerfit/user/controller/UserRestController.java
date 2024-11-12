@@ -1,9 +1,7 @@
 package com.peach.careerfit.user.controller;
 
 import java.time.LocalDate;
-import java.util.Date;
 
-import org.apache.ibatis.annotations.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;

@@ -2,7 +2,6 @@ package com.peach.careerfit.user.model.dao;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.cglib.core.TinyBitSet;
 
 import com.peach.careerfit.user.model.dto.User;
 

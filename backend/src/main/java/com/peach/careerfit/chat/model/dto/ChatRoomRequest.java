@@ -1,9 +1,5 @@
 package com.peach.careerfit.chat.model.dto;
 
-import java.time.LocalDate;
-
-import com.peach.careerfit.user.model.dto.User;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

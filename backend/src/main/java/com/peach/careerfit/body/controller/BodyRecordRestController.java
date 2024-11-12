@@ -1,6 +1,5 @@
 package com.peach.careerfit.body.controller;
 
-import java.net.http.HttpRequest;
 import java.time.LocalDate;
 
 import org.springframework.http.HttpStatus;
@@ -29,13 +28,14 @@ public class BodyRecordRestController {
 
 	public BodyRecordRestController(BodyRecordService bodyRecordService, JwtUtils jwtUtils) {
 		this.bodyRecordService = bodyRecordService;
-		this.jwtUtils = jwtUtils;
+		this.jwtUtils = jwtUtils;	
 	}
 
 	@GetMapping("/{date}")
 	public ResponseEntity<Object> getBodyRecord(@PathVariable("date") LocalDate date, HttpServletRequest httpRequest) {
 		try {
-			BodyRecord bodyRecord = new BodyRecord().builder().date(date).build();
+			new BodyRecord();
+			BodyRecord bodyRecord = BodyRecord.builder().date(date).build();
 			bodyRecord.setUserId(jwtUtils.getUserIdFromToken(jwtUtils.getAccessToken(httpRequest)));
 			BodyRecord userBodyRecord = bodyRecordService.getBodyRecord(bodyRecord);
 			if (userBodyRecord == null) {
@@ -49,7 +49,7 @@ public class BodyRecordRestController {
 
 	@PostMapping
 	public ResponseEntity<Object> registBodyRecord(@RequestPart("bodyRecord") BodyRecord bodyRecord,
-			@RequestPart("file") MultipartFile file) {
+			@RequestPart(name = "file", required = false) MultipartFile file) {
 		System.out.println(file);
 		System.out.println(bodyRecord);
 		try {
@@ -66,7 +66,7 @@ public class BodyRecordRestController {
 
 	@PutMapping
 	public ResponseEntity<Object> setBodyRecord(@RequestPart("bodyRecord") BodyRecord bodyRecord,
-			@RequestPart("file") MultipartFile file) {
+			@RequestPart(name = "file", required = false) MultipartFile file) {
 		try {
 			int status = bodyRecordService.setBodyRecord(bodyRecord, file);
 			if (status == 0) {

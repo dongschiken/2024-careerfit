@@ -51,6 +51,15 @@
   </div>
 </template>
 
+<script setup>
+import { useBoardStore } from "@/stores/board";
+import { onMounted } from "vue";
+const store = useBoardStore();
+onMounted(() => {
+  store.getBoardList();
+});
+</script>
+
 <style lang="css" scoped>
 @import url(@/assets/css/board-category.css);
 </style>

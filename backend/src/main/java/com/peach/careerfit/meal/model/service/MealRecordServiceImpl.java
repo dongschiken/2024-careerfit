@@ -1,11 +1,6 @@
 package com.peach.careerfit.meal.model.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,14 +14,16 @@ public class MealRecordServiceImpl implements MealRecordService {
 
 	private MealRecordDao mealRecordDao;
 	private FileStorageComponent fileStorageComponent;
-	public MealRecordServiceImpl(MealRecordDao mealRecordDao) {
+	private static final String type = "Meal";
+	public MealRecordServiceImpl(MealRecordDao mealRecordDao, FileStorageComponent fileStorageComponent) {
 		this.mealRecordDao = mealRecordDao;
+		this.fileStorageComponent = fileStorageComponent;
 	}
 
 	@Override
 	public int registMealRecord(MealRecord mealRecord, MultipartFile file) {
-//		mealRecord.setImg();
-		
+		String img = fileStorageComponent.saveFile(file, type);
+		mealRecord.setImg(img);
 		return mealRecordDao.insertMealRecord(mealRecord);
 	}
 
@@ -37,24 +34,8 @@ public class MealRecordServiceImpl implements MealRecordService {
 
 	@Override
 	public int setMealRecoard(MealRecord mealRecord, MultipartFile file) {
-		if (file != null) {
-//			validateFile(file);
-			String originName = file.getOriginalFilename();
-			if (!file.isEmpty() && originName.length() > 0) {
-				try {
-					String subDir = new SimpleDateFormat("yyyy/MM/dd/HH/").format(new Date()).toString();
-					File dir = new File("c:/uploads/" + subDir);
-					dir.mkdirs();
-					String systemName = UUID.randomUUID().toString() + originName;
-					File f = new File(dir, systemName);
-					file.transferTo(f);
-					mealRecord.setImg(dir.toString() + systemName);
-					System.out.println(mealRecord);
-				} catch (IllegalStateException | IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		String img = fileStorageComponent.saveFile(file, type);
+		mealRecord.setImg(img);
 		return mealRecordDao.updateMealRecord(mealRecord);
 	}
 

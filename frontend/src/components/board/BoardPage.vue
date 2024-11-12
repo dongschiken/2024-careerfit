@@ -34,6 +34,8 @@
   </div>
 </template>
 
-<style lang="css" scoped>
-@import url(../../assets/css/board-page.css);
+<script setup></script>
+
+<style lang="css">
+@import url(@/assets/css/board-page.css);
 </style>
