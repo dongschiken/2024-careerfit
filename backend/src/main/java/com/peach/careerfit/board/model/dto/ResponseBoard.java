@@ -3,7 +3,6 @@ package com.peach.careerfit.board.model.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.peach.careerfit.board.model.service.BoardService;
 import com.peach.careerfit.user.model.dto.User;
 
 import lombok.AllArgsConstructor;
@@ -15,18 +14,18 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Board {
+public class ResponseBoard {
 	private int boardId;
-	private int userId;
-	private int categoryId;
+	private User user;
+	private BoardCategory category;
 	private String title;
 	private String content;
 	private int likeCount;
 	private int viewCount;
 	private LocalDateTime createdAt;
-	private LocalDateTime updatedAt;	
+	private String timeAgo;
+	private LocalDateTime updatedAt;
 	private String address;
 	private String deleteWhether;
 	private List<BoardImg> boardImgs;
-	private BoardSearch boardSearch;
 }

@@ -56,6 +56,7 @@ public class BoardRestController {
 	@GetMapping
 	public ResponseEntity<Object> getBoardList() {
 		List<Board> boards = boardService.getBoardList();
+		System.out.println(boards);
 		try {
 			if (boards.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("찾는 데이터가 없습니다.");
@@ -73,7 +74,7 @@ public class BoardRestController {
 											  HttpServletRequest request) {
 		try {
 			String token = jwtUtils.getAccessToken(request);
-			board.setUser(User.builder().userId(jwtUtils.getUserIdFromToken(token)).build());
+			board.setUserId(jwtUtils.getUserIdFromToken(token));
 			int status = boardService.registBoard(board, files);
 			if (status < 1) {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -109,7 +110,7 @@ public class BoardRestController {
 											  HttpServletRequest request) {
 		try {
 			String token = jwtUtils.getAccessToken(request);
-			board.setUser(User.builder().userId(jwtUtils.getUserIdFromToken(token)).build());
+			board.setUserId(jwtUtils.getUserIdFromToken(token));
 			int status = boardService.setBoard(board, files);
 			if (status < 1) {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

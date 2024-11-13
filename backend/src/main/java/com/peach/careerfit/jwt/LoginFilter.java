@@ -32,21 +32,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         this.userMapper = userMapper;
     }
 
-    /**
-     * Authentication manager 한테 유저 id, password -> 토큰에 담아서 던져주면 로그인 실패, 성공 여부에 따라서 처리
-     */
-    @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-    	
-        // 클라이언트 요청에서 userEmail, password 추출
-        String userEmail = request.getParameter("email");
-        String password = obtainPassword(request);
-        // 3번째 매개변수는 ROLE 값
-        
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userEmail, password);
-
-        return authenticationManager.authenticate(authToken);
-    }
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
