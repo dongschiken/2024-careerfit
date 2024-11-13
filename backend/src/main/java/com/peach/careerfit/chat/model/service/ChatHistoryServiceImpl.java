@@ -8,12 +8,17 @@ import org.springframework.stereotype.Service;
 import com.peach.careerfit.chat.model.dao.ChatHistoryMapper;
 import com.peach.careerfit.chat.model.dto.ChatMessageRequest;
 import com.peach.careerfit.chat.model.dto.ChatMessageResponse;
+import com.peach.careerfit.user.model.service.UserService;
 
 @Service
 public class ChatHistoryServiceImpl implements ChatHistoryService{
 
 	@Autowired
 	private ChatHistoryMapper chatHistoryMapper;
+
+	// 사용자 닉네임 및 프로필 사진 조회를 위한 서비스
+	@Autowired
+	private UserService userService;
 	
 	@Override
 	public void sendMessage(int chatRoomId, int sendUserId, ChatMessageRequest request) {
@@ -30,6 +35,14 @@ public class ChatHistoryServiceImpl implements ChatHistoryService{
 	@Override
 	public List<ChatMessageResponse> getMessage(int chatRoomId) {
 		// 특정 채팅방의 메세지 목록을 조회
-		return chatHistoryMapper.getMessagesByChatRoomId(chatRoomId);
+		List<ChatMessageResponse> messages = chatHistoryMapper.getMessagesByChatRoomId(chatRoomId);
+		
+		// 각 메시지에 대한 발신자의 닉네임과 프로필 사진을 추가로 조회하여 설정
+		for(ChatMessageResponse message : messages) {
+			var user = userService.getUserById(message.getSendUserId());
+			message.setSenderNickname(user.getNickname());
+			message.setSenderProfileUrl(user.getProfileUrl());
+		}
+		return messages;
 	}
 }

@@ -15,4 +15,6 @@ public class ChatMessageResponse {
 	private int sendUserId;
 	private String message;
 	private Timestamp sendDate;
+	private String senderNickname;			// 닉네임 추가
+	private String senderProfileUrl;		// 프로필 사진 URL 추가
 }
