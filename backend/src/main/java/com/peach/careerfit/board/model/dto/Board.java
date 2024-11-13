@@ -3,6 +3,7 @@ package com.peach.careerfit.board.model.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.peach.careerfit.board.model.service.BoardService;
 import com.peach.careerfit.user.model.dto.User;
 
 import lombok.AllArgsConstructor;
@@ -27,4 +28,5 @@ public class Board {
 	private String address;
 	private String deleteWhether;
 	private List<BoardImg> boardImgs;
+	private BoardSearch boardSearch;
 }

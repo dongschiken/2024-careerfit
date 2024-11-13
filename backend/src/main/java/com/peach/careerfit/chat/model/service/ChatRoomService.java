@@ -16,4 +16,6 @@ public interface ChatRoomService {
 	boolean isUserAlreadyInChatRoom(int chatRoomId, int userId);
 	void leaveChatRoom(int chatRoomId, int userId); 
 	List<ChatParticipantResponse> getParticipants(int chatRoomId, int page, int size);
+	
+	
 }
