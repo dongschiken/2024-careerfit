@@ -65,26 +65,41 @@
 		</foreach>
 	</insert>
 
-	<select id="selectBoardAll" resultMap="BoardResultMap">
+	<select id="selectBoardAll" resultMap="BoardResultMap" parameterType="BoardSearch">
 	    <![CDATA[
 	        SELECT b.board_id, u.email, u.nickname, c.name, b.delete_whether, title, 
-	               content, like_count, view_count, b.created_at, b.updated_at, address,
-	               board_img_id, path, system_name, origin_name, main_whether, 
-	               CASE 
-	                   WHEN TIMESTAMPDIFF(MINUTE, b.created_at, NOW()) < 60 
-	                       THEN CONCAT(TIMESTAMPDIFF(MINUTE, b.created_at, NOW()), '분 전')
-	                   WHEN TIMESTAMPDIFF(HOUR, b.created_at, NOW()) < 24 
-	                       THEN CONCAT(TIMESTAMPDIFF(HOUR, b.created_at, NOW()), '시간 전')
-	                   ELSE CONCAT(TIMESTAMPDIFF(DAY, b.created_at, NOW()), '일 전')
-	               END AS time_ago
-	        FROM board b 
-	        LEFT JOIN board_img bi ON b.board_id = bi.board_id AND bi.main_whether = 'M'
-	        JOIN user u ON u.user_id = b.user_id
-	        JOIN board_category c ON c.board_category_id = b.category_id
-	        WHERE b.delete_whether LIKE 'N'
-	        ORDER BY created_at DESC
-	        LIMIT 0, 10;
-	    ]]>
+						content, like_count, view_count, b.created_at, b.updated_at, address,
+						board_img_id, path, system_name, origin_name, main_whether, 
+				CASE
+				   WHEN TIMESTAMPDIFF(SECOND, b.created_at, NOW()) < 60 
+					   THEN CONCAT(TIMESTAMPDIFF(SECOND, b.created_at, NOW()), '초 전')
+		           WHEN TIMESTAMPDIFF(MINUTE, b.created_at, NOW()) < 60 
+		               THEN CONCAT(TIMESTAMPDIFF(MINUTE, b.created_at, NOW()), '분 전')
+		           WHEN TIMESTAMPDIFF(HOUR, b.created_at, NOW()) < 24 
+		               THEN CONCAT(TIMESTAMPDIFF(HOUR, b.created_at, NOW()), '시간 전')
+		           ELSE CONCAT(TIMESTAMPDIFF(DAY, b.created_at, NOW()), '일 전')
+		       END AS time_ago
+			FROM board b LEFT JOIN board_img bi ON b.board_id = bi.board_id AND bi.main_whether = 'M'
+							 JOIN user u ON u.user_id = b.user_id
+							 JOIN board_category c ON c.board_category_id = b.category_id
+			WHERE b.delete_whether LIKE 'N'
+			 ]]>
+			<if test="searchWord != null and searchWord != ''" >
+				 <![CDATA[
+		        AND (b.content LIKE CONCAT('%', #{searchWord}, '%')
+		             OR b.title LIKE CONCAT('%', #{searchWord}, '%')
+		             OR u.nickname LIKE CONCAT('%', #{searchWord}, '%'))
+		        ]]>
+			</if>
+			<if test="boardCategoryId != null">
+				<![CDATA[
+		        AND c.board_category_id = #{boardCategoryId}
+		        ]]>
+			</if>
+		    <![CDATA[
+			    ORDER BY b.created_at DESC
+			    LIMIT #{offset}, #{listSize}
+			]]>
 	</select>
 
 

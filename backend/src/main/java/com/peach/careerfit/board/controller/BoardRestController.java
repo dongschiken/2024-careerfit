@@ -8,35 +8,28 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.peach.careerfit.board.model.dto.Board;
-import com.peach.careerfit.board.model.dto.BoardCategory;
-import com.peach.careerfit.board.model.service.BoardCategoryService;
+import com.peach.careerfit.board.model.dto.BoardSearch;
 import com.peach.careerfit.board.model.service.BoardService;
 import com.peach.careerfit.jwt.JwtUtils;
-import com.peach.careerfit.user.model.dto.User;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/board")
 public class BoardRestController {
 
 	private final BoardService boardService;
-	private final BoardCategoryService boardCategoryService;
 	private final JwtUtils jwtUtils;
 
-	public BoardRestController(BoardService boardService, BoardCategoryService boardCategoryService,
-			JwtUtils jwtUtils) {
-		this.boardService = boardService;
-		this.boardCategoryService = boardCategoryService;
-		this.jwtUtils = jwtUtils;
-	}
 	
 	@GetMapping("/{boardId}")
 	public ResponseEntity<Object> getBoardById(@PathVariable("boardId") int boardId) {
@@ -54,8 +47,17 @@ public class BoardRestController {
 
 	// 페이징 처리
 	@GetMapping
-	public ResponseEntity<Object> getBoardList() {
-		List<Board> boards = boardService.getBoardList();
+	public ResponseEntity<Object> getBoardList(@RequestParam(required = false) String searchWord,
+											   @RequestParam(required = false) int page,
+											   @RequestParam(required = false) int categoryId) {
+		System.out.println("boardSearch : " + searchWord);
+		System.out.println("boardSearch : " + page);
+		System.out.println("boardSearch : " + categoryId);
+		BoardSearch boardSearch = new BoardSearch();
+		boardSearch.setSearchWord(searchWord);
+		boardSearch.setPage(page);
+		boardSearch.setBoardCategoryId(categoryId);
+		List<Board> boards = boardService.getBoardList(boardSearch);
 		System.out.println(boards);
 		try {
 			if (boards.isEmpty()) {
@@ -81,15 +83,6 @@ public class BoardRestController {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		}
-		return ResponseEntity.status(HttpStatus.CREATED).body("리소스가 성공적으로 생성되었습니다.");
-	}
-
-	@PostMapping("/category")
-	public ResponseEntity<Object> registBoardCategory(@RequestBody BoardCategory boardCategory) {
-		int status = boardCategoryService.registBoardCategory(boardCategory);
-		if (status == 0) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body("리소스가 성공적으로 생성되었습니다.");

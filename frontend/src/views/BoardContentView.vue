@@ -23,9 +23,30 @@
           </router-link>
         </div>
         <div class="board-content-header-menu-category">
-          <div><button>스터디 & 모임</button></div>
-          <div><button>헬스이야기</button></div>
-          <div><button>회사생활</button></div>
+          <div>
+            <button
+              @click="getBoardCategoryPage(boardCategories[0].boardCategoryId)"
+              v-if="boardCategories.length > 0"
+            >
+              {{ boardCategories[0].name }}
+            </button>
+          </div>
+          <div>
+            <button
+              @click="getBoardCategoryPage(boardCategories[1].boardCategoryId)"
+              v-if="boardCategories.length > 0"
+            >
+              {{ boardCategories[1].name }}
+            </button>
+          </div>
+          <div>
+            <button
+              @click="getBoardCategoryPage(boardCategories[2].boardCategoryId)"
+              v-if="boardCategories.length > 0"
+            >
+              {{ boardCategories[2].name }}
+            </button>
+          </div>
         </div>
         <div class="board-content-header-menu-search">
           <div class="search-group">
@@ -70,20 +91,42 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { onMounted, ref } from "vue";
+import { useBoardStore } from "@/stores/board";
 import HeaderView from "@/components/module/MainHeader.vue";
 import FooterView from "@/components/module/MainFooter.vue";
 import BoardCategory from "@/components/board/BoardCategory.vue";
 import axios from "axios";
 import BoardPage from "@/components/board/BoardPage.vue";
 
-export default {
-  components: {
-    HeaderView,
-    FooterView,
-    BoardCategory,
-    BoardPage,
-  },
+const search = ref({
+  searchWord: "",
+  page: "",
+});
+
+const boardStore = useBoardStore();
+const boardCategories = ref([]);
+onMounted(() => {
+  axios.get(boardStore.REST_API_URL + "/category").then((response) => {
+    boardCategories.value = response.data;
+    console.log(boardCategories.value[0].name);
+  });
+});
+
+const getBoardCategoryPage = (boardCategoryId) => {
+  axios
+    .get(boardStore.REST_API_URL, {
+      params: {
+        searchWord: search.value.searchWord, // 검색어
+        page: search.value.page, // 현재 페이지
+        categoryId: boardCategoryId, // 카테고리 ID
+      },
+    })
+    .then((response) => {
+      boardStore.boardList.value = response.data;
+      console.log(boardStore.boardList.value);
+    });
 };
 </script>
 
