@@ -17,6 +17,17 @@
 	    <result property="address" column="address"/>
 	    <result property="deleteWhether" column="delete_whether"/>
 	    
+	    <association property="user" javaType="User">
+	    	<id property="userId" column="user_id"/>
+            <result property="email" column="email"/>
+            <result property="nickname" column="nickname"/>
+	    </association>
+	    
+	    <association property="category" javaType="BoardCategory">
+	    	<id property="boardCategoryId" column="board_category_id"/>
+            <result property="name" column="name"/>
+	    </association>
+	    
 	    <!-- BoardImg -->
 	    <collection property="boardImgs" ofType="BoardImg">
 	        <id property="boardImgId" column="board_img_id"/>
@@ -28,7 +39,7 @@
 	</resultMap>
 
 
-	<insert id="insertBoard" parameterType="Board" useGeneratedKeys="true" keyProperty="boardId">
+	<insert id="insertBoard" parameterType="Board" useGeneratedKeys="true" keyProperty="boardId" keyColumn="board_id">
 		INSERT INTO board
 		(user_id, category_id, title, content, like_count,
 		view_count, created_at, updated_at, address)
@@ -42,18 +53,21 @@
 		INSERT INTO board_img
 		(board_id, path, system_name, origin_name, main_whether)
 		VALUES
-	<foreach collection="boardImgs" item="BoardImg" separator=",">
-		(#{BoardImg.boardId}, #{BoardImg.path}, #{BoardImg.systemName},
-		 #{BoardImg.originName}, #{BoardImg.mainWhether})	
+	<foreach collection="boardImgs" item="boardImg" separator=",">
+		(#{boardImg.boardId}, #{boardImg.path}, #{boardImg.systemName},
+		 #{boardImg.originName}, #{boardImg.mainWhether})	
 	</foreach>
 	</insert>
 	
 	<select id="selectBoardAll" resultMap="BoardResultMap" >
-		SELECT b.board_id, user_id, category_id, delete_whether, title, 
-			   content, like_count, view_count, created_at, updated_at, address,
-	           board_img_id, path, system_name, origin_name, main_whether
+		SELECT b.board_id, u.email, u.nickname, c.name, b.delete_whether, title, 
+				content, like_count, view_count, b.created_at, b.updated_at, address,
+				board_img_id, path, system_name, origin_name, main_whether
 		FROM board b JOIN board_img bi ON b.board_id = bi.board_id
+					 JOIN user u ON u.user_id = b.user_id
+					 JOIN board_category c ON c.board_category_id = b.category_id
 		WHERE b.delete_whether LIKE 'N' AND bi.main_whether LIKE 'M'
+		LIMIT 10 OFFSET 0
 	</select>
 	
 	<select id="selectBoardById" resultType="Board" parameterType="int">

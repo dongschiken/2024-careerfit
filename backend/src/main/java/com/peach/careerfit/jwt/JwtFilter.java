@@ -3,7 +3,6 @@ package com.peach.careerfit.jwt;
 
 import java.io.IOException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,8 +22,6 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtFilter extends OncePerRequestFilter {
 
     private JwtUtils jwtUtils;
-
-    @Autowired
     public JwtFilter(JwtUtils jwtUtils) {
         this.jwtUtils = jwtUtils;
     }
@@ -43,7 +40,6 @@ public class JwtFilter extends OncePerRequestFilter {
             // 조건에 해당되면 메서드 종료 ( 필수 )
             return;
         }
-        System.out.println(authorization);
         // Bearer 제거후 순수 토큰만 가져옴
         String token = authorization.split(" ")[1];
 

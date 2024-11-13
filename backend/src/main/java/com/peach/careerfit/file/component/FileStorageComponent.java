@@ -2,10 +2,12 @@ package com.peach.careerfit.file.component;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Component;
@@ -58,10 +60,10 @@ public class FileStorageComponent {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * dto class 타입을 받아서 여러 파일을 저장하는 메서드
-	 * 제일 처음 들어오는 IMG파일이 MAIN 이미지
+	 * dto class 타입을 받아서 여러 파일을 저장하는 메서드 제일 처음 들어오는 IMG파일이 MAIN 이미지
+	 * 
 	 * @param <T>
 	 * @param files
 	 * @param id
@@ -73,37 +75,35 @@ public class FileStorageComponent {
 		List<T> list = new ArrayList<>();
 		String subDir = new SimpleDateFormat("yyyy/MM/dd/HH/").format(new Date()).toString();
 		File dir = new File("c:/uploads/" + type + "/" + subDir);
-		int count = 0;
-		for (MultipartFile file : files) {
-			if (!file.isEmpty()) {
-				try {
+		dir.mkdirs();
+		try {
+			Method setIdMethod = dtoClass.getMethod("set" + type + "Id", int.class);
+			Method setPathMethod = dtoClass.getMethod("setPath", String.class);
+			Method setSystemNameMethod = dtoClass.getMethod("setSystemName", String.class);
+			Method setOriginNameMethod = dtoClass.getMethod("setOriginName", String.class);
+			Method setMainWhetherMethod = dtoClass.getMethod("setMainWhether", String.class);
+
+			int count = 0;
+			for (MultipartFile file : Optional.ofNullable(files).orElse(java.util.Collections.emptyList())) {
+				if (!file.isEmpty()) {
 					// 파일 저장
 					String originName = file.getOriginalFilename();
 					String systemName = UUID.randomUUID().toString() + "_" + originName;
 					String path = dir.toString();
-
-					file.transferTo(new File(path + systemName)); // 파일 저장 수행
-
-					// 제네릭 타입의 DTO 객체 생성 및 값 설정
+					file.transferTo(new File(path + systemName));
+					
 					T dtoInstance = dtoClass.getDeclaredConstructor().newInstance();
 
-					// 리플렉션을 통해 필드에 값을 설정
-					dtoClass.getMethod("set" + type + "Id", int.class).invoke(dtoInstance, id);
-					System.out.println(type+"Id");
-					dtoClass.getMethod("setPath", String.class).invoke(dtoInstance, path);
-					dtoClass.getMethod("setSystemName", String.class).invoke(dtoInstance, systemName);
-					dtoClass.getMethod("setOriginName", String.class).invoke(dtoInstance, originName);
-					if(count < 1) {
-						dtoClass.getMethod("setMainWhether", String.class).invoke(dtoInstance, "M");						
-					}else {
-						dtoClass.getMethod("setMainWhether", String.class).invoke(dtoInstance, "S");												
-					}
+					setIdMethod.invoke(dtoInstance, id);
+					setPathMethod.invoke(dtoInstance, path);
+					setSystemNameMethod.invoke(dtoInstance, systemName);
+					setOriginNameMethod.invoke(dtoInstance, originName);
+					setMainWhetherMethod.invoke(dtoInstance, count++ == 0 ? 'M' : 'S');	
 					list.add(dtoInstance);
-					count++;
-				} catch (IOException | ReflectiveOperationException e) {
-					e.printStackTrace();
 				}
 			}
+		} catch (IOException | ReflectiveOperationException e) {
+			e.printStackTrace();
 		}
 		return list;
 	}

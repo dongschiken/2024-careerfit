@@ -34,7 +34,10 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { useTodosStore } from "@/stores/Todos";
+const store = useTodosStore();
+</script>
 
 <style lang="css" scoped>
 @import url(@/assets/css/board-page.css);

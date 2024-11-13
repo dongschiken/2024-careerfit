@@ -26,7 +26,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
-    @Autowired
     public LoginFilter(AuthenticationManager authenticationManager, JwtUtils jwtUtils, UserMapper userMapper) {
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
