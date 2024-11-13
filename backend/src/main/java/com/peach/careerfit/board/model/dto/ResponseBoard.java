@@ -14,16 +14,17 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Board {
+public class ResponseBoard {
 	private int boardId;
-	private int userId;
-	private int categoryId;
+	private User user;
+	private BoardCategory category;
 	private String title;
 	private String content;
 	private int likeCount;
 	private int viewCount;
 	private LocalDateTime createdAt;
-	private LocalDateTime updatedAt;	
+	private String timeAgo;
+	private LocalDateTime updatedAt;
 	private String address;
 	private String deleteWhether;
 	private List<BoardImg> boardImgs;

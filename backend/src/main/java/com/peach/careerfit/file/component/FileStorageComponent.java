@@ -48,7 +48,7 @@ public class FileStorageComponent {
 			try {
 				String originName = file.getOriginalFilename();
 				String subDir = new SimpleDateFormat("yyyy/MM/dd/HH/").format(new Date()).toString();
-				File dir = new File("c:/uploads/" + type + "/" + subDir);
+				File dir = new File("c:/uploads/" + type + "/" + subDir + "/");
 				dir.mkdirs();
 				String systemName = UUID.randomUUID().toString() + originName;
 				File f = new File(dir, systemName);
@@ -75,7 +75,7 @@ public class FileStorageComponent {
 		List<T> list = new ArrayList<>();
 		String subDir = new SimpleDateFormat("yyyy/MM/dd/HH/").format(new Date()).toString();
 		File dir = new File("c:/uploads/" + type + "/" + subDir);
-		dir.mkdirs();
+		dir.mkdirs(); 
 		try {
 			Method setIdMethod = dtoClass.getMethod("set" + type + "Id", int.class);
 			Method setPathMethod = dtoClass.getMethod("setPath", String.class);
@@ -88,17 +88,17 @@ public class FileStorageComponent {
 				if (!file.isEmpty()) {
 					// 파일 저장
 					String originName = file.getOriginalFilename();
-					String systemName = UUID.randomUUID().toString() + "_" + originName;
+					String systemName = "/"+UUID.randomUUID().toString() + "_" + originName;
 					String path = dir.toString();
-					file.transferTo(new File(path + systemName));
+					file.transferTo(new File(path, systemName));
 					
 					T dtoInstance = dtoClass.getDeclaredConstructor().newInstance();
-
+					String relativePath = path.replace("c:\\uploads\\", "").replace("\\", "/");
 					setIdMethod.invoke(dtoInstance, id);
-					setPathMethod.invoke(dtoInstance, path);
+					setPathMethod.invoke(dtoInstance, relativePath);
 					setSystemNameMethod.invoke(dtoInstance, systemName);
 					setOriginNameMethod.invoke(dtoInstance, originName);
-					setMainWhetherMethod.invoke(dtoInstance, count++ == 0 ? 'M' : 'S');	
+					setMainWhetherMethod.invoke(dtoInstance, count++ == 0 ? "M" : "S");	
 					list.add(dtoInstance);
 				}
 			}

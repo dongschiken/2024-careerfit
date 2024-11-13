@@ -16,16 +16,22 @@
           <div class="user-profile-img">
             <img src="@/assets/img/snoopy.png" alt="" />
           </div>
-          <div class="user-profile-name">{{ board.userId }}</div>
+          <div class="user-profile-name">{{ board.user.nickname }}</div>
         </div>
-        <div class="board-content-left-category">{{ board.categoryId }}</div>
+        <div class="board-content-left-category">{{ board.category.name }}</div>
       </div>
       <div class="board-content-right">
         <div class="board-content-right-img">
-          <img src="@/assets/img/snoopy.png" alt="" />
+          <img
+            v-if="mainImage(board)"
+            :src="`http://localhost:8080/uploads/${mainImage(board).path}${
+              mainImage(board).systemName
+            }`"
+            alt="Board Image"
+          />
         </div>
         <div class="board-content-right-footer">
-          <span class="date-time">{{ board.createdAt }}</span>
+          <span class="date-time">{{ board.timeAgo }}</span>
           <span class="like-count">
             <img
               src="@/assets/img/thumb_up_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
@@ -60,6 +66,11 @@ const store = useBoardStore();
 onMounted(() => {
   store.getBoardList();
 });
+
+// main 이미지 필터링 함수
+function mainImage(board) {
+  return board.boardImgs.find((img) => img.mainWhether === "M");
+}
 </script>
 
 <style lang="css" scoped>

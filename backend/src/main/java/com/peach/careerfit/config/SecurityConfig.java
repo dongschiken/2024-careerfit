@@ -70,14 +70,14 @@ public class SecurityConfig  {
         // static한 값들에 대해서도 경로를 지정해 줘야한다.
         http.authorizeHttpRequests((auth) -> auth
         		.requestMatchers("/api/login/**", "/api/join", "/api/login", "/error" , "/main", "/api/user/**").permitAll()
-        		.requestMatchers(HttpMethod.GET, "/api/board").permitAll()
+        		.requestMatchers(HttpMethod.GET, "/api/board/**", "/uploads/**").permitAll()
                 .requestMatchers("/assets/**", "/js/**", "/img/**").permitAll() // 정적 리소스 접근 허용
                 .requestMatchers("/admin").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/board", "/api/board/category").hasRole("USER")
                 .requestMatchers(HttpMethod.PUT, "/api/board/**").hasRole("USER")                
                 .requestMatchers(HttpMethod.DELETE, "/api/board/**").hasRole("USER")                                
                 .anyRequest().authenticated());
-//
+
         
         http.cors((cors) -> cors.configurationSource(new CorsConfigurationSource() {
             @Override
@@ -110,7 +110,7 @@ public class SecurityConfig  {
 
     @Bean
     WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/assets/**", "/js/**", "/img/**");
+        return (web) -> web.ignoring().requestMatchers("/assets/**", "/js/**", "/img/**", "/uploads/**");
     }
 
 }

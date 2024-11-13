@@ -34,6 +34,7 @@ public class BoardServiceImpl implements BoardService {
         int status = boardDao.insertBoard(board);
         List<BoardImg> boardImgs = fileStorageComponent.saveFiles(files, board.getBoardId(), BoardImg.class, type);
         if(!boardImgs.isEmpty()) boardDao.insertBoardImgs(boardImgs);
+		System.out.println(boardImgs);
         return status;
     }
 
