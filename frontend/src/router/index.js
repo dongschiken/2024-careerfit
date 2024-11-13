@@ -37,6 +37,7 @@ const routes = [
     name: "meal",
     component: MealPlan,
   },
+
 ];
 
 const router = createRouter({
