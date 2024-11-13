@@ -7,6 +7,7 @@ export const useBoardStore = defineStore("board", () => {
   const getBoardList = () => {
     axios.get(REST_API_URL).then((response) => {
       boardList.value = response.data;
+      console.log(boardList.value);
     });
   };
   return { boardList, getBoardList };

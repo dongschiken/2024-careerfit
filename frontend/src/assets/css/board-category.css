@@ -55,7 +55,7 @@
   border-radius: 10px;
 }
 .board-content-right-footer {
-  margin-top: 52px;
+  margin-top: 57px;
   display: flex;
 }
 .board-content-right-footer > span > img {
@@ -71,6 +71,8 @@
 .board-content-right-img {
   display: flex;
   justify-content: end;
+  min-height: 170px;
+  max-height: 170px;
 }
 .like-count,
 .reply-count,
