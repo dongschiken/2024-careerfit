@@ -63,11 +63,7 @@
 import { useBoardStore } from "@/stores/board";
 import { onMounted } from "vue";
 const store = useBoardStore();
-onMounted(() => {
-  store.getBoardList();
-});
 
-// main 이미지 필터링 함수
 function mainImage(board) {
   return board.boardImgs.find((img) => img.mainWhether === "M");
 }

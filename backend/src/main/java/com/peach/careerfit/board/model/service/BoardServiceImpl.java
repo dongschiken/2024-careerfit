@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.peach.careerfit.board.model.dao.BoardDao;
 import com.peach.careerfit.board.model.dto.Board;
 import com.peach.careerfit.board.model.dto.BoardImg;
+import com.peach.careerfit.board.model.dto.BoardSearch;
 import com.peach.careerfit.file.component.FileStorageComponent;
 
 @Service
@@ -39,8 +40,8 @@ public class BoardServiceImpl implements BoardService {
     }
 
 	@Override
-	public List<Board> getBoardList() {
-		return boardDao.selectBoardAll();
+	public List<Board> getBoardList(BoardSearch boardSearch) {
+		return boardDao.selectBoardAll(boardSearch);
 	}
 
 	@Override
