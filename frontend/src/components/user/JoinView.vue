@@ -136,6 +136,7 @@
                 v-model="formData.postalCode"
                 class="input-field"
                 placeholder="우편번호"
+                readonly
                 required
               />
               <button
@@ -156,6 +157,7 @@
               v-model="formData.parcelAddress"
               class="input-field"
               placeholder="지번 주소"
+              readonly
               required
             />
           </div>
