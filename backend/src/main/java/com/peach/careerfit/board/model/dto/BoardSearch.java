@@ -1,35 +1,33 @@
 package com.peach.careerfit.board.model.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class BoardSearch {
+	private static final int LIST_SIZE = 10;
 	private int page;
 	private int listSize;
 	private String searchWord;
 	private int boardCategoryId;
-	
     public BoardSearch() {
-        this(1, 10, null, null);
+        this(1, "", 0);
     }
 
     public BoardSearch(String searchWord) {
-        this(1, 10, searchWord, null);
+        this(1, searchWord, 0);
     }
 
     public BoardSearch(int boardCategoryId) {
-        this(1, 10, null, boardCategoryId);
+        this(1, "", boardCategoryId);
     }
     
     public BoardSearch(int page, String searchWord) {
-        this(page, 10, searchWord, null);
+        this(page, searchWord, 0);
     }
 
-    public BoardSearch(int page, int listSize, String searchWord, Integer boardCategoryId) {
+    public BoardSearch(int page, String searchWord, Integer boardCategoryId) {
         this.page = page;
-        this.listSize = listSize;
+        this.listSize = LIST_SIZE;
         this.searchWord = searchWord;
         this.boardCategoryId = boardCategoryId;
     }

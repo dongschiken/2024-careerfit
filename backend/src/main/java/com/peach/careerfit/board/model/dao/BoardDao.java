@@ -18,4 +18,5 @@ public interface BoardDao {
 	List<BoardImg> selectBoardImgbyBoardId(int boardId);
 	int deleteBoardImgs(int boardId);
 	int updateBoard(Board board);
+	int selectBoardsCount(BoardSearch boardSearch);
 }
