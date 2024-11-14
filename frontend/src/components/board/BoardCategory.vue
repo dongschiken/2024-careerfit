@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      v-for="board in store.boardList"
+      v-for="board in boardStore.boardList"
       :key="board.boardId"
       class="board-content-list-group"
     >
@@ -61,14 +61,22 @@
 
 <script setup>
 import { useBoardStore } from "@/stores/board";
+import axios from "axios";
 import { onMounted } from "vue";
-const store = useBoardStore();
+const boardStore = useBoardStore();
 
 function mainImage(board) {
   return board.boardImgs.find((img) => img.mainWhether === "M");
 }
+
+onMounted(() => {
+  axios.get(boardStore.REST_API_URL).then((response) => {
+    boardStore.getBoardList(response.data);
+  });
+});
 </script>
 
 <style lang="css" scoped>
 @import url(@/assets/css/board-category.css);
+
 </style>

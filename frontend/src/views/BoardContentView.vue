@@ -22,32 +22,24 @@
             </button>
           </router-link>
         </div>
-        <div class="board-content-header-menu-category">
-          <div>
+        <div
+          class="board-content-header-menu-category"
+          v-if="boardCategories && boardCategories.length > 0"
+        >
+          <div v-for="(category, index) in boardCategories" :key="index">
             <button
-              @click="getBoardCategoryPage(boardCategories[0].boardCategoryId)"
-              v-if="boardCategories.length > 0"
+              :class="{
+                'select-category-btn':
+                  boardStore.boardSearch?.boardCategoryId ===
+                  category.boardCategoryId,
+              }"
+              @click="getBoardCategoryPage(category.boardCategoryId)"
             >
-              {{ boardCategories[0].name }}
-            </button>
-          </div>
-          <div>
-            <button
-              @click="getBoardCategoryPage(boardCategories[1].boardCategoryId)"
-              v-if="boardCategories.length > 0"
-            >
-              {{ boardCategories[1].name }}
-            </button>
-          </div>
-          <div>
-            <button
-              @click="getBoardCategoryPage(boardCategories[2].boardCategoryId)"
-              v-if="boardCategories.length > 0"
-            >
-              {{ boardCategories[2].name }}
+              {{ category.name }}
             </button>
           </div>
         </div>
+
         <div class="board-content-header-menu-search">
           <div class="search-group">
             <input
@@ -85,7 +77,7 @@
       <BoardCategory />
     </main>
     <footer class="board-footer-group">
-      <BoardPage />
+      <BoardPage :pageResult="boardStore.pageResult" />
     </footer>
     <FooterView />
   </div>
@@ -102,7 +94,7 @@ import BoardPage from "@/components/board/BoardPage.vue";
 
 const search = ref({
   searchWord: "",
-  page: "",
+  page: 1,
 });
 
 const boardStore = useBoardStore();
@@ -110,26 +102,22 @@ const boardCategories = ref([]);
 onMounted(() => {
   axios.get(boardStore.REST_API_URL + "/category").then((response) => {
     boardCategories.value = response.data;
-    console.log(boardCategories.value[0].name);
   });
 });
 
 const getBoardCategoryPage = (boardCategoryId) => {
-  axios
-    .get(boardStore.REST_API_URL, {
-      params: {
-        searchWord: search.value.searchWord, // 검색어
-        page: search.value.page, // 현재 페이지
-        categoryId: boardCategoryId, // 카테고리 ID
-      },
-    })
-    .then((response) => {
-      boardStore.boardList.value = response.data;
-      console.log(boardStore.boardList.value);
-    });
+  boardStore.getBoardCategoryPage(
+    boardCategoryId,
+    search.value.searchWord,
+    search.value.page
+  );
 };
 </script>
 
 <style lang="css" scoped>
 @import url(@/assets/css/board-content.css);
+.select-category-btn {
+  background-color: #ff7f32 !important;
+  color: #ffffff !important;
+}
 </style>

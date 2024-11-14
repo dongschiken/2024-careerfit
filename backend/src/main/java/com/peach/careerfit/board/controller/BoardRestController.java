@@ -1,6 +1,8 @@
 package com.peach.careerfit.board.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,22 +50,19 @@ public class BoardRestController {
 	// 페이징 처리
 	@GetMapping
 	public ResponseEntity<Object> getBoardList(@RequestParam(required = false) String searchWord,
-											   @RequestParam(required = false) int page,
-											   @RequestParam(required = false) int categoryId) {
-		System.out.println("boardSearch : " + searchWord);
-		System.out.println("boardSearch : " + page);
-		System.out.println("boardSearch : " + categoryId);
-		BoardSearch boardSearch = new BoardSearch();
+											   @RequestParam(required = false, defaultValue = "1") int page,
+											   @RequestParam(required = false, defaultValue = "0") int categoryId) {
+		BoardSearch boardSearch = new BoardSearch(page, searchWord, categoryId);
 		boardSearch.setSearchWord(searchWord);
 		boardSearch.setPage(page);
 		boardSearch.setBoardCategoryId(categoryId);
-		List<Board> boards = boardService.getBoardList(boardSearch);
-		System.out.println(boards);
+		Map<String, Object> response = boardService.getBoardList(boardSearch);
+		System.out.println(response);
 		try {
-			if (boards.isEmpty()) {
+			if (response.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("찾는 데이터가 없습니다.");
 			} else {
-				return ResponseEntity.status(HttpStatus.OK).body(boards);
+				return ResponseEntity.status(HttpStatus.OK).body(response);
 			}
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

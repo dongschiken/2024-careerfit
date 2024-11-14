@@ -91,7 +91,7 @@
 		             OR u.nickname LIKE CONCAT('%', #{searchWord}, '%'))
 		        ]]>
 			</if>
-			<if test="boardCategoryId != null">
+			<if test="boardCategoryId != null and boardCategoryId != 0">
 				<![CDATA[
 		        AND c.board_category_id = #{boardCategoryId}
 		        ]]>
@@ -102,7 +102,11 @@
 			]]>
 	</select>
 
-
+	<select id="selectBoardsCount" resultType="int" parameterType="BoardSearch">
+		SELECT COUNT(*)
+		FROM board
+	</select>
+	
 	<select id="selectBoardById" resultType="Board"
 		parameterType="int">
 		SELECT board_id, user_id, category_id, title, content,

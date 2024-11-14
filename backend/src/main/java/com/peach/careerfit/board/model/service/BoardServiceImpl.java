@@ -1,7 +1,9 @@
 package com.peach.careerfit.board.model.service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +13,7 @@ import com.peach.careerfit.board.model.dao.BoardDao;
 import com.peach.careerfit.board.model.dto.Board;
 import com.peach.careerfit.board.model.dto.BoardImg;
 import com.peach.careerfit.board.model.dto.BoardSearch;
+import com.peach.careerfit.board.model.dto.PageResult;
 import com.peach.careerfit.file.component.FileStorageComponent;
 
 @Service
@@ -23,7 +26,6 @@ public class BoardServiceImpl implements BoardService {
         this.boardDao = boardDao;
         this.fileStorageComponent = fileStorageComponent;
     }
-
     /**
      * 게시글 1개 생성 시 생성날짜와 최근업데이트 날짜를 동일하게 설정하고, 파일을 업로드.
      */
@@ -35,13 +37,19 @@ public class BoardServiceImpl implements BoardService {
         int status = boardDao.insertBoard(board);
         List<BoardImg> boardImgs = fileStorageComponent.saveFiles(files, board.getBoardId(), BoardImg.class, type);
         if(!boardImgs.isEmpty()) boardDao.insertBoardImgs(boardImgs);
-		System.out.println(boardImgs);
         return status;
     }
-
+    
+    @Transactional
 	@Override
-	public List<Board> getBoardList(BoardSearch boardSearch) {
-		return boardDao.selectBoardAll(boardSearch);
+	public Map<String, Object> getBoardList(BoardSearch boardSearch) {
+		Map<String, Object> result = new HashMap<>();
+		result.put("boards", boardDao.selectBoardAll(boardSearch));
+		result.put("pageResult", new PageResult(boardSearch.getPage(), 
+				boardDao.selectBoardsCount(boardSearch), 
+				boardSearch.getListSize()));
+		result.put("boardSearch", boardSearch);
+		return result;
 	}
 
 	@Override
