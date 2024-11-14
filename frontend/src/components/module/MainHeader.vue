@@ -37,7 +37,9 @@
   </div>
 </template>
 
-<script></script>
+<script>
+import { RouterLink } from "vue-router";
+</script>
 
 <style lang="css" scoped>
 @import url(../../assets/css/header.css);

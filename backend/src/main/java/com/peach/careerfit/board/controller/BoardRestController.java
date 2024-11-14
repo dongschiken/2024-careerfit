@@ -50,15 +50,11 @@ public class BoardRestController {
 	public ResponseEntity<Object> getBoardList(@RequestParam(required = false) String searchWord,
 											   @RequestParam(required = false) int page,
 											   @RequestParam(required = false) int categoryId) {
-		System.out.println("boardSearch : " + searchWord);
-		System.out.println("boardSearch : " + page);
-		System.out.println("boardSearch : " + categoryId);
 		BoardSearch boardSearch = new BoardSearch();
 		boardSearch.setSearchWord(searchWord);
 		boardSearch.setPage(page);
 		boardSearch.setBoardCategoryId(categoryId);
 		List<Board> boards = boardService.getBoardList(boardSearch);
-		System.out.println(boards);
 		try {
 			if (boards.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("찾는 데이터가 없습니다.");
