@@ -71,7 +71,7 @@
         v-for="(meal, index) in detailedMeals"
         :key="index"
       >
-        <img :src="meal.image" alt="Meal Image" />
+        <img src="@/assets/img/pasta-7209002_1280.jpg" alt="Meal Image" />
         <div class="meal-info">
           <h4>{{ meal.type }}</h4>
           <p>{{ meal.time }}</p>
@@ -118,19 +118,16 @@ export default {
         type: "아침",
         time: "오전 09:30",
         details: "닭가슴살 100g, 현미밥 130g, 브로콜리2, 파프리카 조금",
-        image: "path/to/breakfast.jpg",
       },
       {
         type: "점심",
         time: "오전 11:30",
         details: "닭가슴살 100g, 현미밥 130g, 브로콜리2, 파프리카 조금",
-        image: "path/to/lunch.jpg",
       },
       {
         type: "저녁",
         time: "오후 06:30",
         details: "닭가슴살 100g, 현미밥 130g, 브로콜리2, 파프리카 조금",
-        image: "path/to/dinner.jpg",
       },
     ];
 

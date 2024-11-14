@@ -6,6 +6,7 @@ import BoardWrite from "@/components/board/BoardWrite.vue";
 import MealPlan from "@/components/meal/MealPlan.vue";
 import BoardContentView from "@/views/BoardContentView.vue";
 import ChatView from "@/views/ChatView.vue";
+import BoardDetailView from "@/views/BoardDetailView.vue";
 
 const routes = [
   {
@@ -41,7 +42,13 @@ const routes = [
   {
     path: "/chat",
     component: ChatView,
-  }
+  },
+  {
+    path: "/board/:boardId",
+    name: "boardDetail",
+    component: BoardDetailView,
+    props: true,
+  },
 ];
 
 const router = createRouter({

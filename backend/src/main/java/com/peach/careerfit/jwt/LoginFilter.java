@@ -3,9 +3,8 @@ package com.peach.careerfit.jwt;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -13,6 +12,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.peach.careerfit.user.model.dao.UserMapper;
 import com.peach.careerfit.user.model.dto.User;
 
@@ -31,9 +31,28 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         this.jwtUtils = jwtUtils;
         this.userMapper = userMapper;
     }
-
+    
 
     @Override
+	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+			throws AuthenticationException {
+    	
+    	 ObjectMapper objectMapper = new ObjectMapper();
+         // request의 InputStream에서 JSON 데이터를 Map으로 변환
+         Map<String, String> credentials;
+         UsernamePasswordAuthenticationToken authRequest = null;
+		try {
+			credentials = objectMapper.readValue(request.getInputStream(), Map.class);
+	         String email = credentials.get("email");
+	         String password = credentials.get("password");
+	         authRequest = new UsernamePasswordAuthenticationToken(email, password);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+         return authenticationManager.authenticate(authRequest);
+	}
+
+	@Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
     	
     	String userEmail = authResult.getName();

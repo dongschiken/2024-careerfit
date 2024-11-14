@@ -47,6 +47,26 @@ export const useBoardStore = defineStore(
       }
     };
 
+    const getFirstCategoryPage = async () => {
+      try {
+        const params = {
+          searchWord: "",
+          page: 1,
+          categoryId: 0,
+          sortOrder: "",
+        };
+        const response = await axios.get(REST_API_URL, { params });
+        boardList.value = response.data.boards;
+        boardSearch.value = {
+          ...boardSearch.value,
+          ...response.data.boardSearch,
+        };
+        pageResult.value = response.data.pageResult;
+      } catch (error) {
+        console.error("게시글 로드 실패:", error);
+      }
+    };
+
     return {
       boardList,
       getBoardList,
@@ -54,6 +74,7 @@ export const useBoardStore = defineStore(
       getBoardCategoryPage,
       boardSearch,
       pageResult,
+      getFirstCategoryPage,
     };
   },
   {
