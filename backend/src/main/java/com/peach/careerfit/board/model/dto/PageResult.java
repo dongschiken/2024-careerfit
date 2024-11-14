@@ -1,9 +1,13 @@
 package com.peach.careerfit.board.model.dto;
 
+import lombok.Data;
+import lombok.ToString;
+
 /**
  * 페이징 처리를 위한 변수를 표현
  * 
  */
+@ToString
 public class PageResult {
 	private static final int TAB_SIZE = 10;
 	private static final int LIST_SIZE = 10;
