@@ -21,16 +21,21 @@ export const useBoardStore = defineStore(
       pageResult.value = data.pageResult;
     };
 
-    const getBoardCategoryPage = async (boardCategoryId, searchWord, page) => {
+    const getBoardCategoryPage = async (
+      boardCategoryId,
+      searchWord,
+      page,
+      sortOrder
+    ) => {
       try {
         boardSearch.value.boardCategoryId = boardCategoryId;
         const params = {
           searchWord: searchWord || boardSearch.value.searchWord,
           page: page || 1,
           categoryId: boardCategoryId,
+          sortOrder: sortOrder,
         };
         const response = await axios.get(REST_API_URL, { params });
-        console.log(params);
         boardList.value = response.data.boards;
         boardSearch.value = {
           ...boardSearch.value,

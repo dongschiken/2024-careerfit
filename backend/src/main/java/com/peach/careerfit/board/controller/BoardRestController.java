@@ -50,11 +50,9 @@ public class BoardRestController {
 	@GetMapping
 	public ResponseEntity<Object> getBoardList(@RequestParam(required = false) String searchWord,
 											   @RequestParam(required = false, defaultValue = "1") int page,
-											   @RequestParam(required = false, defaultValue = "0") int categoryId) {
-		BoardSearch boardSearch = new BoardSearch(page, searchWord, categoryId);
-		boardSearch.setSearchWord(searchWord);
-		boardSearch.setPage(page);
-		boardSearch.setBoardCategoryId(categoryId);
+											   @RequestParam(required = false, defaultValue = "0") int categoryId,
+											   @RequestParam(required = false) String sortOrder) {
+		BoardSearch boardSearch = new BoardSearch(page, searchWord, categoryId, sortOrder);
 		Map<String, Object> response = boardService.getBoardList(boardSearch);
 		System.out.println(response);
 		try {
