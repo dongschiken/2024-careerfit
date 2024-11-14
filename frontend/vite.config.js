@@ -17,4 +17,7 @@ export default defineConfig({
     port: 3000,
     hmr: false, // HMR 비활성화
   },
+  define: {
+    global: {},
+  },
 });

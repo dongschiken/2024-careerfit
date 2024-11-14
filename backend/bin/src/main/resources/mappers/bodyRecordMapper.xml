@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.peach.careerfit.body.model.dao.BodyRecordDao">
+
+	<insert id="insertBodyRecord" parameterType="BodyRecord">
+		INSERT INTO body_record (user_id, date, weight, skeletal_muscle, body_fat, img)
+		VALUES (#{userId}, #{date}, #{weight}, #{skeletalMuscle}, #{bodyFat}, #{img})
+	</insert>
+	
+	<update id="updateBodyRecord" parameterType="BodyRecord">
+		UPDATE body_record
+		SET 
+			weight = #{weight},
+			skeletal_muscle = #{skeletalMuscle},
+			body_fat = #{bodyFat},
+			img = #{img}
+		WHERE user_id = #{userId} AND date = #{date}
+	</update>
+	
+	<delete id="deleteBodyRecord" parameterType="int">
+		DELETE FROM body_record
+		WHERE body_record_id = #{bodyRecordId}
+	</delete>
+	
+	<select id="selectBodyRecord" parameterType="BodyRecord" resultType="BodyRecord">
+		SELECT body_record_id, user_id, date, weight, skeletal_muscle, body_fat, img
+		FROM body_record
+		WHERE date = #{date} AND body_record_id = #{bodyRecordId}
+	</select>
+</mapper>

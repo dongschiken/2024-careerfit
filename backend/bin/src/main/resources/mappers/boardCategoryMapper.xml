@@ -7,4 +7,9 @@
 		INSERT INTO board_category (name, created_at, updated_at)
 		VALUES (#{name}, #{createdAt}, #{updatedAt})
 	</insert>
+	
+	<select id="selectBoardCategoryAll" resultType="BoardCategory">
+		SELECT *
+		FROM board_category
+	</select>
 </mapper>

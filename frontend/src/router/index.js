@@ -5,6 +5,7 @@ import JoinView from "@/components/user/JoinView.vue";
 import BoardWrite from "@/components/board/BoardWrite.vue";
 import MealPlan from "@/components/meal/MealPlan.vue";
 import BoardContentView from "@/views/BoardContentView.vue";
+import ChatView from "@/views/ChatView.vue";
 
 const routes = [
   {
@@ -37,6 +38,10 @@ const routes = [
     name: "meal",
     component: MealPlan,
   },
+  {
+    path: "/chat",
+    component: ChatView,
+  }
 ];
 
 const router = createRouter({
