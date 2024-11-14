@@ -91,6 +91,11 @@
 		             OR u.nickname LIKE CONCAT('%', #{searchWord}, '%'))
 		        ]]>
 			</if>
+			<if test="searchWord == ''">
+				AND (b.content LIKE CONCAT('%', '', '%')
+		             OR b.title LIKE CONCAT('%', '', '%')
+		             OR u.nickname LIKE CONCAT('%', '', '%'))
+			</if>
 			<if test="boardCategoryId != null and boardCategoryId != 0">
 				<![CDATA[
 		        AND c.board_category_id = #{boardCategoryId}
@@ -105,10 +110,10 @@
 						ORDER BY created_at ASC
 					</if>
 					<if test="sortOrder == '인기순'">
-						ORDER BY like_count
+						ORDER BY like_count, created_at DESC
 					</if>
 					<if test="sortOrder == '조회순'">
-						ORDER BY view_count
+						ORDER BY view_count, created_at DESC
 					</if>
 				</when>
 				<otherwise>
@@ -118,8 +123,6 @@
 		    <![CDATA[
 		    	LIMIT #{offset}, #{listSize}
 			]]>
-			    
-			   
 	</select>
 
 	<select id="selectBoardsCount" resultType="int" parameterType="BoardSearch">

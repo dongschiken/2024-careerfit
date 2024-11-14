@@ -30,47 +30,47 @@ import com.peach.careerfit.user.model.service.UserService;
 public class UserRestController {
 
 	private final UserService userService;
-	private final AuthenticationManager authenticationManager;
-	private final JwtUtils jwtUtils;
+//	private final AuthenticationManager authenticationManager;
+//	private final JwtUtils jwtUtils;
 
-	public UserRestController(UserService userService, AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
+	public UserRestController(UserService userService /*, AuthenticationManager authenticationManager, JwtUtils jwtUtils*/) {
 		this.userService = userService;
-		this.authenticationManager = authenticationManager;
-		this.jwtUtils = jwtUtils;
+//		this.authenticationManager = authenticationManager;
+//		this.jwtUtils = jwtUtils;
 	}
 	
-	// 로그인
-	@PostMapping("/login")
-	public ResponseEntity<Object> getUser(@RequestBody LoginRequest loginRequest) {
-		System.out.println("login");
-		System.out.println(loginRequest.getEmail());
-		System.out.println(loginRequest.getPassword());
-		try {
-
-			// 사용자 인증 시도
-			Authentication authentication = authenticationManager.authenticate(
-					new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-			System.out.println(authentication);
-			System.out.println(11);
-			User loginUser = userService.findUserByEmail(loginRequest.getEmail());
-
-			// 탈퇴한 회원인지 확인
-			if (loginUser.getStatus() == 0) {
-				return ResponseEntity.status(HttpStatus.FORBIDDEN).body("탈퇴한 회원입니다. 로그인이 불가능합니다.");
-			}
-
-			SecurityContextHolder.getContext().setAuthentication(authentication);
-			//
-			// JWT 토큰 생성
-			String token = jwtUtils.createJwt(loginUser.getUserId(), loginUser.getRole(), loginUser.getEmail(),
-					loginUser.getNickname());
-			System.out.println("token" + token);
-			// 응답으로 토큰 전달
-			return ResponseEntity.status(HttpStatus.OK).body(new JwtResponse(token));
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("잘못된 이메일 또는 비밀번호입니다.");
-		}
-	}
+//	// 로그인
+//	@PostMapping("/login")
+//	public ResponseEntity<Object> getUser(@RequestBody LoginRequest loginRequest) {
+//		System.out.println("login");
+//		System.out.println(loginRequest.getEmail());
+//		System.out.println(loginRequest.getPassword());
+//		try {
+//
+//			// 사용자 인증 시도
+//			Authentication authentication = authenticationManager.authenticate(
+//					new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+//			System.out.println(authentication);
+//			System.out.println(11);
+//			User loginUser = userService.findUserByEmail(loginRequest.getEmail());
+//
+//			// 탈퇴한 회원인지 확인
+//			if (loginUser.getStatus() == 0) {
+//				return ResponseEntity.status(HttpStatus.FORBIDDEN).body("탈퇴한 회원입니다. 로그인이 불가능합니다.");
+//			}
+//
+//			SecurityContextHolder.getContext().setAuthentication(authentication);
+//			//
+//			// JWT 토큰 생성
+//			String token = jwtUtils.createJwt(loginUser.getUserId(), loginUser.getRole(), loginUser.getEmail(),
+//					loginUser.getNickname());
+//			System.out.println("token" + token);
+//			// 응답으로 토큰 전달
+//			return ResponseEntity.status(HttpStatus.OK).body(new JwtResponse(token));
+//		} catch (Exception e) {
+//			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("잘못된 이메일 또는 비밀번호입니다.");
+//		}
+//	}
 
 	// 회원가입
 	@PostMapping("/join")

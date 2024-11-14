@@ -4,7 +4,7 @@
     <header class="board-header-group">
       <div class="board-content-header">
         <div class="board-content-header-text">
-          <button @click="getBoardCategoryPage(0)">커뮤니티</button>
+          <button @click="getFirstCategoryPage()">커뮤니티</button>
           <p>다양한 사람들과 이야기를 나눠 보세요</p>
         </div>
       </div>
@@ -131,6 +131,10 @@ const getBoardCategoryPage = (boardCategoryId) => {
     sortOrder.value
   );
 };
+
+const getFirstCategoryPage = () => {
+  boardStore.getFirstCategoryPage();
+};
 </script>
 
 <style lang="css" scoped>
@@ -143,7 +147,6 @@ const getBoardCategoryPage = (boardCategoryId) => {
   width: 26px;
   height: 26px;
 }
-
 .board-content-header-text > button:hover,
 .search-group > button > img:hover {
   cursor: pointer;
@@ -153,25 +156,5 @@ const getBoardCategoryPage = (boardCategoryId) => {
   background-color: transparent;
   font-size: 25px;
   padding: 0px;
-}
-
-div
-  > div
-  > main
-  > div
-  > div
-  > div.board-content-left
-  > div.board-content-title:hover {
-  cursor: pointer;
-}
-
-div
-  > div
-  > main
-  > div
-  > div
-  > div.board-content-left
-  > div.user-profile-group:hover {
-  cursor: pointer;
 }
 </style>

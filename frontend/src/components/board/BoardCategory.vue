@@ -6,8 +6,13 @@
       class="board-content-list-group"
     >
       <div class="board-content-left">
-        <div class="board-content-title">{{ board.title }}</div>
-        <div class="board-content-content">
+        <div @click="getBoardDetail(board.boardId)" class="board-content-title">
+          {{ board.title }}
+        </div>
+        <div
+          @click="getBoardDetail(board.boardId)"
+          class="board-content-content"
+        >
           <p class="ellipsis">
             {{ board.content }}
           </p>
@@ -23,6 +28,7 @@
       <div class="board-content-right">
         <div class="board-content-right-img obj-div">
           <img
+            @click="getBoardDetail(board.boardId)"
             class="obj-img"
             v-if="mainImage(board)"
             :src="`http://localhost:8080/uploads/${mainImage(board).path}${
@@ -62,11 +68,12 @@
 </template>
 
 <script setup>
+import { useRouter } from "vue-router";
 import { useBoardStore } from "@/stores/board";
 import axios from "axios";
 import { onMounted } from "vue";
 const boardStore = useBoardStore();
-
+const router = useRouter();
 function mainImage(board) {
   return board.boardImgs.find((img) => img.mainWhether === "M");
 }
@@ -76,8 +83,21 @@ onMounted(() => {
     boardStore.getBoardList(response.data);
   });
 });
+
+const getBoardDetail = (boardId) => {
+  alert("여기");
+  router.push({ name: "boardDetail", params: { boardId } });
+};
 </script>
 
 <style lang="css" scoped>
 @import url(@/assets/css/board-category.css);
+
+.board-content-content,
+.board-content-title {
+  cursor: pointer;
+}
+div.board-content-right-img.obj-div > img {
+  border-radius: 10px;
+}
 </style>
