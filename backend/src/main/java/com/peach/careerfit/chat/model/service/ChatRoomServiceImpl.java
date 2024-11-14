@@ -42,7 +42,7 @@ public class ChatRoomServiceImpl implements ChatRoomService{
 
 	@Override
 	public List<ChatParticipantResponse> getParticipants(int chatRoomId, int page, int size) {
-		int offset = page * size;	// 페이지네이션 계싼
+		int offset = page * size;
 		return chatRoomMapper.selectParticipantsByChatRoom(chatRoomId, offset, size);
 	}
 }

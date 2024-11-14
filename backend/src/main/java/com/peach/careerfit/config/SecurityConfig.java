@@ -69,15 +69,15 @@ public class SecurityConfig  {
         // 경로별 인가 작업
         // static한 값들에 대해서도 경로를 지정해 줘야한다.
         http.authorizeHttpRequests((auth) -> auth
-        		.requestMatchers("/api/login/**", "/api/join", "/api/login", "/error" , "/main", "/api/user/**", "/api/chat-room/**", "/api/chat-rooms/**").permitAll()
-        		.requestMatchers(HttpMethod.GET, "/api/board/**", "/uploads/**", "/api/board/category").permitAll()
+        		.requestMatchers("/api/login/**", "/chat/**", "/api/join", "/api/login", "/error" , "/main", "/api/user/**", "/api/chat-room/**", "/api/chat-rooms/**").permitAll()
+        		.requestMatchers(HttpMethod.GET,  "/api/board/**", "/uploads/**", "/api/board/category").permitAll()
                 .requestMatchers("/assets/**", "/js/**", "/img/**").permitAll() // 정적 리소스 접근 허용
                 .requestMatchers("/admin").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/board", "/api/board/category").hasRole("USER")
-                .requestMatchers(HttpMethod.PUT, "/api/board/**").hasRole("USER")                
+                .requestMatchers(HttpMethod.PUT, "/api/board/**").hasRole("USER")    
                 .requestMatchers(HttpMethod.DELETE, "/api/board/**").hasRole("USER")                                
                 .anyRequest().authenticated());
-
+        
         
         http.cors((cors) -> cors.configurationSource(new CorsConfigurationSource() {
             @Override
