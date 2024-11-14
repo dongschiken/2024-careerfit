@@ -45,8 +45,8 @@ public class BoardServiceImpl implements BoardService {
 	public Map<String, Object> getBoardList(BoardSearch boardSearch) {
 		Map<String, Object> result = new HashMap<>();
 		result.put("boards", boardDao.selectBoardAll(boardSearch));
-		result.put("pageResult", new PageResult(boardSearch.getPage(), 
-				boardDao.selectBoardsCount(boardSearch), 
+		result.put("pageResult", new PageResult(boardSearch.getPage(),
+				boardDao.selectBoardsCount(boardSearch),
 				boardSearch.getListSize()));
 		result.put("boardSearch", boardSearch);
 		return result;

@@ -48,12 +48,13 @@ public class FileStorageComponent {
 			try {
 				String originName = file.getOriginalFilename();
 				String subDir = new SimpleDateFormat("yyyy/MM/dd/HH/").format(new Date()).toString();
-				File dir = new File("c:/uploads/" + type + "/" + subDir + "/");
+				File dir = new File("c:/uploads/" + type + "/" + subDir);
 				dir.mkdirs();
-				String systemName = UUID.randomUUID().toString() + originName;
-				File f = new File(dir, systemName);
-				file.transferTo(f);
-				return dir.toString() + systemName;
+				String path = dir.toString();
+				String systemName = "/"+UUID.randomUUID().toString() + "_" + originName;
+				String relativePath = path.replace("c:\\uploads\\", "").replace("\\", "/");
+				file.transferTo(new File(path, systemName));
+				return relativePath + systemName;
 			} catch (IllegalStateException | IOException e) {
 				e.printStackTrace();
 			}
