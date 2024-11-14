@@ -1,12 +1,19 @@
 <template>
   <div class="pagination">
-    <a href="#" class="first">First</a>
+    <a
+      :class="{
+        'none-page': pageResult.page === 1,
+      }"
+      @click="goFistPage(pageResult.page)"
+      class="first"
+      >First</a
+    >
     <span>...</span>
     <div class="next-prev-button">
       <button
         class="prev"
         v-if="pageResult.prev"
-        @click="changePage(pageResult.page - 1)"
+        @click="changePage(pageResult.beginPage - 1)"
       >
         <img
           class="prev-btn"
@@ -26,7 +33,10 @@
       </div>
     </div>
     <div class="next-prev-button">
-      <button v-if="pageResult.next" @click="changePage(pageResult.page + 1)">
+      <button
+        v-if="pageResult.next"
+        @click="changePage(pageResult.endPage + 1)"
+      >
         <img
           class="next-btn"
           src="@/assets/img/arrow_forward_ios_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
@@ -34,12 +44,21 @@
       </button>
     </div>
     <span>...</span>
-    <a href="#" class="last">Last</a>
+    <a
+      :class="{
+        'none-page': pageResult.page === pageResult.lastPage,
+      }"
+      @click="goLastPage(pageResult.page)"
+      class="last"
+      >Last</a
+    >
   </div>
 </template>
 
 <script setup>
 import { computed } from "vue";
+import { useBoardStore } from "@/stores/board";
+const boardStore = useBoardStore();
 const props = defineProps({
   pageResult: {
     type: Object,
@@ -57,7 +76,32 @@ const pages = computed(() => {
 });
 
 const changePage = (page) => {
-  console.log("Changing to page:", page);
+  boardStore.getBoardCategoryPage(
+    boardStore.boardSearch.boardCategoryId,
+    boardStore.boardSearch.searchWord,
+    page
+  );
+};
+const goLastPage = (page) => {
+  if (page === props.pageResult.lastPage) {
+    return;
+  }
+  boardStore.getBoardCategoryPage(
+    boardStore.boardSearch.boardCategoryId,
+    boardStore.boardSearch.searchWord,
+    props.pageResult.lastPage
+  );
+};
+
+const goFistPage = (page) => {
+  if (1 === props.pageResult.page) {
+    return;
+  }
+  boardStore.getBoardCategoryPage(
+    boardStore.boardSearch.boardCategoryId,
+    boardStore.boardSearch.searchWord,
+    1
+  );
 };
 </script>
 
@@ -80,7 +124,27 @@ const changePage = (page) => {
 .next-btn {
   width: 17px;
 }
+
 .prev-btn {
   width: 17px;
+}
+.last:hover {
+  cursor: pointer;
+}
+.first:hover {
+  cursor: pointer;
+}
+.none-page:hover {
+  cursor: auto;
+}
+.pagination > a.none-page {
+  color: lightgray;
+}
+.pagination > a.none-page:hover {
+  transition: none;
+  background-color: white;
+}
+.active {
+  background-color: lightgray;
 }
 </style>

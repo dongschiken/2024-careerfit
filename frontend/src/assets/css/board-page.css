@@ -20,17 +20,19 @@ div > .prev-btn {
   padding-left: 5px;
   padding-right: 5px;
   border-radius: 4px;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.4s ease;
 }
 
 .pagination .page-number:hover,
 .first:hover,
 .last:hover {
   background-color: #ddd;
+  transition: background-color 0.4s ease;
 }
 
 .next-prev-button:hover {
   background-color: #ddd;
+  transition: background-color 0.4s ease;
 }
 
 .pagination .prev,
@@ -51,6 +53,7 @@ div > .prev-btn {
 }
 .page-number {
   margin: 5px 5px;
+  border-radius: 4px;
 }
 .next-prev-button {
   display: flex;
@@ -58,4 +61,8 @@ div > .prev-btn {
   justify-content: end;
   align-items: end;
   text-align: end;
+  border-radius: 4px;
+}
+.next-prev-button button:hover {
+  cursor: pointer;
 }

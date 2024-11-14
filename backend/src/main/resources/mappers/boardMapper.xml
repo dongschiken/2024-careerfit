@@ -105,6 +105,15 @@
 	<select id="selectBoardsCount" resultType="int" parameterType="BoardSearch">
 		SELECT COUNT(*)
 		FROM board
+		<where>
+			<if test="boardCategoryId != null and boardCategoryId != 0">
+				category_id = #{boardCategoryId}
+			</if>
+			<if test="searchWord != null">
+				AND (title LIKE CONCAT('%', #{searchWord}, '%')
+				OR content LIKE CONCAT('%', #{searchWord}, '%'))
+			</if>
+		</where>
 	</select>
 	
 	<select id="selectBoardById" resultType="Board"

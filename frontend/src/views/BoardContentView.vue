@@ -30,8 +30,9 @@
             <button
               :class="{
                 'select-category-btn':
+                  boardStore.boardSearch &&
                   boardStore.boardSearch?.boardCategoryId ===
-                  category.boardCategoryId,
+                    category.boardCategoryId,
               }"
               @click="getBoardCategoryPage(category.boardCategoryId)"
             >
@@ -43,15 +44,26 @@
         <div class="board-content-header-menu-search">
           <div class="search-group">
             <input
+              @keydown.enter="
+                getBoardCategoryPage(boardStore.boardSearch.boardCategoryId)
+              "
+              v-model="search.searchWord"
               class="search-input"
               type="text"
               placeholder="검색"
               style="border: 0px"
             />
-            <img
-              src="@/assets/img/search_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
-              alt=""
-            />
+            <button
+              @click="
+                getBoardCategoryPage(boardStore.boardSearch.boardCategoryId)
+              "
+              style="border: none; background: none; padding: 0"
+            >
+              <img
+                src="@/assets/img/search_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
+                alt="Search"
+              />
+            </button>
           </div>
         </div>
         <div class="board-content-header-menu-sort">
@@ -106,11 +118,7 @@ onMounted(() => {
 });
 
 const getBoardCategoryPage = (boardCategoryId) => {
-  boardStore.getBoardCategoryPage(
-    boardCategoryId,
-    search.value.searchWord,
-    search.value.page
-  );
+  boardStore.getBoardCategoryPage(boardCategoryId, search.value.searchWord, 1);
 };
 </script>
 
@@ -119,5 +127,12 @@ const getBoardCategoryPage = (boardCategoryId) => {
 .select-category-btn {
   background-color: #ff7f32 !important;
   color: #ffffff !important;
+}
+.search-group > button > img {
+  width: 26px;
+  height: 26px;
+}
+.search-group > button > img:hover {
+  cursor: pointer;
 }
 </style>

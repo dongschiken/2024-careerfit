@@ -28,6 +28,7 @@
               mainImage(board).systemName
             }`"
             alt="Board Image"
+            style="border: none; background: none; padding: 0; cursor: pointer"
           />
         </div>
         <div class="board-content-right-footer">
@@ -78,5 +79,4 @@ onMounted(() => {
 
 <style lang="css" scoped>
 @import url(@/assets/css/board-category.css);
-
 </style>

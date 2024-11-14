@@ -42,6 +42,13 @@
   margin-left: 15px;
   font-weight: 600;
 }
+.board-content-right {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  align-items: end;
+  border: 0;
+}
 .board-content-left-category {
   display: flex;
   padding-top: 10px;
@@ -49,13 +56,17 @@
   font-weight: 400;
 }
 .board-content-right > .board-content-right-img > img {
-  margin-top: 20px;
-  width: 160px;
-  height: 150px;
+  /* display: flex; */
+  min-width: 160px;
+  max-width: 160px;
+  min-height: 170px;
+  max-height: 170px;
+  align-items: flex-end;
   border-radius: 10px;
+  border: 0;
 }
 .board-content-right-footer {
-  margin-top: 57px;
+  margin-top: 64px;
   display: flex;
 }
 .board-content-right-footer > span > img {
