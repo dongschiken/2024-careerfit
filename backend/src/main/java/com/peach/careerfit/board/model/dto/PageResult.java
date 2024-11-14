@@ -1,6 +1,5 @@
 package com.peach.careerfit.board.model.dto;
 
-import lombok.Data;
 import lombok.ToString;
 
 /**

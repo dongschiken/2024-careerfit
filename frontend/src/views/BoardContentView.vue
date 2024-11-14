@@ -4,7 +4,7 @@
     <header class="board-header-group">
       <div class="board-content-header">
         <div class="board-content-header-text">
-          <router-link to="/board">커뮤니티</router-link>
+          <button @click="getBoardCategoryPage(0)">커뮤니티</button>
           <p>다양한 사람들과 이야기를 나눠 보세요</p>
         </div>
       </div>
@@ -74,12 +74,17 @@
             />
           </div>
           <div class="custom-select">
-            <select>
-              <option value="option1">최신순</option>
-              <option value="option2">과거순</option>
-              <option value="option3">인기순</option>
-              <option value="option4">댓글순</option>
-              <option value="option4">조회순</option>
+            <select
+              v-model="sortOrder"
+              @change="
+                getBoardCategoryPage(boardStore.boardSearch.boardCategoryId)
+              "
+            >
+              <option disabled value="">선택</option>
+              <option>최신순</option>
+              <option>과거순</option>
+              <option>인기순</option>
+              <option>조회순</option>
             </select>
           </div>
         </div>
@@ -108,9 +113,10 @@ const search = ref({
   searchWord: "",
   page: 1,
 });
-
+const sortOrder = ref("");
 const boardStore = useBoardStore();
 const boardCategories = ref([]);
+
 onMounted(() => {
   axios.get(boardStore.REST_API_URL + "/category").then((response) => {
     boardCategories.value = response.data;
@@ -118,7 +124,12 @@ onMounted(() => {
 });
 
 const getBoardCategoryPage = (boardCategoryId) => {
-  boardStore.getBoardCategoryPage(boardCategoryId, search.value.searchWord, 1);
+  boardStore.getBoardCategoryPage(
+    boardCategoryId,
+    search.value.searchWord,
+    1,
+    sortOrder.value
+  );
 };
 </script>
 
@@ -132,7 +143,35 @@ const getBoardCategoryPage = (boardCategoryId) => {
   width: 26px;
   height: 26px;
 }
+
+.board-content-header-text > button:hover,
 .search-group > button > img:hover {
+  cursor: pointer;
+}
+.board-content-header-text > button {
+  border: none;
+  background-color: transparent;
+  font-size: 25px;
+  padding: 0px;
+}
+
+div
+  > div
+  > main
+  > div
+  > div
+  > div.board-content-left
+  > div.board-content-title:hover {
+  cursor: pointer;
+}
+
+div
+  > div
+  > main
+  > div
+  > div
+  > div.board-content-left
+  > div.user-profile-group:hover {
   cursor: pointer;
 }
 </style>

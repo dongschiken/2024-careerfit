@@ -21,8 +21,9 @@
         <div class="board-content-left-category">{{ board.category.name }}</div>
       </div>
       <div class="board-content-right">
-        <div class="board-content-right-img">
+        <div class="board-content-right-img obj-div">
           <img
+            class="obj-img"
             v-if="mainImage(board)"
             :src="`http://localhost:8080/uploads/${mainImage(board).path}${
               mainImage(board).systemName

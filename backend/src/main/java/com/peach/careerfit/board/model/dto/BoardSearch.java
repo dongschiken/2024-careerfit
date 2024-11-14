@@ -9,27 +9,29 @@ public class BoardSearch {
 	private int listSize;
 	private String searchWord;
 	private int boardCategoryId;
+	private String sortOrder;
     public BoardSearch() {
-        this(1, "", 0);
+        this(1, "", 0, "");
     }
 
     public BoardSearch(String searchWord) {
-        this(1, searchWord, 0);
+        this(1, searchWord, 0, "");
     }
 
     public BoardSearch(int boardCategoryId) {
-        this(1, "", boardCategoryId);
+        this(1, "", boardCategoryId, "");
     }
     
     public BoardSearch(int page, String searchWord) {
-        this(page, searchWord, 0);
+        this(page, searchWord, 0, "");
     }
 
-    public BoardSearch(int page, String searchWord, Integer boardCategoryId) {
+    public BoardSearch(int page, String searchWord, Integer boardCategoryId, String sortOrder) {
         this.page = page;
         this.listSize = LIST_SIZE;
         this.searchWord = searchWord;
         this.boardCategoryId = boardCategoryId;
+        this.sortOrder = sortOrder;
     }
 	
 	public BoardSearch(int page, int listSize) {

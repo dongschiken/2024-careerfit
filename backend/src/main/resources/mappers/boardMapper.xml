@@ -96,10 +96,30 @@
 		        AND c.board_category_id = #{boardCategoryId}
 		        ]]>
 			</if>
+			<choose>
+				<when test="sortOrder != null and sortOrder != ''">
+					<if test="sortOrder == '최신순'">
+						ORDER BY created_at DESC
+					</if>
+					<if test="sortOrder == '과거순'">
+						ORDER BY created_at ASC
+					</if>
+					<if test="sortOrder == '인기순'">
+						ORDER BY like_count
+					</if>
+					<if test="sortOrder == '조회순'">
+						ORDER BY view_count
+					</if>
+				</when>
+				<otherwise>
+					ORDER BY created_at DESC
+				</otherwise>
+			</choose>
 		    <![CDATA[
-			    ORDER BY b.created_at DESC
-			    LIMIT #{offset}, #{listSize}
+		    	LIMIT #{offset}, #{listSize}
 			]]>
+			    
+			   
 	</select>
 
 	<select id="selectBoardsCount" resultType="int" parameterType="BoardSearch">
