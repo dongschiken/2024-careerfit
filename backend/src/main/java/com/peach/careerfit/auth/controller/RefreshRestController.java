@@ -18,6 +18,7 @@ public class RefreshRestController {
 	
 	private final JwtUtils jwtUtils;
 	private final RefreshTokenService refreshTokenService;
+	
 	public RefreshRestController(JwtUtils jwtUtils, RefreshTokenService refreshTokenService) {
 		this.jwtUtils = jwtUtils;
 		this.refreshTokenService = refreshTokenService;
