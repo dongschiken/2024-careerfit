@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import com.peach.careerfit.auth.model.service.RefreshTokenService;
 import com.peach.careerfit.jwt.JwtFilter;
 import com.peach.careerfit.jwt.JwtUtils;
 import com.peach.careerfit.jwt.LoginFilter;
@@ -33,12 +34,14 @@ public class SecurityConfig  {
     private final JwtUtils jwtUtils;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final UserMapper userMapper;
+    private final RefreshTokenService refreshTokenService;
     public SecurityConfig(AuthenticationConfiguration authenticationConfiguration
-    		, JwtUtils jwtUtils, UserMapper userMapper
+    		, JwtUtils jwtUtils, UserMapper userMapper, RefreshTokenService refreshTokenService
     		) {
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtils = jwtUtils;
         this.userMapper = userMapper;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Bean
@@ -97,7 +100,7 @@ public class SecurityConfig  {
         // 로그인 필터는 매니저가 필요하다 -> 매니저는 configuration 필요하다.
         // jwt를 위한 jwtUtil 도 필요하다.
         http.addFilterAt(
-                new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtils, userMapper),
+                new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtils, userMapper, refreshTokenService),
                 UsernamePasswordAuthenticationFilter.class
         );
         http.addFilterAt(
