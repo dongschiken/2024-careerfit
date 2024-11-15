@@ -71,8 +71,9 @@ public class BoardRestController {
 											  @RequestPart(name = "files", required = false) List<MultipartFile> files,
 											  HttpServletRequest request) {
 		try {
+			System.out.println("토큰확인");
 			String token = jwtUtils.getAccessToken(request);
-			board.setUserId(jwtUtils.getUserIdFromToken(token));
+			board.setUserId(1);
 			int status = boardService.registBoard(board, files);
 			if (status < 1) {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

@@ -100,4 +100,6 @@ const getBoardDetail = (boardId) => {
 div.board-content-right-img.obj-div > img {
   border-radius: 10px;
 }
+.board-content-content > p {
+}
 </style>

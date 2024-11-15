@@ -14,8 +14,8 @@ export default defineConfig({
     },
   },
   server: {
-    port: 3000,
-    hmr: false, // HMR 비활성화
+    //host: "192.168.210.52", // 서버의 IP 주소
+    port: 3000, // 포트 번호
   },
   define: {
     global: {},

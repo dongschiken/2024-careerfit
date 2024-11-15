@@ -19,6 +19,7 @@ export const useBoardStore = defineStore(
       boardList.value = data.boards;
       boardSearch.value = data.boardSearch;
       pageResult.value = data.pageResult;
+      s;
     };
 
     const getBoardCategoryPage = async (
