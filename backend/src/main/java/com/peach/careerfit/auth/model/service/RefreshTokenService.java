@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 public class RefreshTokenService {
 	
 	private final StringRedisTemplate stringRedisTemplate;
+	
 	public RefreshTokenService(StringRedisTemplate stringRedisTemplate) {
 		this.stringRedisTemplate = stringRedisTemplate;
 	}
