@@ -120,7 +120,7 @@ public class JwtUtils {
     /**
      * 새로운 refresh 토큰을 생성
      */
-    public String craeteRefreshToken(Integer userId, String role, String email, String nickname, Long expiredMs) {
+    public String craeteRefreshToken(Integer userId, String role, String email, String nickname) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + REFRESH_TOKEN_EXPIRE_TIME);   
     	return builder()

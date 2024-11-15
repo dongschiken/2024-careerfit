@@ -2,6 +2,7 @@ package com.peach.careerfit.jwt;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -13,6 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.peach.careerfit.auth.model.service.RefreshTokenService;
 import com.peach.careerfit.user.model.dao.UserMapper;
 import com.peach.careerfit.user.model.dto.User;
 
@@ -22,17 +24,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
-
+	
+	public static final long REFRESH_TOKEN_EXPIRE_TIME = 1000L * 60 * 60 * 24 * 15; // 15일로 설정
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
-    public LoginFilter(AuthenticationManager authenticationManager, JwtUtils jwtUtils, UserMapper userMapper) {
+    private final RefreshTokenService refreshTokenService;
+    public LoginFilter(AuthenticationManager authenticationManager, JwtUtils jwtUtils, UserMapper userMapper, RefreshTokenService refreshTokenService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
         this.userMapper = userMapper;
+        this.refreshTokenService = refreshTokenService;
     }
     
-
     @Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException {
@@ -64,8 +68,16 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         GrantedAuthority auth = iterator.next();
         
         String role = auth.getAuthority();
-        String token = jwtUtils.createJwt(user.getUserId(), user.getRole(), user.getEmail(), user.getNickname());
-        response.addHeader("Authorization", "Bearer " + token); // Bearer_ 뒤에 띄어쓰기 한칸
+        String accessToken = jwtUtils.createJwt(user.getUserId(), role, user.getEmail(), user.getNickname());
+        String refreshToken = jwtUtils.craeteRefreshToken(user.getUserId(), role, userEmail, user.getNickname());
+        refreshTokenService.saveRefreshToken(userEmail, refreshToken, REFRESH_TOKEN_EXPIRE_TIME);
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", accessToken);
+        tokens.put("refreshToken", refreshToken);
+        
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(new ObjectMapper().writeValueAsString(tokens));
     }
     
     @Override
