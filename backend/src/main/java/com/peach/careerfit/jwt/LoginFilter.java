@@ -20,6 +20,7 @@ import com.peach.careerfit.user.model.dto.User;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -30,6 +31,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
     private final RefreshTokenService refreshTokenService;
+    
     public LoginFilter(AuthenticationManager authenticationManager, JwtUtils jwtUtils, UserMapper userMapper, RefreshTokenService refreshTokenService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
@@ -57,28 +59,39 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	}
 
 	@Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-    	
-    	String userEmail = authResult.getName();
-    	User user = userMapper.findByUserEmail(userEmail);
+	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+	    
+	    String userEmail = authResult.getName();
+	    User user = userMapper.findByUserEmail(userEmail);
 
-        // role을 뽑아내기 위해 collection 형태로 변환 후 role을 뽑아냄
-        Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>)authResult.getAuthorities();
-        Iterator<GrantedAuthority> iterator = authorities.iterator();
-        GrantedAuthority auth = iterator.next();
-        
-        String role = auth.getAuthority();
-        String accessToken = jwtUtils.createJwt(user.getUserId(), role, user.getEmail(), user.getNickname());
-        String refreshToken = jwtUtils.craeteRefreshToken(user.getUserId(), role, userEmail, user.getNickname());
-        refreshTokenService.saveRefreshToken(userEmail, refreshToken, REFRESH_TOKEN_EXPIRE_TIME);
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("accessToken", accessToken);
-        tokens.put("refreshToken", refreshToken);
-        
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(new ObjectMapper().writeValueAsString(tokens));
-    }
+	    // role을 뽑아내기 위해 collection 형태로 변환 후 role을 뽑아냄
+	    Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>)authResult.getAuthorities();
+	    Iterator<GrantedAuthority> iterator = authorities.iterator();
+	    GrantedAuthority auth = iterator.next();
+	    String role = auth.getAuthority();
+	    
+	    // Access Token 생성
+	    String accessToken = jwtUtils.createJwt(user.getUserId(), role, user.getEmail(), user.getNickname());
+	    
+	    // Refresh Token 생성 및 저장 (Redis)
+	    String refreshToken = jwtUtils.craeteRefreshToken(user.getUserId(), role, userEmail, user.getNickname());
+	    refreshTokenService.saveRefreshToken(userEmail, refreshToken, REFRESH_TOKEN_EXPIRE_TIME);
+	    
+	    // Access Token과 Refresh Token을 JSON 형태로 응답에 추가
+	    response.setContentType("application/json");
+	    response.setCharacterEncoding("UTF-8");
+	    Map<String, String> tokens = new HashMap<>();
+	    tokens.put("accessToken", accessToken);
+	    tokens.put("refreshToken", refreshToken);
+	    new ObjectMapper().writeValue(response.getWriter(), tokens);
+	    
+	    // Refresh Token을 HttpOnly 쿠키에 추가
+	    Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+	    refreshTokenCookie.setHttpOnly(true); // HttpOnly 설정으로 클라이언트 자바스크립트에서 접근 차단
+	    refreshTokenCookie.setMaxAge((int) (JwtUtils.REFRESH_TOKEN_EXPIRE_TIME / 1000)); // 쿠키 만료 시간 설정
+	    refreshTokenCookie.setPath("/"); // 모든 경로에서 사용 가능하도록 설정
+	    response.addCookie(refreshTokenCookie);
+	}
     
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {

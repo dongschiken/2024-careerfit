@@ -6,6 +6,7 @@ import com.peach.careerfit.user.model.dto.User;
 
 public interface UserService {
 	public User findUserByEmail(String email);
+	User findUserByNickname(String nickname);
 	public void registUser(User user);
 	
 	// 마이페이지 조회
@@ -25,4 +26,5 @@ public interface UserService {
 	boolean changePassword(int userId, String newPassword);
 	boolean isPasswordComplexEnough(String password);
 	void sendPasswordChangeEmail(int userId);
+
 }

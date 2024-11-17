@@ -35,6 +35,7 @@ public class SecurityConfig  {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final UserMapper userMapper;
     private final RefreshTokenService refreshTokenService;
+    
     public SecurityConfig(AuthenticationConfiguration authenticationConfiguration
     		, JwtUtils jwtUtils, UserMapper userMapper, RefreshTokenService refreshTokenService
     		) {
@@ -68,11 +69,12 @@ public class SecurityConfig  {
 
         // http basic 인증 방식 disable
         http.httpBasic((auth) -> auth.disable());
+        
         // JWT 인증 / 인가를 위해 필요한 코드
         // 경로별 인가 작업
         // static한 값들에 대해서도 경로를 지정해 줘야한다.
         http.authorizeHttpRequests((auth) -> auth
-        		.requestMatchers("/api/login/**", "/chat/**", "/api/join", "/api/login", "/error" , "/main", "/api/user/**", "/api/chat-rooms/**").permitAll()
+        		.requestMatchers("/", "/index", "/main", "/api/login/**", "/chat/**", "/api/join", "/api/login", "/error" , "/main", "/api/user/**", "/api/chat-rooms/**", "/auth/**", "/api/check-nickname", "/join", "/resource/**").permitAll()
         		.requestMatchers(HttpMethod.GET,  "/api/board/**", "/uploads/**", "/api/board/category").permitAll()
                 .requestMatchers("/assets/**", "/js/**", "/img/**").permitAll() // 정적 리소스 접근 허용
                 .requestMatchers("/admin").hasRole("ADMIN")
@@ -103,8 +105,8 @@ public class SecurityConfig  {
                 new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtils, userMapper, refreshTokenService),
                 UsernamePasswordAuthenticationFilter.class
         );
-        http.addFilterAt(
-                new JwtFilter(jwtUtils), LoginFilter.class
+        http.addFilterBefore(
+                new JwtFilter(jwtUtils), UsernamePasswordAuthenticationFilter.class
         );
         // 세션을 스테이트 리스 상태로 관리하기 위한 코드
         http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
