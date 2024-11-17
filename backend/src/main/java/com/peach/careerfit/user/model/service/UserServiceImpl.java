@@ -127,4 +127,10 @@ public class UserServiceImpl implements UserService {
 		
 		mailSender.send(message);
 	}
+
+	@Override
+	public User findUserByNickname(String nickname) {
+		return userMapper.findByUserNickname(nickname);
+	}
+
 }

@@ -29,41 +29,32 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        // request header에서 Authorization를 찾는다. ( JWT 토큰 )
+    	// Authorization 헤더에서 JWT 토큰을 추출
         String authorization = request.getHeader("Authorization");
 
-        // Authorization을 검증
-        if(authorization == null || !authorization.startsWith("Bearer")) {
-            System.out.println("token null");
-            filterChain.doFilter(request, response);
+        if (authorization != null && authorization.startsWith("Bearer ")) {
+            String token = authorization.substring(7); // "Bearer " 부분 제거
 
-            // 조건에 해당되면 메서드 종료 ( 필수 )
-            return;
+            // 토큰이 유효한지 검사
+            if (!jwtUtils.isExpired(token)) {
+                // JWT가 유효한 경우, 토큰에서 사용자 정보를 추출
+                String userEmail = jwtUtils.getUserEmail(token);
+                String role = jwtUtils.getRole(token);
+
+                // 사용자 정보를 CustomUserDetails 객체로 설정
+                User user = new User();
+                user.setEmail(userEmail);
+                user.setRole(role); // 사용자 역할 설정 (예: ROLE_USER)
+
+                CustomUserDetails customUserDetails = new CustomUserDetails(user);
+
+                // Authentication 객체를 생성하여 SecurityContext에 설정
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
         }
-        // Bearer 제거후 순수 토큰만 가져옴
-        String token = authorization.split(" ")[1];
 
-        // 토큰 소멸시간 검증
-        if(jwtUtils.isExpired(token)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        String userEmail = jwtUtils.getUserEmail(token);
-        String role = jwtUtils.getRole(token);
-
-        // 회원엔티티 생성해서 값 set
-        User user = new User();
-        user.setEmail(userEmail);
-        user.setPassword("temppassword");
-        user.setRole(role);
-        
-        CustomUserDetails customUserDetails = new CustomUserDetails(user);
-
-        Authentication authentication = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
+        // 다음 필터로 요청을 전달
         filterChain.doFilter(request, response);
     }
 }

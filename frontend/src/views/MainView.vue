@@ -8,6 +8,7 @@
 </template>
 
 <script>
+import { useUserStore } from "@/stores/userStore";
 import HeaderView from "@/components/module/MainHeader.vue";
 import FooterView from "@/components/module/MainFooter.vue";
 import MainContent from "@/components/main/MainContent.vue";
@@ -18,6 +19,19 @@ export default {
     HeaderView,
     FooterView,
     MainContent,
+  },
+  computed: {
+    isLoggedIn() {
+      const userStore = useUserStore();
+      return userStore.accessToken !== "";
+    },
+  },
+  mounted() {
+    if (this.isLoggedIn) {
+      // 로그인 상태라면
+      const userStore = useUserStore();
+      userStore.setUser({ nickname: "사용자 이름" }); // 여기에 실제 유저 데이터를 넣으면 됨
+    }
   },
 };
 </script>
