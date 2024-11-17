@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +18,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.peach.careerfit.board.model.dto.Board;
 import com.peach.careerfit.board.model.dto.BoardSearch;
+import com.peach.careerfit.board.model.dto.ResponseBoard;
 import com.peach.careerfit.board.model.service.BoardService;
+import com.peach.careerfit.board.model.service.ViewCountService;
 import com.peach.careerfit.jwt.JwtUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,17 +32,22 @@ import lombok.RequiredArgsConstructor;
 public class BoardRestController {
 
 	private final BoardService boardService;
+	private final ViewCountService viewCountService;
 	private final JwtUtils jwtUtils;
 
 	
 	@GetMapping("/{boardId}")
-	public ResponseEntity<Object> getBoardById(@PathVariable("boardId") int boardId) {
-		Board board = boardService.getBoardById(boardId);
+	public ResponseEntity<Object> getBoardById(@PathVariable("boardId") int boardId,
+											   HttpServletRequest request) {
+		String token = jwtUtils.getAccessToken(request);
+		int userId = jwtUtils.getUserIdFromToken(token);
+		ResponseBoard responseBoard = boardService.getBoardById(boardId, userId);
 		try {
-			if (board == null) {
+			if (responseBoard == null) {
+				viewCountService.incrementViewCount(boardId, userId);
 				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("찾는 데이터가 없습니다.");
 			} else {
-				return ResponseEntity.status(HttpStatus.OK).body(board);
+				return ResponseEntity.status(HttpStatus.OK).body(responseBoard);
 			}
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -54,7 +62,6 @@ public class BoardRestController {
 											   @RequestParam(required = false) String sortOrder) {
 		BoardSearch boardSearch = new BoardSearch(page, searchWord, categoryId, sortOrder);
 		Map<String, Object> response = boardService.getBoardList(boardSearch);
-		System.out.println(response);
 		try {
 			if (response.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("찾는 데이터가 없습니다.");
@@ -66,12 +73,11 @@ public class BoardRestController {
 		}
 	}
 
-	@PostMapping
+	@PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
 	public ResponseEntity<Object> Registboard(@RequestPart(name = "board") Board board,
 											  @RequestPart(name = "files", required = false) List<MultipartFile> files,
 											  HttpServletRequest request) {
 		try {
-			System.out.println("토큰확인");
 			String token = jwtUtils.getAccessToken(request);
 			board.setUserId(1);
 			int status = boardService.registBoard(board, files);
@@ -87,6 +93,7 @@ public class BoardRestController {
 
 	@PutMapping("/{boardId}")
 	public ResponseEntity<Object> setBoardDeleteStatus(@PathVariable("boardId") int boardId) {
+		System.out.println(boardId);
 		int status = boardService.setBoardDeleteStatus(boardId);
 		if (status == 0) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -97,10 +104,12 @@ public class BoardRestController {
 	@PutMapping
 	public ResponseEntity<Object> setboard(@RequestPart(value = "board") Board board,
 										   @RequestPart(value = "files", required = false) List<MultipartFile> files,
-											  HttpServletRequest request) {
+										   HttpServletRequest request) {
 		try {
-			String token = jwtUtils.getAccessToken(request);
-			board.setUserId(jwtUtils.getUserIdFromToken(token));
+//			String token = jwtUtils.getAccessToken(request);
+//			board.setUserId(jwtUtils.getUserIdFromToken(token));
+			//
+			System.out.println(board);
 			int status = boardService.setBoard(board, files);
 			if (status < 1) {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -109,7 +118,7 @@ public class BoardRestController {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body("리소스가 성공적으로 생성되었습니다.");
+		return ResponseEntity.status(HttpStatus.CREATED).body("리소스가 성공적으로 수정되었습니다.");
 	}
 
 }

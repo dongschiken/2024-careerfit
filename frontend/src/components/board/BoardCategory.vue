@@ -85,7 +85,6 @@ onMounted(() => {
 });
 
 const getBoardDetail = (boardId) => {
-  alert("여기");
   router.push({ name: "boardDetail", params: { boardId } });
 };
 </script>

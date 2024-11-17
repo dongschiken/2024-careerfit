@@ -14,57 +14,70 @@ import com.peach.careerfit.board.model.dto.Board;
 import com.peach.careerfit.board.model.dto.BoardImg;
 import com.peach.careerfit.board.model.dto.BoardSearch;
 import com.peach.careerfit.board.model.dto.PageResult;
+import com.peach.careerfit.board.model.dto.ResponseBoard;
 import com.peach.careerfit.file.component.FileStorageComponent;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Service
 public class BoardServiceImpl implements BoardService {
+
+	private final BoardDao boardDao;
+	private final FileStorageComponent fileStorageComponent;
+	private final ViewCountService viewCountService;
+	private static final String type = "Board";
 	
-    private final BoardDao boardDao;
-    private final FileStorageComponent fileStorageComponent;
-    private static final String type = "Board";
-    public BoardServiceImpl(BoardDao boardDao, FileStorageComponent fileStorageComponent) {
-        this.boardDao = boardDao;
-        this.fileStorageComponent = fileStorageComponent;
-    }
-    /**
-     * 게시글 1개 생성 시 생성날짜와 최근업데이트 날짜를 동일하게 설정하고, 파일을 업로드.
-     */
-    @Transactional
-    @Override
-    public int registBoard(Board board, List<MultipartFile> files) {
-        board.setCreatedAt(LocalDateTime.now());
-        board.setUpdatedAt(LocalDateTime.now());
-        int status = boardDao.insertBoard(board);
-        List<BoardImg> boardImgs = fileStorageComponent.saveFiles(files, board.getBoardId(), BoardImg.class, type);
-        if(!boardImgs.isEmpty()) boardDao.insertBoardImgs(boardImgs);
-        return status;
-    }
-    
-    @Transactional
+	/**
+	 * 게시글 1개 생성 시 생성날짜와 최근업데이트 날짜를 동일하게 설정하고, 파일을 업로드.
+	 */
+	@Transactional
+	@Override
+	public int registBoard(Board board, List<MultipartFile> files) {
+		board.setCreatedAt(LocalDateTime.now());
+		board.setUpdatedAt(LocalDateTime.now());
+		int status = boardDao.insertBoard(board);
+		List<BoardImg> boardImgs = fileStorageComponent.saveFiles(files, board.getBoardId(), BoardImg.class, type);
+		if (!boardImgs.isEmpty())
+			boardDao.insertBoardImgs(boardImgs);
+		return status;
+	}
+
+	@Transactional
 	@Override
 	public Map<String, Object> getBoardList(BoardSearch boardSearch) {
 		Map<String, Object> result = new HashMap<>();
-		result.put("boards", boardDao.selectBoardAll(boardSearch));
-		result.put("pageResult", new PageResult(boardSearch.getPage(),
-				boardDao.selectBoardsCount(boardSearch),
+		if(boardSearch.getSortOrder() != null && boardSearch.getSortOrder().equals("조회순")) {
+			System.out.println("조회순 반영");
+			viewCountService.syncViewCountsToDatabase();
+		}
+		List<ResponseBoard> boards = boardDao.selectBoardAll(boardSearch);
+		for (ResponseBoard board : boards) {
+			board.setViewCount(viewCountService.getViewCount(board.getBoardId()));
+		}
+		result.put("boards", boards);
+		result.put("pageResult", new PageResult(boardSearch.getPage(), boardDao.selectBoardsCount(boardSearch),
 				boardSearch.getListSize()));
 		result.put("boardSearch", boardSearch);
 		return result;
 	}
-
-	@Override
-	public Board getBoardById(int boardId) {
-		Board board = boardDao.selectBoardById(boardId);
-		List<BoardImg> boardImgs = boardDao.selectBoardImgbyBoardId(boardId);
-		board.setBoardImgs(boardImgs);
-		return board;
-	}
 	
+	@Transactional
+	@Override
+	public ResponseBoard getBoardById(int boardId, int userId) {
+		viewCountService.incrementViewCount(boardId, userId);
+		ResponseBoard responsBoard = boardDao.selectBoardById(boardId);
+		responsBoard.setViewCount(viewCountService.getViewCount(responsBoard.getBoardId()));
+		List<BoardImg> boardImgs = boardDao.selectBoardImgbyBoardId(boardId);
+		responsBoard.setBoardImgs(boardImgs);
+		return responsBoard;
+	}
+
 	@Override
 	public int setBoardDeleteStatus(int boardId) {
 		return boardDao.updateBoardDeleteWhetherById(boardId);
 	}
-	
+
 	/**
 	 * 기존 이미지를 모두 삭제하고 새로운 이미지를 insert하는 형식
 	 */
@@ -74,8 +87,9 @@ public class BoardServiceImpl implements BoardService {
 		List<BoardImg> boardImgs = fileStorageComponent.saveFiles(files, board.getBoardId(), BoardImg.class, type);
 		int status = boardDao.updateBoard(board);
 		boardDao.deleteBoardImgs(board.getBoardId());
-		boardDao.insertBoardImgs(boardImgs);
+		if (!boardImgs.isEmpty())
+			boardDao.insertBoardImgs(boardImgs);
 		return status;
 	}
-
+	
 }

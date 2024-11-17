@@ -31,7 +31,12 @@ const routes = [
   },
   {
     path: "/write",
-    name: "write",
+    name: "writeRegist",
+    component: BoardWrite,
+  },
+  {
+    path: "/write/:boardId",
+    name: "writeEdit",
     component: BoardWrite,
   },
   {
@@ -44,7 +49,7 @@ const routes = [
     component: ChatView,
   },
   {
-    path: "/board/:boardId",
+    path: "/board/detail/:boardId",
     name: "boardDetail",
     component: BoardDetailView,
     props: true,
