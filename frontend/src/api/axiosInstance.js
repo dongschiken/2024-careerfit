@@ -11,6 +11,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = sessionStorage.getItem("accessToken");
+    alert(`Bearer ${token}`);
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
@@ -45,7 +46,7 @@ api.interceptors.response.use(
 
       try {
         // 리프레시 토큰을 이용해 새로운 액세스 토큰 요청
-        const response = await axios.post(
+        const response = await api.post(
           "http://localhost:8080/api/refresh-token",
           {
             refreshToken,
@@ -66,8 +67,9 @@ api.interceptors.response.use(
         originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
-        console.error("Failed to refresh access token");
-        return Promise.reject(refreshError);
+        console.error("No refresh token found. Redirecting to login...");
+        window.location.href = "/login"; // 로그인 페이지로 리다이렉트
+        return Promise.reject(error);
       }
     }
     return Promise.reject(error);

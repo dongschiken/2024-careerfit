@@ -87,7 +87,6 @@ onMounted(() => {
 
 const getBoardDetail = (boardId) => {
   token.value = sessionStorage.getItem("accessToken");
-  alert(token.value);
   router.push({ name: "boardDetail", params: { boardId } });
 };
 </script>
