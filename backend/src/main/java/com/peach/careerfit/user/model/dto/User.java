@@ -15,7 +15,6 @@ public class User {
 	private int userId;
 	private String email;
 	private String password;
-	private String name;
 	private String nickname;
 	private String profileUrl;
 	private String phone;
@@ -23,11 +22,11 @@ public class User {
 	private String parcelAddress;
 	private String streetAddress;
 	private String detailAddress;
-//	private String refreshToken;
+	private String refreshToken;
 	private double latitude;
 	private double longitude;
 	private LocalDate createdAt;
 	private LocalDate updatedAt;
 	private int status;
-	private String role;
+	private String role = "USER";
 }

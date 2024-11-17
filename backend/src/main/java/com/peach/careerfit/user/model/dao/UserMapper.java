@@ -8,6 +8,7 @@ import com.peach.careerfit.user.model.dto.User;
 @Mapper
 public interface UserMapper {
 	User findByUserEmail(@Param("email") String userEmail);
+	User findByUserNickname(@Param("nickname") String nickname); 
 	void insertUser(User user);
 	
 	// 마이페이지 유저 정보 조회
@@ -24,4 +25,6 @@ public interface UserMapper {
 
 	// 유저 비밀번호 업데이트
 	int updateUserPassword(@Param("user_id") int userId, @Param("password") String password);
+
+
 }

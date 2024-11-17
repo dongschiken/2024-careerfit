@@ -5,13 +5,24 @@ import App from "./App.vue";
 import router from "./router";
 import piniaPersistedstate from "pinia-plugin-persistedstate";
 import api from "./api/axiosInstance";
+import Toast from "vue-toastification";
+import "vue-toastification/dist/index.css";
+
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 
 const app = createApp(App);
 app.use(createPinia());
 app.use(router);
+app.use(Toast);
+
 app.config.globalProperties.$api = api;
 pinia.use(piniaPersistedstate);
 
 app.mount("#app");
+
+// 로그인 후 토큰 저장 함수
+function storeTokens(accessToken, refreshToken) {
+  sessionStorage.setItem("accessToken", accessToken); // 세션 스토리지에 Access Token 저장
+  document.cookie = `refreshToken=${refreshToken}; path=/; HttpOnly`; // 쿠키에 Refresh Token 저장
+}
