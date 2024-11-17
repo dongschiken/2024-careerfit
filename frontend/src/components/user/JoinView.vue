@@ -168,8 +168,8 @@
             <div class="input-with-button">
               <input
                 type="text"
-                id="postalCode"
-                v-model="formData.postalCode"
+                id="postCode"
+                v-model="formData.postCode"
                 class="input-field"
                 placeholder="우편번호"
                 readonly
@@ -244,7 +244,7 @@ export default {
         password: "",
         passwordConfirm: "",
         nickname: "",
-        postalCode: "",
+        postCode: "",
         parcelAddress: "",
         streetAddress: "",
         detailAddress: "",
@@ -306,7 +306,7 @@ export default {
             data.roadAddress || data.autoRoadAddress; // 도로명 주소
 
           // console.log()로 확인해보기
-          console.log("우편번호:", this.formData.postalCode);
+          console.log("우편번호:", this.formData.postCode);
           console.log("지번 주소:", this.formData.parcelAddress);
           console.log("도로명 주소:", this.formData.streetAddress);
         },
