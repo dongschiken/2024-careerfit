@@ -8,16 +8,6 @@ body {
   margin: 0 auto;
 }
 
-.editor {
-  width: 100%;
-  min-height: 300px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  overflow-y: auto;
-}
-
 .editor img {
   max-width: 100%;
   margin-top: 10px;
@@ -27,6 +17,7 @@ body {
   display: flex;
   gap: 10px;
   margin: 15px 0;
+  justify-content: flex-end;
 }
 
 .buttons button {
@@ -35,13 +26,15 @@ body {
   font-size: 16px;
   cursor: pointer;
   border: none;
-  background-color: #007bff;
+  background-color: #ccc;
   color: white;
   border-radius: 5px;
+  min-width: 150px;
+  max-width: 150px;
 }
 
 .buttons button:hover {
-  background-color: #0056b3;
+  background-color: #888;
 }
 
 .submit-btn {
@@ -57,4 +50,170 @@ body {
 
 .submit-btn:hover {
   background-color: #218838;
+}
+
+.container {
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+.write-header {
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
+  /* justify-content: center; */
+  /* align-items: center; */
+}
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 600px;
+  margin: 0 auto;
+  margin-top: 75px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.info-text {
+  font-size: 0.875rem;
+  color: #ff7f32;
+}
+
+.form-input {
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.form-input:focus {
+  border-color: #ff7f32;
+}
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 600px; /* 버튼 컨테이너의 최대 크기 설정 */
+  margin: 0 auto; /* 화면 중앙 배치 */
+}
+
+button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.cancel-button {
+  background-color: #fff;
+  color: #333;
+}
+
+.cancel-button:hover {
+  background-color: #f5f5f5;
+  border-color: #bbb;
+}
+
+.submit-button {
+  background-color: #ff7f32;
+  color: #fff;
+  border-color: #ff7f32;
+}
+
+.submit-button:hover {
+  background-color: #ff5714;
+  border-color: #ff5714;
+}
+.editor {
+  border: 1px solid #ccc;
+  padding: 10px;
+  min-height: 100px;
+  border-radius: 5px;
+  min-height: 300px;
+  min-width: 578px;
+  max-width: 578px;
+  outline: none;
+  transition: border-color 0.3s;
+  position: relative;
+  resize: none;
+  font-size: 1rem;
+  font-family: inherit;
+}
+.editor:focus {
+  border-color: #ff7f32;
+}
+.editor::before {
+  content: "내용을 입력하세요";
+  color: #999;
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  pointer-events: none;
+  display: block;
+}
+
+.editor:empty::before {
+  display: block;
+}
+
+.editor:not(:empty)::before {
+  display: none;
+}
+.content-label {
+  display: flex;
+  margin-top: 25px;
+}
+.image-preview {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 15px;
+  text-align: center;
+}
+
+.preview-item img {
+  max-width: 100%;
+  min-height: 200px;
+  max-height: 200px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.preview-item {
+  position: relative;
+}
+.delete-x {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 22px;
+  height: 22px;
+  background-color: #ffffff;
+  color: #888;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s;
+}
+.delete-x:hover {
+  background-color: #ddd;
 }

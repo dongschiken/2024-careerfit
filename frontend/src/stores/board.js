@@ -19,7 +19,6 @@ export const useBoardStore = defineStore(
       boardList.value = data.boards;
       boardSearch.value = data.boardSearch;
       pageResult.value = data.pageResult;
-      s;
     };
 
     const getBoardCategoryPage = async (
@@ -49,6 +48,7 @@ export const useBoardStore = defineStore(
     };
 
     const getFirstCategoryPage = async () => {
+      alert("여기");
       try {
         const params = {
           searchWord: "",
@@ -57,6 +57,7 @@ export const useBoardStore = defineStore(
           sortOrder: "",
         };
         const response = await axios.get(REST_API_URL, { params });
+        console.log(response);
         boardList.value = response.data.boards;
         boardSearch.value = {
           ...boardSearch.value,
