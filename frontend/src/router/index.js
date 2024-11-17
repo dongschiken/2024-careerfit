@@ -14,25 +14,21 @@ const routes = [
     path: "/",
     name: "main",
     component: MainView,
-    meta: { requiresAuth: false },
   },
   {
     path: "/board",
     name: "board",
     component: BoardContentView,
-    meta: { requiresAuth: true },
   },
   {
     path: "/user/login",
     name: "login",
     component: LoginView,
-    meta: { requiresAuth: false },
   },
   {
     path: "/user/join",
     name: "join",
     component: JoinView,
-    meta: { requiresAuth: false },
   },
   {
     path: "/write",

@@ -40,6 +40,8 @@ public class BoardRestController {
 	public ResponseEntity<Object> getBoardById(@PathVariable("boardId") int boardId,
 											   HttpServletRequest request) {
 		String token = jwtUtils.getAccessToken(request);
+		String authorizationHeader = request.getHeader("Authorization");
+		System.out.println(authorizationHeader);
 		int userId = jwtUtils.getUserIdFromToken(token);
 		ResponseBoard responseBoard = boardService.getBoardById(boardId, userId);
 		try {
@@ -72,14 +74,15 @@ public class BoardRestController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-
+	
 	@PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
 	public ResponseEntity<Object> Registboard(@RequestPart(name = "board") Board board,
 											  @RequestPart(name = "files", required = false) List<MultipartFile> files,
 											  HttpServletRequest request) {
+		
 		try {
 			String token = jwtUtils.getAccessToken(request);
-			board.setUserId(1);
+			board.setUserId(jwtUtils.getUserIdFromToken(token));
 			int status = boardService.registBoard(board, files);
 			if (status < 1) {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

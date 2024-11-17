@@ -74,7 +74,6 @@ export default {
         // 응답 데이터에서 accessToken과 refreshToken을 가져옵니다.
         const accessToken = response.data.accessToken;
         const refreshToken = response.data.refreshToken;
-
         // Access Token이 있는지 확인하고 세션 스토리지에 저장합니다.
         if (accessToken) {
           this.storeTokens(accessToken);

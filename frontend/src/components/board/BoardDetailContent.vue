@@ -55,6 +55,7 @@
 </template>
 
 <script setup>
+import api from "@/api/axiosInstance";
 import { defineProps, computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useBoardStore } from "@/stores/board";
@@ -69,7 +70,7 @@ const user = ref({
   email: "test@example.com",
   role: "",
 });
-const token = `eyJhbGciOiJIUzM4NCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJST0xFX1VTRVIiLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJuaWNrbmFtZSI6Iuq4uOuPmeydtCIsImlhdCI6MTczMTgzNjcxNCwiZXhwIjoxNzMyMDA5NTE0fQ.TV4f1p9uhHTXzs_U6v0U2M0Ud10zkeRNHy6ifo6yvBdWV7tN4xAoxWniTfR6VFB0`;
+const token = sessionStorage.getItem("accessToken");
 defineProps({
   boardId: {
     type: Number,
@@ -83,11 +84,7 @@ const board = ref({
 const boardId = ref(Number(route.params.boardId)); // 명시적 변환
 const getBoard = async (boardId) => {
   try {
-    const response = await axios.get(boardStore.REST_API_URL + `/${boardId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await api.get(`/api/board/${boardId}`);
     board.value = response.data;
     console.log("게시글 데이터:", board.value);
   } catch (error) {

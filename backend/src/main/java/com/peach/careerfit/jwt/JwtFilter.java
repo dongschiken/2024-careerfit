@@ -31,21 +31,17 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
     	// Authorization 헤더에서 JWT 토큰을 추출
         String authorization = request.getHeader("Authorization");
-
         if (authorization != null && authorization.startsWith("Bearer ")) {
             String token = authorization.substring(7); // "Bearer " 부분 제거
-
             // 토큰이 유효한지 검사
             if (!jwtUtils.isExpired(token)) {
                 // JWT가 유효한 경우, 토큰에서 사용자 정보를 추출
                 String userEmail = jwtUtils.getUserEmail(token);
                 String role = jwtUtils.getRole(token);
-
                 // 사용자 정보를 CustomUserDetails 객체로 설정
                 User user = new User();
                 user.setEmail(userEmail);
                 user.setRole(role); // 사용자 역할 설정 (예: ROLE_USER)
-
                 CustomUserDetails customUserDetails = new CustomUserDetails(user);
 
                 // Authentication 객체를 생성하여 SecurityContext에 설정
@@ -53,7 +49,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
-
+        
         // 다음 필터로 요청을 전달
         filterChain.doFilter(request, response);
     }
