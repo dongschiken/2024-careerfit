@@ -180,4 +180,5 @@ public class UserRestController {
 		boolean isAvailable = (user == null);
 		return ResponseEntity.ok(Collections.singletonMap("available", isAvailable));
 	}
+	
 }
