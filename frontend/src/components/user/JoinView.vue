@@ -18,59 +18,62 @@
 
         <form @submit.prevent="handlejoin" class="join-form">
           <!-- 이메일 필드 -->
-          <div class="input-group">
-            <div class="input-with-button">
-              <input
-                type="email"
-                id="email"
-                v-model="formData.email"
-                class="input-field"
-                placeholder="이메일"
-                required
-                @input="validateEmailFormat"
-              />
-              <button
-                type="button"
-                class="check-verification-button"
-                @click="sendEmailVerification"
-              >
-                이메일 인증
-              </button>
-            </div>
-            <span class="error-text" v-if="errors.email">{{
-              errors.email
-            }}</span>
-          </div>
+<div class="input-group">
+  <div class="input-with-button">
+    <input
+      type="email"
+      id="email"
+      v-model="formData.email"
+      class="input-field"
+      placeholder="이메일"
+      required
+      @input="validateEmailFormat"
+    />
+    <button
+      type="button"
+      class="check-verification-button"
+      @click="sendEmailVerification"
+    >
+      이메일 인증
+    </button>
+  </div>
+  <!-- 에러 메시지 -->
+  <span class="error-text" v-if="errors.email">{{ errors.email }}</span>
+  <!-- 성공 메시지 -->
+  <span class="success-text" v-if="emailVerificationSent"
+    >인증 코드가 발송되었습니다.</span
+  >
+</div>
 
-          <!-- 이메일 인증 코드 입력 -->
-          <div class="input-group">
-            <div class="input-with-button">
-              <input
-                type="text"
-                id="verificationCode"
-                v-model="formData.verificationCode"
-                class="input-field"
-                placeholder="인증 코드"
-                required
-              />
-              <span v-if="timer > 0" class="timer-text">{{
-                formattedTimer
-              }}</span>
-              <button
-                type="button"
-                class="check-button"
-                @click="verifyEmailCode"
-              >
-                인증 확인
-              </button>
+             <div class="input-group">
+              <div class="input-with-button">
+                <!-- 인증 코드 입력 필드 -->
+                <input
+                  type="text"
+                  id="verificationCode"
+                  v-model="formData.verificationCode"
+                  class="input-field"
+                  placeholder="인증 코드"
+                  required
+                />
+                <!-- 타이머 표시 -->
+                <span v-if="timer > 0" class="timer-text">{{ formattedTimer }}</span>
+                <!-- 인증 확인 버튼 -->
+                <button type="button" class="check-button" @click="verifyEmailCode">
+                  인증 확인
+                </button>
+              </div>
+
+              <!-- 인증 결과 메시지 -->
+              <!-- 실패 메시지 -->
+              <span class="error-text" v-if="!isEmailVerified && verificationMessage">
+                {{ verificationMessage }}
+              </span>
+              <!-- 성공 메시지 -->
+              <span class="success-text" v-if="isEmailVerified">
+                이메일 인증에 성공하였습니다.
+              </span>
             </div>
-            <span class="error-text" v-if="verificationMessage">{{
-              verificationMessage
-            }}</span>
-            <span class="success-text" v-if="isEmailVerified"
-              >이메일 인증에 성공하였습니다.</span
-            >
-          </div>
 
           <!-- 비밀번호 필드 -->
           <div class="input-group">
@@ -81,6 +84,7 @@
               class="input-field"
               placeholder="비밀번호"
               required
+              @input="validatePassword"
             />
             <span class="error-text" v-if="errors.password">{{
               errors.password
@@ -258,6 +262,7 @@ export default {
         passwordConfirm: "",
         nickname: "",
       },
+      emailVerificationSent: false,
       passwordsMatch: false,
       nicknameAvailable: false,
       nicknameChecked: false,
@@ -288,6 +293,10 @@ export default {
     document.head.appendChild(script);
   },
   methods: {
+    main() {
+      // 메인 페이지로 이동
+      this.$router.push("/");
+    },
     searchAddress() {
       if (typeof daum === "undefined" || !daum.Postcode) {
         console.error("Daum 주소 API가 로드되지 않았습니다.");
@@ -312,45 +321,96 @@ export default {
         },
       }).open();
     },
-    async sendEmailVerification() {
+    async checkEmailDuplicate() {
+  try {
+    const response = await api.get("/api/check-email", {
+      params: { email: this.formData.email },
+    });
+
+    if (response.data.available) {
+      this.errors.email = ""; // 사용 가능하면 오류 메시지 제거
+    } else {
+      this.errors.email = "이미 사용 중인 이메일입니다.";
+    }
+  } catch (error) {
+    console.error("이메일 중복 확인 중 오류 발생:", error);
+    this.errors.email = "이메일 중복 확인에 실패했습니다.";
+  }
+},
+async verifyEmailCode() {
+  if (!this.formData.verificationCode) {
+    this.verificationMessage = "인증 코드를 입력해주세요.";
+    this.isEmailVerified = false;
+    return;
+  }
+
+  try {
+    const response = await api.post("/auth/verify-email-code", {
+      email: this.formData.email,
+      code: this.formData.verificationCode,
+    });
+
+    if (response.data.isValid) {
+      // 성공 시
+      this.isEmailVerified = true;
+      this.verificationMessage = response.data.message || "인증에 성공하였습니다.";
+    } else {
+      // 실패 시
+      this.isEmailVerified = false;
+      this.verificationMessage = response.data.message || "인증 코드가 일치하지 않습니다.";
+    }
+  } catch (error) {
+    console.error("인증 확인 중 오류 발생:", error);
+    this.isEmailVerified = false;
+    this.verificationMessage = "인증 코드 확인에 실패했습니다. 다시 시도해주세요.";
+  }
+},
+
+async sendEmailVerification() {
+      this.errors.email = ""; // 기존 에러 메시지 초기화
+      this.emailVerificationSent = false; // 초기화
+
+      // 이메일 유효성 검증
+      if (!this.formData.email) {
+        this.errors.email = "이메일을 입력해주세요.";
+        return;
+      }
+      if (this.errors.email) return;
+
       try {
         const response = await api.post("/auth/send-email-verification", {
           email: this.formData.email,
         });
-        console.log("이메일 인증 코드 전송 성공:", response);
-        this.startTimer();
+
+        // 성공적으로 인증 코드 발송 시
+        this.emailVerificationSent = true;
+        this.startTimer(); // 타이머 시작
       } catch (error) {
-        console.error("이메일 인증 코드 전송 실패:", error);
-        this.errors.email = "이메일 인증 코드 전송에 실패했습니다.";
+        // 서버에서 에러 메시지 반환
+        if (error.response && error.response.data.message) {
+          this.errors.email = error.response.data.message;
+        } else {
+          this.errors.email = "이메일 인증 요청에 실패했습니다.";
+        }
       }
     },
-    async verifyEmailCode() {
-      if (!this.formData.verificationCode) {
-        this.verificationMessage = "인증 코드를 입력해주세요.";
-        this.isEmailVerified = false;
-        return;
+    validatePassword() {
+      const passwordRegex =
+        /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+      if (!passwordRegex.test(this.formData.password)) {
+        this.errors.password =
+          "비밀번호는 8자 이상이며, 영문, 숫자, 특수문자를 각각 하나 이상 포함해야 합니다.";
+      } else {
+        this.errors.password = "";
       }
-      try {
-        const response = await api.post("/auth/verify-email-code", {
-          email: this.formData.email,
-          code: this.formData.verificationCode,
-        });
-        if (response.data) {
-          this.isEmailVerified = true;
-          this.verificationMessage = "";
-          alert("인증이 완료되었습니다.");
-          clearInterval(this.timerInterval);
-          this.timer = 0;
-        } else {
-          this.isEmailVerified = false;
-          this.verificationMessage =
-            "인증 코드가 일치하지 않습니다. 다시 확인해주세요.";
-        }
-      } catch (error) {
-        console.error("인증 과정에서 문제가 발생했습니다", error);
-        this.isEmailVerified = false;
-        this.verificationMessage =
-          "인증 과정에서 문제가 발생했습니다. 다시 시도해주세요.";
+    },
+    validatePasswordMatch() {
+      this.passwordsMatch =
+        this.formData.password === this.formData.passwordConfirm;
+      if (!this.passwordsMatch) {
+        this.errors.passwordConfirm = "비밀번호가 일치하지 않습니다.";
+      } else {
+        this.errors.passwordConfirm = "";
       }
     },
     startTimer() {
@@ -377,24 +437,33 @@ export default {
       this.checkNicknameDuplicate();
     },
     async checkNicknameDuplicate() {
-      this.nicknameChecked = true;
-      try {
-        const response = await api.get("/api/check-nickname", {
-          params: { nickname: this.formData.nickname },
-        });
-        if (response.data.available) {
-          this.nicknameAvailable = true;
-          this.errors.nickname = "";
-        } else {
-          this.nicknameAvailable = false;
-          this.errors.nickname = "사용할 수 없는 닉네임입니다.";
-        }
-      } catch (error) {
-        console.error("닉네임 중복 확인 실패:", error);
-        this.nicknameAvailable = false;
-        this.errors.nickname = "닉네임 중복 확인 중 오류가 발생했습니다.";
-      }
-    },
+  // 오류 메시지 초기화
+  this.errors.nickname = "";
+  this.nicknameAvailable = false;
+
+  if (!this.formData.nickname.trim()) {
+    this.errors.nickname = "닉네임을 입력해주세요.";
+    return;
+  }
+
+  try {
+    const response = await api.get("/api/check-nickname", {
+      params: { nickname: this.formData.nickname },
+    });
+
+    if (response.data.available) {
+      this.nicknameAvailable = true;
+      this.errors.nickname = ""; // 오류 메시지 초기화
+    } else {
+      this.nicknameAvailable = false;
+      this.errors.nickname = "사용할 수 없는 닉네임입니다.";
+    }
+  } catch (error) {
+    console.error("닉네임 중복 확인 실패:", error);
+    this.nicknameAvailable = false;
+    this.errors.nickname = "닉네임 중복 확인 중 오류가 발생했습니다.";
+  }
+},
     formatPhoneNumber() {
       // 숫자만 남기고 하이픈 추가
       let cleaned = this.formData.phone.replace(/\D/g, "");
@@ -430,42 +499,49 @@ export default {
       }
     },
     async handlejoin() {
-      if (!this.validateForm()) {
-        alert("모든 필수 항목을 올바르게 입력해 주세요.");
-        return;
-      }
+  // 오류 메시지 초기화
+  this.errors = {
+    nickname: "",
+    email: "",
+    password: "",
+    phone: "",
+    verificationCode: "",
+  };
 
-      console.log("회원가입 시도 전 formData 확인:", this.formData);
+  // 유효성 검사
+  if (!this.validateForm()) {
+    alert("모든 필수 항목을 올바르게 입력해 주세요.");
+    return;
+  }
 
-      try {
-        const response = await api.post("/api/join", this.formData, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        console.log("회원가입 성공:", response);
-        alert("회원가입이 완료되었습니다.");
-        window.location.href = "http://localhost:3000/user/login";
-      } catch (error) {
-        if (error.response) {
-          console.error("회원가입 실패 - 서버 응답 에러:", error.response.data);
-          alert(
-            `회원가입에 실패하였습니다: ${
-              error.response.data.message || "알 수 없는 오류"
-            }`
-          );
-        } else if (error.request) {
-          console.error(
-            "회원가입 실패 - 서버에 요청을 보내지 못함:",
-            error.request
-          );
-          alert("서버에 요청을 보내지 못했습니다. 네트워크 상태를 확인하세요.");
-        } else {
-          console.error("회원가입 실패 - 설정 오류:", error.message);
-          alert("회원가입 과정에서 문제가 발생했습니다. 다시 시도해 주세요.");
-        }
-      }
-    },
+  console.log("회원가입 시도 전 formData 확인:", this.formData);
+
+  try {
+    const response = await api.post("/api/join", this.formData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    console.log("회원가입 성공:", response);
+    alert("회원가입이 완료되었습니다!");
+    window.location.href = "http://localhost:3000/user/login";
+  } catch (error) {
+    if (error.response) {
+      console.error("회원가입 실패 - 서버 응답 에러:", error.response.data);
+      alert("회원가입에 실패하였습니다: 이메일 또는 닉네임이 중복되었습니다.");
+    } else if (error.request) {
+      console.error(
+        "회원가입 실패 - 서버에 요청을 보내지 못함:",
+        error.request
+      );
+      alert("서버에 요청을 보내지 못했습니다. 네트워크 상태를 확인하세요.");
+    } else {
+      console.error("회원가입 실패 - 설정 오류:", error.message);
+      alert("회원가입 과정에서 문제가 발생했습니다. 다시 시도해주세요.");
+    }
+  }
+},
+
     validateForm() {
       let isValid = true;
       this.errors = {
@@ -502,10 +578,10 @@ export default {
       }
 
       // 닉네임 중복 확인
-      if (!this.nicknameChecked || !this.nicknameAvailable) {
-        this.errors.nickname = "닉네임 중복 확인이 필요합니다.";
-        isValid = false;
-      }
+  if (!this.nicknameAvailable) {
+    this.errors.nickname = "닉네임 중복 확인이 필요합니다.";
+    isValid = false;
+  }
 
       return isValid;
     },
@@ -636,7 +712,8 @@ export default {
 }
 
 .timer-text {
-  color: #444;
+  color: #ff9800; /* 주황색 */
+  font-weight: bold;
   font-size: 14px;
   margin-left: 2px;
   margin-top: 22px;

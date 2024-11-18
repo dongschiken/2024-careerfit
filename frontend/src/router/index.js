@@ -34,12 +34,12 @@ const routes = [
     path: "/write",
     name: "writeRegist",
     component: BoardWrite,
+    meta: { requiresAuth: true },
   },
   {
     path: "/write/:boardId",
     name: "writeEdit",
     component: BoardWrite,
-    meta: { requiresAuth: true },
   },
   {
     path: "/meal",

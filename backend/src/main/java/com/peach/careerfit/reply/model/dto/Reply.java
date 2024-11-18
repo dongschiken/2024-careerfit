@@ -18,4 +18,13 @@ public class Reply {
 	private int depth;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
+	
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+	
+	
 }

@@ -18,9 +18,15 @@
           </p>
         </div>
         <div class="user-profile-group">
-          <div class="user-profile-img">
-            <img src="@/assets/img/snoopy.png" alt="" />
-          </div>
+          <div
+            class="author-avatar"
+            :class="{
+              'gradient-animation':
+                !board.user.profileUrl ||
+                board.user.profileUrl === '' ||
+                board.user.profileUrl == null,
+            }"
+          ></div>
           <div class="user-profile-name">{{ board.user.nickname }}</div>
         </div>
         <div class="board-content-left-category">{{ board.category.name }}</div>
@@ -71,7 +77,7 @@
 import { useRouter } from "vue-router";
 import { useBoardStore } from "@/stores/board";
 import axios from "axios";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 const boardStore = useBoardStore();
 const router = useRouter();
 const token = ref("");
@@ -79,16 +85,22 @@ function mainImage(board) {
   return board.boardImgs.find((img) => img.mainWhether === "M");
 }
 
+const getBoardDetail = (boardId) => {
+  router.push({ name: "boardDetail", params: { boardId } });
+};
+
+// 이미지 배경 스타일
+function getBackgroundImage(profileUrl) {
+  return profileUrl
+    ? { backgroundImage: `url(${profileUrl})` }
+    : { background: "linear-gradient(135deg, #FF7F50, #FFB6C1, #87CEFA)" };
+}
+
 onMounted(() => {
   axios.get(boardStore.REST_API_URL).then((response) => {
     boardStore.getBoardList(response.data);
   });
 });
-
-const getBoardDetail = (boardId) => {
-  token.value = sessionStorage.getItem("accessToken");
-  router.push({ name: "boardDetail", params: { boardId } });
-};
 </script>
 
 <style lang="css" scoped>
@@ -101,6 +113,26 @@ const getBoardDetail = (boardId) => {
 div.board-content-right-img.obj-div > img {
   border-radius: 10px;
 }
-.board-content-content > p {
+.gradient-animation {
+  background: linear-gradient(135deg, #ff7f50, #ffb6c1, #87cefa);
+  background-size: 200% 200%;
+  animation: gradientShift 5s infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+.author-avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
 }
 </style>

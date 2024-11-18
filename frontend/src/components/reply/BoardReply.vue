@@ -7,7 +7,7 @@
         placeholder="댓글 작성."
         rows="3"
       ></textarea>
-      <button @click="registReply" class="reply-button">댓글 쓰기</button>
+      <button @click="registReply()" class="reply-button">댓글 쓰기</button>
     </div>
 
     <!-- 댓글 리스트 -->
@@ -40,13 +40,15 @@
 
 <script setup>
 import axios from "axios";
+import api from "@/api/axiosInstance";
 import { ref, onMounted } from "vue";
 
+const reply = ref({});
 const replies = ref([]);
 
 const registReply = async () => {
   try {
-    const response = await axios.post();
+    const response = await api.post("/api/reply");
   } catch (error) {}
 };
 </script>

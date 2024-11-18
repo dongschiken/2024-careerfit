@@ -10,15 +10,12 @@ import "vue-toastification/dist/index.css";
 
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
-
+pinia.use(piniaPersistedstate);
 const app = createApp(App);
-app.use(createPinia());
+app.use(pinia);
 app.use(router);
 app.use(Toast);
-
 app.config.globalProperties.$api = api;
-pinia.use(piniaPersistedstate);
-
 app.mount("#app");
 
 // 로그인 후 토큰 저장 함수
