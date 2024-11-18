@@ -33,6 +33,12 @@ public class RefreshRestController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 리프레시 토큰입니다.");
 		}
 		String newAccessToken = jwtUtils.createJwt(userId, refreshToken, userEmail, userEmail);
+		
+		Cookie cookie
+		
+		
+		
+		
 		return ResponseEntity.status(HttpStatus.OK).body(new JwtResponse(newAccessToken));
 	}
 	
