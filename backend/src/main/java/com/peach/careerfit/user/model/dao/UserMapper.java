@@ -26,5 +26,5 @@ public interface UserMapper {
 	// 유저 비밀번호 업데이트
 	int updateUserPassword(@Param("user_id") int userId, @Param("password") String password);
 
-
+	int countByEmail(@Param("email") String email);
 }

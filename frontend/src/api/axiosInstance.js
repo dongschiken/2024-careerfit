@@ -2,6 +2,7 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: "http://localhost:8080", // 백엔드의 기본 API URL로 설정
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
@@ -11,7 +12,6 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = sessionStorage.getItem("accessToken");
-    alert(`Bearer ${token}`);
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }

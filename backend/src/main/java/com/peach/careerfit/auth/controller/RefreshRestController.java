@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,16 +27,20 @@ public class RefreshRestController {
 		this.refreshTokenService = refreshTokenService;
 	}
 	
-	@PostMapping
-	public ResponseEntity<Object> refreshToken(@RequestBody TokenRequest tokenRequest) {
-		String refreshToken = tokenRequest.getRefreshToken(); 
-		String userEmail = jwtUtils.getUserEmail(refreshToken);
-		int userId = jwtUtils.getUserIdFromToken(refreshToken);
-		if(!refreshTokenService.validateRefreshToken(userEmail, refreshToken)) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 리프레시 토큰입니다.");
-		}
-		String newAccessToken = jwtUtils.createJwt(userId, refreshToken, userEmail, userEmail);
-		 return ResponseEntity.status(HttpStatus.OK).body(Map.of("accessToken", newAccessToken, "refreshToken", refreshToken));
-	}
+	 @PostMapping
+	   public ResponseEntity<Object> refreshToken(@CookieValue(name = "refreshToken", required = false) String refreshToken) {
+	       if (refreshToken == null) {
+	           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("리프레시 토큰이 없습니다.");
+	       }
+
+	       String userEmail = jwtUtils.getUserEmail(refreshToken);
+	       int userId = jwtUtils.getUserIdFromToken(refreshToken);
+	       if (!refreshTokenService.validateRefreshToken(userEmail, refreshToken)) {
+	           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 리프레시 토큰입니다.");
+	       }
+
+	       String newAccessToken = jwtUtils.createJwt(userId, jwtUtils.getRole(refreshToken), userEmail, userEmail);
+	       return ResponseEntity.status(HttpStatus.OK).body(Map.of("accessToken", newAccessToken));
+	   }
 	
 }
