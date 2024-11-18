@@ -81,7 +81,7 @@ public class ViewCountService {
 		if (keys != null) {
 			for (String key : keys) {
 				if (key.contains(":userId:")) {
-					continue;
+					redisTemplate.delete(key);
 				}
 				Integer boardId = Integer.parseInt(key.split(":")[2]);
 				Integer viewCount = Integer.parseInt(redisTemplate.opsForValue().get(key).toString());
