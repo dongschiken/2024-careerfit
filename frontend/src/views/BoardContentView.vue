@@ -108,14 +108,28 @@ import FooterView from "@/components/module/MainFooter.vue";
 import BoardCategory from "@/components/board/BoardCategory.vue";
 import axios from "axios";
 import BoardPage from "@/components/board/BoardPage.vue";
-
+const sortOrder = ref("");
+const boardStore = useBoardStore();
+const boardCategories = ref([]);
 const search = ref({
   searchWord: "",
   page: 1,
 });
-const sortOrder = ref("");
-const boardStore = useBoardStore();
-const boardCategories = ref([]);
+
+const resetData = () => {
+  search.value = {
+    searchWord: "",
+    page: 1,
+  };
+  sortOrder.value = "";
+  boardStore.boardSearch = "";
+  boardStore.pageResult = "";
+};
+
+const getFirstCategoryPage = () => {  
+  resetData();
+  boardStore.getFirstCategoryPage();
+};
 
 onMounted(() => {
   axios.get(boardStore.REST_API_URL + "/category").then((response) => {
@@ -130,10 +144,6 @@ const getBoardCategoryPage = (boardCategoryId) => {
     1,
     sortOrder.value
   );
-};
-
-const getFirstCategoryPage = () => {
-  boardStore.getFirstCategoryPage();
 };
 </script>
 

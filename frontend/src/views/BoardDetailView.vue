@@ -1,11 +1,9 @@
 <template>
   <div>
-    <h1>게시글 상세 보기</h1>
-    <div v-if="boardDetail">
-      <h2>{{ boardDetail.title }}</h2>
-      <p>{{ boardDetail.content }}</p>
-      <!-- 게시글의 다른 세부 정보 -->
-    </div>
+    <MainHeader />
+    <BoardDetailContent />
+    <BoardReply />
+    <MainFooter />
   </div>
 </template>
 
@@ -13,6 +11,10 @@
 import { useBoardStore } from "@/stores/board";
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
+import BoardReply from "@/components/reply/BoardReply.vue";
+import BoardDetailContent from "@/components/board/BoardDetailContent.vue";
+import MainHeader from "@/components/module/MainHeader.vue";
+import MainFooter from "@/components/module/MainFooter.vue";
 import axios from "axios";
 const BoardStore = useBoardStore();
 const route = useRoute();

@@ -25,6 +25,6 @@
         WHERE 
         	ch.chat_room_id = #{chatRoomId}
         ORDER BY 
-        	ch.send_date ASC
+        	ch.send_date ASC;
     </select>
 </mapper>

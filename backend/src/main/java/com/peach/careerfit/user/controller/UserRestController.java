@@ -1,9 +1,12 @@
 package com.peach.careerfit.user.controller;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +23,7 @@ import com.peach.careerfit.user.model.service.UserService;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserRestController {
 
 	private final UserService userService;
@@ -27,7 +31,7 @@ public class UserRestController {
 	public UserRestController(UserService userService) {
 		this.userService = userService;
 	}
-	
+
 //	// 로그인
 //	@PostMapping("/login")
 //	public ResponseEntity<Object> getUser(@RequestBody LoginRequest loginRequest) {
@@ -168,5 +172,12 @@ public class UserRestController {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
 		}
+	}
+
+	@GetMapping("/check-nickname")
+	public ResponseEntity<Map<String, Boolean>> checkNicknameDuplicate(@RequestParam("nickname") String nickname) {
+		User user = userService.findUserByNickname(nickname);
+		boolean isAvailable = (user == null);
+		return ResponseEntity.ok(Collections.singletonMap("available", isAvailable));
 	}
 }

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <HeaderView />
     <div class="login-page">
       <div class="login-container">
         <h1 class="login-title" @click="main">CAREER FIT</h1>
@@ -49,6 +48,8 @@
 </template>
 
 <script>
+import api from "@/api/axiosInstance";
+
 export default {
   name: "LoginView",
   data() {
@@ -60,9 +61,36 @@ export default {
     };
   },
   methods: {
-    handleLogin() {
+    async handleLogin() {
       console.log("로그인 시도:", this.formData);
+
+      try {
+        // 로그인 요청을 보냅니다.
+        const response = await api.post("/login", this.formData);
+
+        // 응답 확인
+        console.log("로그인 응답:", response);
+
+        // 응답 데이터에서 accessToken과 refreshToken을 가져옵니다.
+        const accessToken = response.data.accessToken;
+        const refreshToken = response.data.refreshToken;
+        // Access Token이 있는지 확인하고 세션 스토리지에 저장합니다.
+        if (accessToken) {
+          this.storeTokens(accessToken);
+        } else {
+          throw new Error("Access Token을 찾을 수 없습니다.");
+        }
+
+        alert("로그인에 성공했습니다.");
+
+        // 로그인 성공 후 라우터를 사용해 메인 페이지로 이동
+        this.$router.push("/");
+      } catch (error) {
+        console.error("로그인 실패", error);
+        alert("로그인에 실패했습니다. 이메일 또는 비밀번호를 확인하세요.");
+      }
     },
+
     handleSignup() {
       this.$router.push("/user/join");
     },
@@ -71,6 +99,9 @@ export default {
     },
     main() {
       this.$router.push("/");
+    },
+    storeTokens(accessToken) {
+      sessionStorage.setItem("accessToken", accessToken);
     },
   },
 };

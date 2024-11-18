@@ -1,99 +1,93 @@
 <template>
   <div class="chat-container">
-    <!-- 유저 정보 -->
-    <div class="chat-header">
-      <img :src="userProfileUrl" alt="프로필 이미지" />
-      <div>
-        <h3>{{ userName }}</h3>
-        <p>{{ userStatus }}</p> <!-- 유저 상태 표시 (예: "온라인", "오프라인") -->
-      </div>
-    </div>
-
     <!-- 채팅 메시지 목록 -->
     <div class="chat-messages">
       <ul>
-        <li v-for="(message, index) in messages" :key="index" class="message-item">
-          {{ message.senderNickname }}: {{ message.message }}
-          <span class="timestamp">{{ message.sendDate }}</span>
+        <li
+          v-for="(message, index) in messages"
+          :key="index"
+          class="message-item"
+        >
+          <div>{{ message.senderNickname }}: {{ message.message }}</div>
+          <span class="timestamp">{{ formatTime(message.sendDate) }}</span>
         </li>
       </ul>
     </div>
 
-    <!-- 메시지 입력 폼 -->
+    <!-- 임시 버튼을 클릭하면 모달 창을 확인할 수 있도록 설정 -->
+    <button @click="toggleModal">채팅창 열기</button>
+
+    <!-- 채팅 입력 -->
     <div class="chat-input">
-      <input v-model="messageContent" placeholder="메시지를 입력해주세요" />
+      <input
+        v-model="messageContent"
+        placeholder="메시지를 입력해주세요"
+        maxlength="255"
+      />
       <button @click="sendMessage">전송</button>
+      <span>{{ messageContent.length }}/255</span>
+    </div>
+
+    <!-- 모달 창 -->
+    <div v-if="isModalVisible" class="chat-modal">
+      <div class="modal-content">
+        <h3>채팅방</h3>
+        <div class="chat-messages">
+          <ul>
+            <li
+              v-for="(message, index) in messages"
+              :key="index"
+              class="message-item"
+            >
+              <div>{{ message.senderNickname }}: {{ message.message }}</div>
+              <span class="timestamp">{{ formatTime(message.sendDate) }}</span>
+            </li>
+          </ul>
+        </div>
+        <button @click="closeModal">닫기</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import SockJS from "sockjs-client";
-import Stomp from "stompjs";
-import axios from "axios"; // 서버에서 데이터 가져오기 위해 axios 사용
-
 export default {
   data() {
     return {
       stompClient: null,
       messageContent: "",
       messages: [],
-      userName: "",          // 서버에서 받아올 유저 이름
-      userProfileUrl: "",    // 서버에서 받아올 유저 프로필 이미지 URL
-      userStatus: "",        // 서버에서 받아올 유저 상태 (예: 온라인, 오프라인)
-      chatRoomId: 1,         // 채팅방 ID (기본값을 설정하거나 동적으로 설정 가능)
-      userId: 123,           // 유저 ID (Vuex나 로그인 정보로 설정 가능)
+      userName: "스노우볼",
+      userId: 123,
+      isModalVisible: false, // 모달 표시 여부
     };
   },
   methods: {
-    connect() {
-      const socket = new SockJS("http://localhost:8080/chat"); // 서버와 WebSocket 연결
-      this.stompClient = Stomp.over(socket);
-      this.stompClient.connect({}, (frame) => {
-        console.log("Connected: " + frame);
-        this.stompClient.subscribe("/topic/chatRoom/" + this.chatRoomId, (message) => {
-          this.showMessage(JSON.parse(message.body)); // 서버로부터 받은 메시지만 화면에 표시
-        });
+    formatTime(time) {
+      const date = new Date(time);
+      return date.toLocaleTimeString("ko-KR", {
+        hour: "2-digit",
+        minute: "2-digit",
       });
     },
     sendMessage() {
-      if (this.messageContent.trim() !== "") {
+      if (this.messageContent.trim()) {
         const message = {
-          chatRoomId: this.chatRoomId,
           senderId: this.userId,
+          senderNickname: this.userName,
           message: this.messageContent,
           sendDate: new Date().toISOString(),
-          senderNickname: this.userName,
         };
-        
-        // 서버로 메시지 전송
-        this.stompClient.send(`/app/sendMessage/${this.chatRoomId}`, {}, JSON.stringify(message));
-        
-        // 메시지 전송 후 입력 필드 초기화
-        this.messageContent = ""; 
+        this.messages.push(message); // 메시지를 보내고 리스트에 추가
+        this.messageContent = ""; // 입력창 초기화
       }
     },
-    showMessage(message) {
-      this.messages.push(message); // 서버로부터 받은 메시지를 화면에 추가
+    toggleModal() {
+      this.isModalVisible = !this.isModalVisible; // 모달 열기/닫기
     },
-
-    fetchUserInfo() {
-      // 예시 API 호출 (실제 API 경로는 변경 필요)
-      axios.get("/api/user-info")
-        .then((response) => {
-          const userData = response.data;
-          this.userName = userData.userName;
-          this.userProfileUrl = userData.userProfileUrl;
-          this.userStatus = userData.userStatus; // 예: 온라인, 오프라인 상태
-        })
-        .catch((error) => {
-          console.error("유저 정보를 불러오는 중 오류 발생:", error);
-        });
-    }
-  },
-  mounted() {
-    this.connect();  // WebSocket 연결
-    this.fetchUserInfo();  // 컴포넌트가 마운트될 때 유저 정보 로드
+    closeModal() {
+      this.isModalVisible = false; // 모달 닫기
+    },
   },
 };
 </script>
@@ -102,32 +96,61 @@ export default {
 .chat-container {
   width: 100%;
 }
-.chat-header {
+
+.chat-messages {
+  height: 300px;
+  overflow-y: scroll;
+  margin-bottom: 10px;
+}
+
+.message-item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.chat-input {
   display: flex;
   align-items: center;
 }
-.chat-messages {
-  height: 300px;
-  overflow-y: auto;
-}
-.chat-input {
-  display: flex;
-}
+
 input {
   flex-grow: 1;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
 }
+
 button {
-  width: 50px;
+  background-color: #ff7f50;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
 }
+
+.chat-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 600px;
+}
+
 .timestamp {
   font-size: 0.8em;
   color: gray;
-}
-.message-item {
-  background-color: #ffa500; /* 메시지 배경색 */
-  margin-bottom: 10px; /* 메시지 간격 */
-  padding: 10px; /* 메시지 내부 여백 */
-  border-radius: 20px; /* 메시지 모서리 둥글게 */
-  color: white; /* 글자 색상 */
 }
 </style>

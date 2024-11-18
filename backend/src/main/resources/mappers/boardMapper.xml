@@ -17,6 +17,7 @@
 		<result property="address" column="address" />
 		<result property="deleteWhether" column="delete_whether" />
 		<result property="timeAgo" column="time_ago" />
+		
 		<association property="user" javaType="User">
 			<id property="userId" column="user_id" />
 			<result property="email" column="email" />
@@ -68,7 +69,7 @@
 	<select id="selectBoardAll" resultMap="BoardResultMap" parameterType="BoardSearch">
 	    <![CDATA[
 	        SELECT b.board_id, u.email, u.nickname, c.name, b.delete_whether, title, 
-						content, like_count, view_count, b.created_at, b.updated_at, address,
+						content, like_count, b.created_at, b.updated_at, address,
 						board_img_id, path, system_name, origin_name, main_whether, 
 				CASE
 				   WHEN TIMESTAMPDIFF(SECOND, b.created_at, NOW()) < 60 
@@ -110,10 +111,10 @@
 						ORDER BY created_at ASC
 					</if>
 					<if test="sortOrder == '인기순'">
-						ORDER BY like_count, created_at DESC
+						ORDER BY like_count DESC, created_at DESC
 					</if>
 					<if test="sortOrder == '조회순'">
-						ORDER BY view_count, created_at DESC
+						ORDER BY view_count DESC, created_at DESC
 					</if>
 				</when>
 				<otherwise>
@@ -139,14 +140,25 @@
 		</where>
 	</select>
 	
-	<select id="selectBoardById" resultType="Board"
+	<select id="selectBoardById" resultMap="BoardResultMap"
 		parameterType="int">
-		SELECT board_id, user_id, category_id, title, content,
-		like_count,
-		view_count, created_at, updated_at, address
-		FROM board
+		<![CDATA[
+		SELECT b.board_id, u.email, u.nickname, u.profile_url, c.board_category_id, c.name, b.delete_whether, title, 
+						content, like_count, b.created_at, b.updated_at, address,
+				CASE
+				   WHEN TIMESTAMPDIFF(SECOND, b.created_at, NOW()) < 60 
+					   THEN CONCAT(TIMESTAMPDIFF(SECOND, b.created_at, NOW()), '초 전')
+		           WHEN TIMESTAMPDIFF(MINUTE, b.created_at, NOW()) < 60 
+		               THEN CONCAT(TIMESTAMPDIFF(MINUTE, b.created_at, NOW()), '분 전')
+		           WHEN TIMESTAMPDIFF(HOUR, b.created_at, NOW()) < 24 
+		               THEN CONCAT(TIMESTAMPDIFF(HOUR, b.created_at, NOW()), '시간 전')
+		           ELSE CONCAT(TIMESTAMPDIFF(DAY, b.created_at, NOW()), '일 전')
+		       END AS time_ago
+			FROM board b JOIN user u ON u.user_id = b.user_id
+							 JOIN board_category c ON c.board_category_id = b.category_id
 		WHERE
-		board_id = #{boardId} AND delete_whether LIKE 'N'
+		b.board_id = #{boardId} AND delete_whether LIKE 'N'
+		]]>
 	</select>
 
 	<select id="selectBoardImgbyBoardId" resultType="BoardImg"
@@ -163,6 +175,32 @@
 		SET delete_whether = 'Y'
 		WHERE board_id = #{boardId}
 	</update>
-
-
+	
+	<update id="updateBoard" parameterType="Board">
+		UPDATE board
+		SET 
+			title = #{title},
+			content = #{content},
+			category_id = #{categoryId}
+		WHERE board_id = #{boardId}
+	</update>
+	
+	<delete id="deleteBoardImgs" parameterType="int">
+		DELETE FROM board_img
+		WHERE board_id = #{boardId}
+	</delete>
+	
+	<update id="updateViewCount" parameterType="map">
+		UPDATE board
+		SET 
+			view_count = #{viewCount}
+		WHERE board_id = #{boardId}
+	</update>
+	
+	<select id="getViewCount" parameterType="int">
+		SELECT view_count
+		FROM board
+		WHERE board_id = #{boardId}
+	</select>
+	
 </mapper>

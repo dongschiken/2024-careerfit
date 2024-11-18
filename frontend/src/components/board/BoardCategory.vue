@@ -71,9 +71,10 @@
 import { useRouter } from "vue-router";
 import { useBoardStore } from "@/stores/board";
 import axios from "axios";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 const boardStore = useBoardStore();
 const router = useRouter();
+const token = ref("");
 function mainImage(board) {
   return board.boardImgs.find((img) => img.mainWhether === "M");
 }
@@ -85,7 +86,7 @@ onMounted(() => {
 });
 
 const getBoardDetail = (boardId) => {
-  alert("여기");
+  token.value = sessionStorage.getItem("accessToken");
   router.push({ name: "boardDetail", params: { boardId } });
 };
 </script>
@@ -99,5 +100,7 @@ const getBoardDetail = (boardId) => {
 }
 div.board-content-right-img.obj-div > img {
   border-radius: 10px;
+}
+.board-content-content > p {
 }
 </style>

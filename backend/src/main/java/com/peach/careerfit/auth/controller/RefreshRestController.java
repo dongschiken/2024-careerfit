@@ -1,5 +1,7 @@
 package com.peach.careerfit.auth.controller;
 
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,13 +35,7 @@ public class RefreshRestController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 리프레시 토큰입니다.");
 		}
 		String newAccessToken = jwtUtils.createJwt(userId, refreshToken, userEmail, userEmail);
-		
-		Cookie cookie
-		
-		
-		
-		
-		return ResponseEntity.status(HttpStatus.OK).body(new JwtResponse(newAccessToken));
+		 return ResponseEntity.status(HttpStatus.OK).body(Map.of("accessToken", newAccessToken, "refreshToken", refreshToken));
 	}
 	
 }
