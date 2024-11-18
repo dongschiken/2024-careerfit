@@ -1,5 +1,6 @@
 package com.peach.careerfit.reply.model.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +30,8 @@ public class ReplyServiceImpl implements ReplyService{
 
 	@Override
 	public int registReply(Reply reply) {
+		reply.setCreatedAt(LocalDateTime.now());
+		reply.setUpdatedAt(LocalDateTime.now());
 		int status = replyDao.insertReply(reply);
 		return status;
 	}

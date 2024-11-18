@@ -65,7 +65,7 @@ export default {
   },
   setup() {
     const userStore = useUserStore();
-    const isLoggedIn = computed(() => userStore.accessToken !== "");
+    const isLoggedIn = computed(() => false);
 
     const handleLogout = () => {
       userStore.clearUser();
