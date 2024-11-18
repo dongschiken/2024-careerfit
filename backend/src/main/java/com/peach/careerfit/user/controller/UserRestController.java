@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,9 +18,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.peach.careerfit.auth.model.service.RefreshTokenService;
+import com.peach.careerfit.jwt.JwtUtils;
 import com.peach.careerfit.user.model.dto.PasswordChangeRequest;
 import com.peach.careerfit.user.model.dto.User;
 import com.peach.careerfit.user.model.service.UserService;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api")
@@ -27,9 +34,12 @@ import com.peach.careerfit.user.model.service.UserService;
 public class UserRestController {
 
 	private final UserService userService;
-
-	public UserRestController(UserService userService) {
+	private final RefreshTokenService refreshTokenService;
+	private final JwtUtils jwtUtils;
+	public UserRestController(UserService userService, RefreshTokenService refreshTokenService, JwtUtils jwtUtils) {
 		this.userService = userService;
+		this.refreshTokenService = refreshTokenService;
+		this.jwtUtils = jwtUtils;
 	}
 
 //	// 로그인
@@ -64,7 +74,27 @@ public class UserRestController {
 //			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("잘못된 이메일 또는 비밀번호입니다.");
 //		}
 //	}
-
+	
+	// 로그아웃
+	@DeleteMapping
+	public ResponseEntity<Object> doLogout(HttpServletRequest request, HttpServletResponse response) {
+		// 1. 쿠키에서 refreshToken 삭제
+		System.out.println("여기");
+	    Cookie cookie = new Cookie("refreshToken", null);
+	    cookie.setMaxAge(0); // 쿠키 삭제
+	    cookie.setHttpOnly(true); // 보안 설정
+	    cookie.setPath("/");
+	    response.addCookie(cookie);
+	    // 2. JWT에서 email 추출
+	   
+	    String email = jwtUtils.getUserEmail(jwtUtils.getAccessToken(request));
+	    if (email == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+	    }
+	    refreshTokenService.deleteRefreshToken(email);
+	    return ResponseEntity.ok().body("Logged out successfully");
+	}
+	
 	// 회원가입
 	@PostMapping("/join")
 	public ResponseEntity<Object> doRegist(@RequestBody User user) {
