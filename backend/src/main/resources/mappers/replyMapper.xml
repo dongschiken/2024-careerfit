@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.peach.careerfit.reply.model.dao.ReplyDao">
+	
+	<resultMap type="ResponseReply" id="ResponseReply">
+	    <id property="replyId" column="reply_id"/>
+	    <result property="boardId" column="board_id"/>
+	    <result property="parentReplyId" column="parent_reply_id"/>
+	    <result property="content" column="content"/>
+	    <result property="depth" column="depth"/>
+	    <result property="dateAgo" column="date_ago"/>
+	    <result property="createdAt" column="created_at"/>
+	    <result property="updatedAt" column="updated_at"/>
+
+	    <association property="user" javaType="User">
+	        <id property="userId" column="user_id"/>
+	        <result property="name" column="user_name"/>
+	        <result property="nickname" column="nickname"/>
+	    </association>
+	</resultMap>
+	
+	<insert id="insertReply" parameterType="Reply" >
+		INSERT INTO reply (user_id, board_id, parent_reply_id, content, depth, created_at, updated_at)
+		VALUES (#{userId}, #{boardId}, #{parentReplyId}, #{content}, #{depth}, #{createdAt}, #{updatedAt})  
+	</insert>
+	
+	<select id="selectReplyByBoardId" parameterType="int" resultMap="ResponseReply">
+	<![CDATA[
+		SELECT reply_id, u.user_id, board_id, u.nickname, parent_reply_id,
+		u.profile_url, r.content, r.created_at, r.updated_at,
+			CASE
+				WHEN TIMESTAMPDIFF(SECOND, r.created_at, NOW()) < 60 
+					THEN CONCAT(TIMESTAMPDIFF(SECOND, r.created_at, NOW()), '초 전')
+				WHEN TIMESTAMPDIFF(MINUTE, r.created_at, NOW()) < 60 
+					THEN CONCAT(TIMESTAMPDIFF(MINUTE, r.created_at, NOW()), '분 전')
+				WHEN TIMESTAMPDIFF(HOUR, r.created_at, NOW()) < 24 
+					THEN CONCAT(TIMESTAMPDIFF(HOUR, r.created_at, NOW()), '시간 전')
+				ELSE CONCAT(TIMESTAMPDIFF(DAY, r.created_at, NOW()), '일 전')
+			END AS time_ago
+		FROM reply r JOIN user u ON r.user_id = u.user_id
+		WHERE parent_reply_id IS NULL AND depth = 0 AND board_id = #{boardId};
+		]]>
+	</select>
+	
+</mapper>

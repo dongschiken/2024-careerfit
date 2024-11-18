@@ -65,10 +65,13 @@ export default {
   },
   setup() {
     const userStore = useUserStore();
-    const isLoggedIn = computed(() => false);
+    const isLoggedIn = computed(() => {
+      const token = sessionStorage.getItem("accessToken");
+      return token !== null; // 토큰이 존재하면 로그인된 상태
+    });
 
-    const handleLogout = () => {
-      userStore.clearUser();
+    const handleLogout = async () => {
+      await userStore.clearUser();
       window.location.reload(); // 로그아웃 후 페이지 새로고침
     };
 

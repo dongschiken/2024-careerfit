@@ -3,6 +3,7 @@
     <!-- 댓글 작성 -->
     <div class="reply-form">
       <textarea
+        v-model="replyData.content"
         class="reply-input"
         placeholder="댓글 작성."
         rows="3"
@@ -41,16 +42,97 @@
 <script setup>
 import axios from "axios";
 import api from "@/api/axiosInstance";
-import { ref, onMounted } from "vue";
-
-const reply = ref({});
+import { ref, onMounted, watch } from "vue";
+import { defineProps } from "vue";
+import router from "@/router";
+const replyData = ref({
+  userId: 0,
+  boardId: 0,
+  content: "",
+  parentReplyId: 0,
+  depth: 0,
+});
 const replies = ref([]);
-
+const props = defineProps({
+  boardId: Number,
+});
 const registReply = async () => {
+  if (!replyData.value.content.trim()) {
+    alert("댓글 내용을 작성해 주세요.");
+    return;
+  }
+  const reply = {
+    userId: replyData.value.userId,
+    boardId: props.boardId,
+    content: replyData.value.content,
+    depth: 0,
+  };
+
   try {
-    const response = await api.post("/api/reply");
-  } catch (error) {}
+    const response = await api.post("/api/reply", reply, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    replyData.value.content = "";
+  } catch (error) {
+    console.error("Error in registReply:", error);
+    if (error.response.status === 403) {
+      alert("댓글을 작성하시려면 로그인을 진행해주세요");
+      router.push({ name: "login" });
+    }
+  }
 };
+
+watch(
+  () => props.boardId,
+  (newBoardId) => {
+    if (newBoardId) {
+      axios
+        .get(`http://localhost:8080/api/reply/${newBoardId}`)
+        .then((response) => {
+          replies.value = response.data;
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  }
+);
+
+onMounted(() => {
+  const accessToken = sessionStorage.getItem("accessToken");
+  if (accessToken) {
+    axios
+      .get("http://localhost:8080/api/token-user", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .then((response) => {
+        replyData.value.userId = response.data.userId;
+        console.log(response.data.userId);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  } else {
+    console.error("access 토큰이 없습니다.");
+  }
+
+  if (props.boardId) {
+    axios
+      .get(`http://localhost:8080/api/reply/${props.boardId}`)
+      .then((response) => {
+        replies.value = response.data;
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching replies:", error);
+      });
+  }
+});
 </script>
 
 <style scoped>

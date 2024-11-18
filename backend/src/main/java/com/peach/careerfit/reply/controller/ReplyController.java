@@ -10,12 +10,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.peach.careerfit.jwt.JwtUtils;
 import com.peach.careerfit.reply.model.dto.Reply;
-import com.peach.careerfit.reply.model.dto.ReplyResponse;
+import com.peach.careerfit.reply.model.dto.ResponseReply;
 import com.peach.careerfit.reply.model.service.ReplyService;
 
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ public class ReplyController {
 	
 	@GetMapping("/{boardId}") 
 	public ResponseEntity<Object> getReplies(@PathVariable("boardId") int boardId) {
-		List<ReplyResponse> replies = replyService.getReply(boardId);
+		List<ResponseReply> replies = replyService.getReply(boardId);
 		try {
 			if(replies.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("댓글이 없습니다.");
@@ -43,7 +44,7 @@ public class ReplyController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Object> registReply(Reply reply) {
+	public ResponseEntity<Object> registReply(@RequestBody Reply reply) {
 		try {
 			int status = replyService.registReply(reply);
 			if(status == 0) {
@@ -52,6 +53,7 @@ public class ReplyController {
 				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("댓글 등록에 성공했습니다.");
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 등록중 오류 발생");
 		}
 	}

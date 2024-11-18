@@ -1,16 +1,13 @@
 import axios from "axios";
 
-const api = axios.create({
-  baseURL: "http://localhost:8080", // 백엔드의 기본 API URL로 설정
-  withCredentials: true, // 쿠키를 포함하도록 설정
+const api2 = axios.create({
+  baseURL: "http://localhost:8080",
   headers: {
     "Content-Type": "application/json",
   },
 });
-
-const api2 = axios.create({
-  baseURL: "http://localhost:8080",
-  withCredentials: true, // 쿠키를 포함하도록 설정
+const api = axios.create({
+  baseURL: "http://localhost:8080", // 백엔드의 기본 API URL로 설정
   headers: {
     "Content-Type": "application/json",
   },
@@ -20,12 +17,15 @@ const api2 = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = sessionStorage.getItem("accessToken");
+
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    Promise.reject(error);
+  }
 );
 
 // 응답 인터셉터 설정
@@ -42,10 +42,8 @@ api.interceptors.response.use(
     ) {
       originalRequest._retry = true;
 
-      const refreshToken = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("refreshToken="))
-        ?.split("=")[1];
+      // sessionStorage에서 refreshToken 가져오기
+      const refreshToken = sessionStorage.getItem("refreshToken");
 
       if (!refreshToken) {
         console.error("No refresh token found");
@@ -55,7 +53,7 @@ api.interceptors.response.use(
       try {
         // 리프레시 토큰을 이용해 새로운 액세스 토큰 요청
         const response = await api.post(
-          "http://localhost:8080/api/refresh-token",
+          "/api/refresh-token", // 상대경로로 변경
           {
             refreshToken,
           },
