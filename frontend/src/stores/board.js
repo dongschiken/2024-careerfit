@@ -48,7 +48,6 @@ export const useBoardStore = defineStore(
     };
 
     const getFirstCategoryPage = async () => {
-      alert("여기");
       try {
         const params = {
           searchWord: "",

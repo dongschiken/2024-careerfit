@@ -26,7 +26,7 @@
           />
           <span>{{ board.viewCount }}</span></span
         >
-        <div v-if="board.user.email == user.email">
+        <div v-if="loginUser != null && board.user.email == loginUser.email">
           <span class="board-detail-user-btn"
             ><button @click="updateBoard(boardId)">수정</button></span
           >
@@ -43,7 +43,7 @@
     </div>
     <div
       v-for="image in board.boardImgs"
-      :key="board.boardImgs.boardImgsId"
+      :key="image.boardImgsId"
       class="image-container"
     >
       <img
@@ -64,13 +64,13 @@ const route = useRoute();
 const router = useRouter();
 const isLoading = ref(true);
 const boardStore = useBoardStore();
+const loginUser = ref(null);
 // user 이메일이 같을 경우 수정버튼을 보이게 한다.
 const user = ref({
   id: 0,
   email: "test@example.com",
   role: "",
 });
-const token = sessionStorage.getItem("accessToken");
 defineProps({
   boardId: {
     type: Number,
@@ -85,7 +85,8 @@ const boardId = ref(Number(route.params.boardId)); // 명시적 변환
 const getBoard = async (boardId) => {
   try {
     const response = await api.get(`/api/board/${boardId}`);
-    board.value = response.data;
+    board.value = response.data.board;
+    loginUser.value = response.data.user;
     console.log("게시글 데이터:", board.value);
   } catch (error) {
     console.log(error);
@@ -115,10 +116,11 @@ const deleteBoard = async (boardId) => {
   try {
     const isDelete = confirm("정말 삭제하시겠습니까?");
     if (!isDelete) return;
-    const response = await axios.put(boardStore.REST_API_URL + `/${boardId}`);
+    const response = await api.put("/api/board" + `/${boardId}`);
     router.replace({
       name: "board",
     });
+    alert("게시글 삭제 완료");
   } catch (error) {
     alert("게시글 삭제 처리중 오류발생");
   }

@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.peach.careerfit.user.model.dto.ResponseTokenUser;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -78,12 +80,19 @@ public class JwtUtils {
     }
     
     /**
+     * 주어진 토큰에서 "nickname" 클레임을 추출한다.
+     */
+    public String getNickname(String token) {
+    	Claims claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+    	return claims.get("nickname", String.class);
+    }
+    
+    /**
      * 내부로직에 의해 DOUBLE로 받아서 INTEGER타입으로 변환해줘야한다.
      * @param token
      * @return
      */
     public Integer getUserIdFromToken(String token) {
-    	System.out.println("token?? : " + token);
         Claims claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
         Double userIdDouble = claims.get("userId", Double.class);
         Integer userId = userIdDouble.intValue();
