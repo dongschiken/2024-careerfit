@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/reply")
 public class ReplyController {
 	
-	private final JwtUtils jwtUtils;
+//	private final JwtUtils jwtUtils;
 	private final ReplyService replyService;
 	
 	@GetMapping("/{boardId}") 
@@ -63,7 +63,7 @@ public class ReplyController {
 			if(status == 0) {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 수정중 오류 발생");
 			}else {
-				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("댓글 수정에 성공했습니다.")
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("댓글 수정에 성공했습니다.");
 			}
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 수정중 오류 발생");
@@ -74,8 +74,13 @@ public class ReplyController {
 	public ResponseEntity<Object> deleteReply(@PathVariable("replyId") int replyId) {
 		try {
 			int status = replyService.deleteReply(replyId);
+			if(status == 0) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("삭제할 댓글을 찾지 못했습니다.");
+			}else {
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("댓글 삭제에 성공했습니다.");
+			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 삭제중 오류 발생");
 		}
 	}
 	
