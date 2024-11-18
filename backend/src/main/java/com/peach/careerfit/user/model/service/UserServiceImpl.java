@@ -18,6 +18,7 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JavaMailSender mailSender;
     private final FileStorageComponent fileStorageComponent;
+    private final static String role = "ROLE_USER";
     private static final String type = "UserProfile";
     
     public UserServiceImpl(UserMapper userMapper, BCryptPasswordEncoder bCryptPasswordEncoder, JavaMailSender mailSender, FileStorageComponent fileStorageComponent) {
@@ -46,7 +47,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void registUser(User user) {
+	
 	    String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+	    user.setRole(role);
 	    user.setPassword(encodedPassword);
 		userMapper.insertUser(user);
 	}
@@ -55,7 +58,7 @@ public class UserServiceImpl implements UserService {
 	public User getUserById(int userId) {
 		return userMapper.findById(userId);
 	}
-
+	
 	@Override
 	public int updateUser(int userId, User user) {
 		return userMapper.updateUser(userId, user);
@@ -132,5 +135,11 @@ public class UserServiceImpl implements UserService {
 	public User findUserByNickname(String nickname) {
 		return userMapper.findByUserNickname(nickname);
 	}
+
+	@Override
+	public boolean isEmailAvailable(String email) {
+		return userMapper.countByEmail(email) == 0;
+	}
+
 
 }

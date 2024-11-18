@@ -28,5 +28,5 @@ public class User {
 	private LocalDate createdAt;
 	private LocalDate updatedAt;
 	private int status;
-	private String role = "ROLE_USER";
+	private String role;
 }

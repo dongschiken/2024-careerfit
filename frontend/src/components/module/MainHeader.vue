@@ -22,15 +22,31 @@
         </div>
       </div>
       <div class="header-nav-login-group">
-        <div>
+        <div v-if="!isLoggedIn">
           <router-link to="/user/login">
-            <button id="loginBtn">로그인</button>
+            <button id="loginBtn" class="form-element login-button">
+              로그인
+            </button>
+          </router-link>
+          <router-link to="/user/join">
+            <button id="joinBtn" class="form-element btn-member-signup">
+              회원가입
+            </button>
           </router-link>
         </div>
-        <div>
-          <router-link to="/user/join">
-            <button id="joinBtn">회원가입</button>
+        <div v-else>
+          <router-link to="/user/mypage">
+            <button id="myPageBtn" class="form-element login-button">
+              마이페이지
+            </button>
           </router-link>
+          <button
+            id="logoutBtn"
+            @click="handleLogout"
+            class="form-element login-button"
+          >
+            로그아웃
+          </button>
         </div>
       </div>
     </div>
@@ -38,7 +54,30 @@
 </template>
 
 <script>
+import { useUserStore } from "@/stores/userStore";
 import { RouterLink } from "vue-router";
+import { computed } from "vue";
+
+export default {
+  name: "MainHeader",
+  components: {
+    RouterLink,
+  },
+  setup() {
+    const userStore = useUserStore();
+    const isLoggedIn = computed(() => false);
+
+    const handleLogout = () => {
+      userStore.clearUser();
+      window.location.reload(); // 로그아웃 후 페이지 새로고침
+    };
+
+    return {
+      isLoggedIn,
+      handleLogout,
+    };
+  },
+};
 </script>
 
 <style lang="css" scoped>

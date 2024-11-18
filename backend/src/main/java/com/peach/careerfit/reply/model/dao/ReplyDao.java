@@ -9,8 +9,9 @@ import com.peach.careerfit.reply.model.dto.ReplyResponse;
 
 @Mapper
 public interface ReplyDao {
+	List<ReplyResponse> selectReplyChildByParentId(int replyId);
 	List<ReplyResponse> selectReplyByBoardId(int boardId);
 	int deleteReplyByReplyId(int replyId);
-	int registReply(Reply reply);
+	int insertReply(Reply reply);
 	int updateReply(Reply reply);
 }

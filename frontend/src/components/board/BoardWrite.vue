@@ -90,6 +90,7 @@
 import { ref, onMounted, defineProps } from "vue";
 import { useBoardStore } from "@/stores/board";
 import { useRoute, useRouter } from "vue-router";
+import api from "@/api/axiosInstance";
 import HeaderView from "@/components/module/MainHeader.vue";
 import FooterView from "@/components/module/MainFooter.vue";
 const route = useRoute();
@@ -103,6 +104,7 @@ const imageFiles = ref([]);
 const imagePreviews = ref([]);
 const imageInput = ref(null);
 const isLoading = ref(true);
+const token = ref(sessionStorage.getItem("accessToken"));
 const board = ref({
   boardImgs: [],
 });
@@ -115,7 +117,6 @@ defineProps({
 });
 
 const boardId = ref(Number(route.params.boardId)); // 명시적 변환
-const token = `eyJhbGciOiJIUzM4NCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJST0xFX1VTRVIiLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJuaWNrbmFtZSI6Iuq4uOuPmeydtCIsImlhdCI6MTczMTgzNjcxNCwiZXhwIjoxNzMyMDA5NTE0fQ.TV4f1p9uhHTXzs_U6v0U2M0Ud10zkeRNHy6ifo6yvBdWV7tN4xAoxWniTfR6VFB0`;
 const addImage = (event) => {
   console.log(event);
   const files = Array.from(event.target.files);
@@ -160,7 +161,7 @@ const setBoard = async () => {
     imageFiles.value.forEach((file) => {
       formData.append("files", file);
     });
-    const response = await axios.put(boardStore.REST_API_URL, formData, {
+    const response = await api.put("/api/board", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -195,7 +196,8 @@ const registBoard = async () => {
     imageFiles.value.forEach((file) => {
       formData.append("files", file);
     });
-    const response = await axios.post(boardStore.REST_API_URL, formData, {
+    console.log(`Bearer ${token.value}`); // 값 출력 확인
+    const response = await api.post("/api/board", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -212,14 +214,9 @@ const registBoard = async () => {
   }
 };
 const getBoard = async (boardId) => {
-  console.log("token" + token);
   try {
-    const response = await axios.get(boardStore.REST_API_URL + `/${boardId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    board.value = response.data;
+    const response = await api.get(`/api/board/${boardId}`);
+    board.value = response.data.board;
     content.value = board.value.content;
     title.value = board.value.title;
     category.value = board.value.category.boardCategoryId;

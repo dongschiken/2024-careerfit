@@ -26,7 +26,7 @@
           />
           <span>{{ board.viewCount }}</span></span
         >
-        <div v-if="board.user.email == user.email">
+        <div v-if="loginUser != null && board.user.email == loginUser.email">
           <span class="board-detail-user-btn"
             ><button @click="updateBoard(boardId)">수정</button></span
           >
@@ -43,7 +43,7 @@
     </div>
     <div
       v-for="image in board.boardImgs"
-      :key="board.boardImgs.boardImgsId"
+      :key="image.boardImgsId"
       class="image-container"
     >
       <img
@@ -55,6 +55,7 @@
 </template>
 
 <script setup>
+import api from "@/api/axiosInstance";
 import { defineProps, computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useBoardStore } from "@/stores/board";
@@ -63,13 +64,13 @@ const route = useRoute();
 const router = useRouter();
 const isLoading = ref(true);
 const boardStore = useBoardStore();
+const loginUser = ref(null);
 // user 이메일이 같을 경우 수정버튼을 보이게 한다.
 const user = ref({
   id: 0,
   email: "test@example.com",
   role: "",
 });
-const token = `eyJhbGciOiJIUzM4NCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJST0xFX1VTRVIiLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJuaWNrbmFtZSI6Iuq4uOuPmeydtCIsImlhdCI6MTczMTgzNjcxNCwiZXhwIjoxNzMyMDA5NTE0fQ.TV4f1p9uhHTXzs_U6v0U2M0Ud10zkeRNHy6ifo6yvBdWV7tN4xAoxWniTfR6VFB0`;
 defineProps({
   boardId: {
     type: Number,
@@ -83,12 +84,9 @@ const board = ref({
 const boardId = ref(Number(route.params.boardId)); // 명시적 변환
 const getBoard = async (boardId) => {
   try {
-    const response = await axios.get(boardStore.REST_API_URL + `/${boardId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    board.value = response.data;
+    const response = await api.get(`/api/board/${boardId}`);
+    board.value = response.data.board;
+    loginUser.value = response.data.user;
     console.log("게시글 데이터:", board.value);
   } catch (error) {
     console.log(error);
@@ -118,10 +116,11 @@ const deleteBoard = async (boardId) => {
   try {
     const isDelete = confirm("정말 삭제하시겠습니까?");
     if (!isDelete) return;
-    const response = await axios.put(boardStore.REST_API_URL + `/${boardId}`);
+    const response = await api.put("/api/board" + `/${boardId}`);
     router.replace({
       name: "board",
     });
+    alert("게시글 삭제 완료");
   } catch (error) {
     alert("게시글 삭제 처리중 오류발생");
   }

@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.peach.careerfit.user.model.dto.ResponseTokenUser;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -75,6 +77,14 @@ public class JwtUtils {
     public Boolean isExpired(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
         return claims.getExpiration().before(new Date());
+    }
+    
+    /**
+     * 주어진 토큰에서 "nickname" 클레임을 추출한다.
+     */
+    public String getNickname(String token) {
+    	Claims claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+    	return claims.get("nickname", String.class);
     }
     
     /**
