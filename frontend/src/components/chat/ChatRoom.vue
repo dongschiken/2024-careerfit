@@ -13,7 +13,6 @@
         </li>
       </ul>
     </div>
-
     <!-- 임시 버튼을 클릭하면 모달 창을 확인할 수 있도록 설정 -->
     <button @click="toggleModal">채팅창 열기</button>
 
