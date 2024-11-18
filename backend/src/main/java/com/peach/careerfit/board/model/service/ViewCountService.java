@@ -74,7 +74,7 @@ public class ViewCountService {
 	/**
 	 * 매 20분 마다 db 서버에 데이터 동기화 작업
 	 */
-	@Scheduled(cron = "0 0/5 * * * *") // 매 5분마다 실행
+	@Scheduled(cron = "0 */5 * * * *") // 매 5분마다 실행
 	public void syncViewCountsToDatabase() {
 		Set<String> keys = redisTemplate.keys("board:view:*");
 		System.out.println(keys);
