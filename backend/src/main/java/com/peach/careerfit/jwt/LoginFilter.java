@@ -84,13 +84,21 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	    tokens.put("accessToken", accessToken);
 	    tokens.put("refreshToken", refreshToken);
 	    new ObjectMapper().writeValue(response.getWriter(), tokens);
+	  
+	    
+	    System.out.println(accessToken);
+	    System.out.println(refreshToken);
 	    
 	    // Refresh Token을 HttpOnly 쿠키에 추가
 	    Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
 	    refreshTokenCookie.setHttpOnly(true); // HttpOnly 설정으로 클라이언트 자바스크립트에서 접근 차단
 	    refreshTokenCookie.setMaxAge((int) (JwtUtils.REFRESH_TOKEN_EXPIRE_TIME / 1000)); // 쿠키 만료 시간 설정
 	    refreshTokenCookie.setPath("/"); // 모든 경로에서 사용 가능하도록 설정
+	    System.out.println(refreshTokenCookie.getName());
+	    System.out.println(refreshTokenCookie.getValue());
 	    response.addCookie(refreshTokenCookie);
+	    
+	  
 	}
     
     @Override

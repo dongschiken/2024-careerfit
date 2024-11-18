@@ -79,7 +79,7 @@ public class SecurityConfig  {
                 .requestMatchers("/assets/**", "/js/**", "/img/**").permitAll() // 정적 리소스 접근 허용
                 .requestMatchers("/admin").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/board", "/api/board/category", "/api/chat-room/**").hasRole("USER")
-                .requestMatchers(HttpMethod.PUT, "/api/board/**").hasRole("USER")
+               .requestMatchers(HttpMethod.PUT, "/api/board/**").hasRole("USER")
                 .requestMatchers(HttpMethod.DELETE, "/api/board/**", "/api/chat-room/**").hasRole("USER")                                
                 .anyRequest().authenticated());
         

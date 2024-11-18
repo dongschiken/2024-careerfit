@@ -43,7 +43,7 @@ div.header-nav-menu-group > div:nth-child(3) {
 .header-nav-menu-group div {
   margin-right: 20px;
 }
-#loginBtn {
+#loginBtn, #myPageBtn {
   width: 90px;
   height: 45px;
   background-color: white;
@@ -56,7 +56,7 @@ div.header-nav-menu-group > div:nth-child(3) {
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-#joinBtn {
+#joinBtn, #logoutBtn {
   width: 90px;
   height: 45px;
   background-color: #ff7f32;

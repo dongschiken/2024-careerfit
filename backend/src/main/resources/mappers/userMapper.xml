@@ -73,4 +73,12 @@
 		FROM user
 		WHERE nickname = #{nickname}
 	</select>
+	
+	<!-- 이메일 중복 확인 -->
+	<select id="countByEmail" parameterType="String" resultType="int">
+	    SELECT COUNT(*)
+	    FROM user
+	    WHERE email = #{email}
+	</select>
+	
 </mapper>

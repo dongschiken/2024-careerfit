@@ -47,6 +47,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void registUser(User user) {
+	
 	    String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
 	    user.setRole(role);
 	    user.setPassword(encodedPassword);
@@ -134,5 +135,11 @@ public class UserServiceImpl implements UserService {
 	public User findUserByNickname(String nickname) {
 		return userMapper.findByUserNickname(nickname);
 	}
+
+	@Override
+	public boolean isEmailAvailable(String email) {
+		return userMapper.countByEmail(email) == 0;
+	}
+
 
 }

@@ -27,4 +27,6 @@ public interface UserService {
 	boolean isPasswordComplexEnough(String password);
 	void sendPasswordChangeEmail(int userId);
 
-}
+	// 이메일 중복 검사
+	boolean isEmailAvailable(String email);
+}	

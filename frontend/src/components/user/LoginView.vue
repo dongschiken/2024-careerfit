@@ -49,9 +49,10 @@
 
 <script>
 import api from "@/api/axiosInstance";
+import { useUserStore } from '@/stores/userStore';
 
 export default {
-  name: "LoginView",
+  name: "LoginComponent",
   data() {
     return {
       formData: {
@@ -73,12 +74,13 @@ export default {
 
         // 응답 데이터에서 accessToken과 refreshToken을 가져옵니다.
         const accessToken = response.data.accessToken;
-        const refreshToken = response.data.refreshToken;
+      
+  
         // Access Token이 있는지 확인하고 세션 스토리지에 저장합니다.
         if (accessToken) {
           this.storeTokens(accessToken);
         } else {
-          throw new Error("Access Token을 찾을 수 없습니다.");
+          throw new Error("Token을 찾을 수 없습니다.");
         }
 
         alert("로그인에 성공했습니다.");
@@ -100,8 +102,9 @@ export default {
     main() {
       this.$router.push("/");
     },
-    storeTokens(accessToken) {
-      sessionStorage.setItem("accessToken", accessToken);
+    storeTokens(accessToken, refreshToken) {
+      const userStore = useUserStore();
+      userStore.setTokens(accessToken, refreshToken);
     },
   },
 };
