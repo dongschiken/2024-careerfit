@@ -49,8 +49,7 @@
 
 <script>
 import api from "@/api/axiosInstance";
-import { useUserStore } from '@/stores/userStore';
-
+import { useUserStore } from "@/stores/userStore";
 export default {
   name: "LoginComponent",
   data() {
@@ -74,15 +73,13 @@ export default {
 
         // 응답 데이터에서 accessToken과 refreshToken을 가져옵니다.
         const accessToken = response.data.accessToken;
-      
-  
+
         // Access Token이 있는지 확인하고 세션 스토리지에 저장합니다.
         if (accessToken) {
           this.storeTokens(accessToken);
         } else {
           throw new Error("Token을 찾을 수 없습니다.");
         }
-
         alert("로그인에 성공했습니다.");
 
         // 로그인 성공 후 라우터를 사용해 메인 페이지로 이동

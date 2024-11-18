@@ -90,6 +90,7 @@
 import { ref, onMounted, defineProps } from "vue";
 import { useBoardStore } from "@/stores/board";
 import { useRoute, useRouter } from "vue-router";
+import api from "@/api/axiosInstance";
 import HeaderView from "@/components/module/MainHeader.vue";
 import FooterView from "@/components/module/MainFooter.vue";
 const route = useRoute();
@@ -160,7 +161,7 @@ const setBoard = async () => {
     imageFiles.value.forEach((file) => {
       formData.append("files", file);
     });
-    const response = await axios.put(boardStore.REST_API_URL, formData, {
+    const response = await api.put("/api/board", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -196,10 +197,9 @@ const registBoard = async () => {
       formData.append("files", file);
     });
     console.log(`Bearer ${token.value}`); // 값 출력 확인
-    const response = await axios.post(boardStore.REST_API_URL, formData, {
+    const response = await api.post("/api/board", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${token.value}`,
       },
     });
     if (response.status == 201) {
@@ -214,14 +214,9 @@ const registBoard = async () => {
   }
 };
 const getBoard = async (boardId) => {
-  console.log("token" + token);
   try {
-    const response = await axios.get(boardStore.REST_API_URL + `/${boardId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    board.value = response.data;
+    const response = await api.get(`/api/board/${boardId}`);
+    board.value = response.data.board;
     content.value = board.value.content;
     title.value = board.value.title;
     category.value = board.value.category.boardCategoryId;

@@ -36,7 +36,7 @@ public class ViewCountService {
 	 * @return
 	 */
 	public boolean incrementViewCount(Integer boardId, Integer userId) {
-		if (userId == null) {
+		if (userId == 0) {
 			return false;
 		}
 		String viewKey = "board:view:" + boardId + ":userId:" + userId;
