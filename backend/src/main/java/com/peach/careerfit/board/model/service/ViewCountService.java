@@ -41,7 +41,7 @@ public class ViewCountService {
 		}
 		String viewKey = "board:view:" + boardId + ":userId:" + userId;
 		Boolean isViewed = redisTemplate.hasKey(viewKey);
-		if (Boolean.TRUE.equals(isViewed)) {		
+		if (Boolean.TRUE.equals(isViewed)) {
 			return false;
 		}
 		redisTemplate.opsForValue().set(viewKey, String.valueOf(true), 1, TimeUnit.DAYS);
@@ -74,21 +74,23 @@ public class ViewCountService {
 	/**
 	 * 매 20분 마다 db 서버에 데이터 동기화 작업
 	 */
-	@Scheduled(cron = "0 0/5 * * * *") // 매 5분마다 실행
+	@Scheduled(cron = "0 */20 * * * *") // 매 5분마다 실행
 	public void syncViewCountsToDatabase() {
 		Set<String> keys = redisTemplate.keys("board:view:*");
 		System.out.println(keys);
 		if (keys != null) {
-			for (String key : keys) {
-				if (key.contains(":userId:")) {
-					continue;
-				}
-				Integer boardId = Integer.parseInt(key.split(":")[2]);
-				Integer viewCount = Integer.parseInt(redisTemplate.opsForValue().get(key).toString());
-				boardDao.updateViewCount(boardId, viewCount);
-				redisTemplate.delete(key);
-			}
-		}
+	        for (String key : keys) {
+	            if (key.contains(":userId:")) {
+	                redisTemplate.delete(key); 
+	            } else {
+	                // 게시글 조회수 동기화
+	                Integer boardId = Integer.parseInt(key.split(":")[2]);
+	                Integer viewCount = Integer.parseInt(redisTemplate.opsForValue().get(key).toString());
+	                boardDao.updateViewCount(boardId, viewCount); 
+	                redisTemplate.delete(key); // Redis에서 삭제
+	            }
+	        }
+	    }
 	}
 
 	/**
@@ -105,5 +107,4 @@ public class ViewCountService {
 			redisTemplate.delete(viewCountKey);
 		}
 	}
-
 }

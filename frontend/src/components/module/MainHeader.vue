@@ -27,17 +27,29 @@
       <div class="header-nav-login-group">
         <div v-if="!isLoggedIn">
           <router-link to="/user/login">
-            <button id="loginBtn" class="form-element login-button">로그인</button>
+            <button id="loginBtn" class="form-element login-button">
+              로그인
+            </button>
           </router-link>
           <router-link to="/user/join">
-            <button id="joinBtn" class="form-element btn-member-signup">회원가입</button>
+            <button id="joinBtn" class="form-element btn-member-signup">
+              회원가입
+            </button>
           </router-link>
         </div>
         <div v-else>
           <router-link to="/user/mypage">
-            <button id="myPageBtn" class="form-element login-button">마이페이지</button>
+            <button id="myPageBtn" class="form-element login-button">
+              마이페이지
+            </button>
           </router-link>
-          <button id="logoutBtn" @click="handleLogout" class="form-element login-button">로그아웃</button>
+          <button
+            id="logoutBtn"
+            @click="handleLogout"
+            class="form-element login-button"
+          >
+            로그아웃
+          </button>
         </div>
       </div>
     </div>
@@ -45,21 +57,24 @@
 </template>
 
 <script>
-import { useUserStore } from '@/stores/userStore';
-import { RouterLink } from 'vue-router';
-import { computed } from 'vue';
+import { useUserStore } from "@/stores/userStore";
+import { RouterLink } from "vue-router";
+import { computed } from "vue";
 
 export default {
-  name: 'MainHeader',
+  name: "MainHeader",
   components: {
     RouterLink,
   },
   setup() {
     const userStore = useUserStore();
-    const isLoggedIn = computed(() => userStore.accessToken !== '');
+    const isLoggedIn = computed(() => {
+      const token = sessionStorage.getItem("accessToken");
+      return token !== null; // 토큰이 존재하면 로그인된 상태
+    });
 
-    const handleLogout = () => {
-      userStore.clearUser();
+    const handleLogout = async () => {
+      await userStore.clearUser();
       window.location.reload(); // 로그아웃 후 페이지 새로고침
     };
 

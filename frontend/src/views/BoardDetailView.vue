@@ -2,7 +2,7 @@
   <div>
     <MainHeader />
     <BoardDetailContent />
-    <BoardReply />
+    <BoardReply :boardId="boardId" />
     <MainFooter />
   </div>
 </template>
@@ -19,11 +19,14 @@ import axios from "axios";
 const BoardStore = useBoardStore();
 const route = useRoute();
 const boardDetail = ref(null);
+const boardId = ref();
 console.log(route);
 const fetchBoardDetail = async () => {
-  const boardId = route.params.boardId;
+  boardId.value = route.params.boardId;
   try {
-    const response = await axios.get(BoardStore.REST_API_URL + `/${boardId}`);
+    const response = await axios.get(
+      BoardStore.REST_API_URL + `/${boardId.value}`
+    );
     boardDetail.value = response.data;
   } catch (error) {
     console.error("게시글 상세 정보 로드 실패:", error);

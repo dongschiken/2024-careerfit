@@ -1,13 +1,13 @@
 package com.peach.careerfit.reply.model.service;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.peach.careerfit.reply.model.dao.ReplyDao;
 import com.peach.careerfit.reply.model.dto.Reply;
-import com.peach.careerfit.reply.model.dto.ReplyResponse;
+import com.peach.careerfit.reply.model.dto.ResponseReply;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,17 +18,19 @@ public class ReplyServiceImpl implements ReplyService{
 	private final ReplyDao replyDao;
 	
 	@Override
-	public List<ReplyResponse> getReply(int boardId) {
-		List<ReplyResponse> parents = replyDao.selectReplyByBoardId(boardId);
-		for (ReplyResponse replyResponse : parents) {
+	public List<ResponseReply> getReply(int boardId) {
+		List<ResponseReply> parents = replyDao.selectReplyByBoardId(boardId);
+		System.out.println(parents);
+		for (ResponseReply replyResponse : parents) {
 			replyResponse.setReplyResponses(replyDao.selectReplyChildByParentId(replyResponse.getReplyId()));		
 		}
-		System.out.println(parents);
 		return parents;
 	}
 
 	@Override
 	public int registReply(Reply reply) {
+		reply.setCreatedAt(LocalDateTime.now());
+		reply.setUpdatedAt(LocalDateTime.now());
 		int status = replyDao.insertReply(reply);
 		return status;
 	}

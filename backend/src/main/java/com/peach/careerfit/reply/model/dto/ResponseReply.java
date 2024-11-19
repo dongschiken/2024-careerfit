@@ -12,10 +12,10 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class ReplyResponse {
+public class ResponseReply {
 	private int replyId;
 	private User user;
-	private List<ReplyResponse> replyResponses;
+	private List<ResponseReply> replyResponses;
 	private	int boardId;
 	private int parentReplyId;
 	private String content;
@@ -24,7 +24,7 @@ public class ReplyResponse {
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 
-	public void setReplyResponses(List<ReplyResponse> replyResponses) {
+	public void setReplyResponses(List<ResponseReply> replyResponses) {
 		this.replyResponses = replyResponses;
 	}
 }
