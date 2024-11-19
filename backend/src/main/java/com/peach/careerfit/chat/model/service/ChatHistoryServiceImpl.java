@@ -30,6 +30,7 @@ public class ChatHistoryServiceImpl implements ChatHistoryService{
 		
 		// 메세지를 DB에 저장
 		 chatHistoryMapper.insertMessage(chatRoomId, sendUserId, request.getMessage());
+		 chatHistoryMapper.updateLastMessageTime(chatRoomId);		// 마지막 메시지 시간 업데이트
 	}
 
 	@Override

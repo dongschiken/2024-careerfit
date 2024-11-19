@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.peach.careerfit.chat.model.dto.ChatParticipantResponse;
+import com.peach.careerfit.chat.model.dto.ChatRoom;
 import com.peach.careerfit.chat.model.dto.ChatRoomRequest;
 import com.peach.careerfit.chat.model.dto.ChatRoomUserRequest;
 import com.peach.careerfit.chat.model.service.ChatRoomService;
@@ -99,4 +100,26 @@ public class ChatRoomController {
     		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
     }
+    
+    @GetMapping("/chat-room/{chat_room_id}")
+    public ResponseEntity<ChatRoom> getChatRoomInfo(@PathVariable("chat_room_id") int chatRoomId) {
+        try {
+            // ChatRoomService에서 데이터를 조회
+            ChatRoom chatRoom = chatRoomService.getChatRoomById(chatRoomId);
+
+            // 채팅방이 존재하지 않는 경우 처리
+            if (chatRoom == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            // 성공적으로 채팅방 정보를 반환
+            return ResponseEntity.ok(chatRoom);
+        } catch (Exception e) {
+            // 예외 처리
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
 }

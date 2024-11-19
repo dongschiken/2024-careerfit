@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.peach.careerfit.chat.model.dto.ChatParticipantResponse;
+import com.peach.careerfit.chat.model.dto.ChatRoom;
 
 import io.lettuce.core.dynamic.annotation.Param;
 
@@ -32,6 +33,7 @@ public interface ChatRoomMapper {
             @Param("offset") int offset,
             @Param("size") int size);
     
-    // 메세지 전송
+    // 특정 채팅방 정보 조회
+    ChatRoom getChatRoomById(@Param("chatRoomId") int chatRoomId);
 }
 

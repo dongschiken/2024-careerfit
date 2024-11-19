@@ -36,6 +36,7 @@ public class RefreshRestController {
 	        	System.out.println(cookie.getName());
 	            if ("refreshToken".equals(cookie.getName())) {
 	                refreshToken = cookie.getValue();
+	                System.out.println(refreshToken);
 	                break;
 	            }
 	        }

@@ -20,6 +20,9 @@
         <div>
           <router-link to="/meal"> 식단관리 </router-link>
         </div>
+        <div>
+          <router-link to="/mate"> Mate </router-link>
+        </div>
       </div>
       <div class="header-nav-login-group">
         <div v-if="!isLoggedIn">
