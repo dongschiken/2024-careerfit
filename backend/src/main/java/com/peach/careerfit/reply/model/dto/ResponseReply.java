@@ -8,10 +8,12 @@ import com.peach.careerfit.user.model.dto.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class ResponseReply {
 	private int replyId;
 	private User user;
