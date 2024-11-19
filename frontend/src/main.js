@@ -8,6 +8,7 @@ import api from "./api/axiosInstance";
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 
+
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 pinia.use(piniaPersistedstate);
