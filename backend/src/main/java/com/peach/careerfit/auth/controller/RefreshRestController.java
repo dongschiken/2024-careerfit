@@ -26,6 +26,7 @@ public class RefreshRestController {
 	@PostMapping
 	public ResponseEntity<Object> refreshToken(@RequestBody TokenRequest tokenRequest) {
 	    String refreshToken = tokenRequest.getRefreshToken();
+	    System.out.println(refreshToken);
 	    String userEmail = jwtUtils.getUserEmail(refreshToken);
 	    String userRole = jwtUtils.getRole(refreshToken);
 	    String userNickname = jwtUtils.getNickname(refreshToken);
@@ -34,6 +35,7 @@ public class RefreshRestController {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 리프레시 토큰입니다.");
 	    }
 	    String newAccessToken = jwtUtils.createJwt(userId, userRole, userEmail, userNickname);
+	    System.out.println("엑세스 토큰"+newAccessToken);
 	    return ResponseEntity.status(HttpStatus.OK).body(newAccessToken);
 	}
 	

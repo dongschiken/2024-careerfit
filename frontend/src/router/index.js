@@ -8,6 +8,7 @@ import BoardContentView from "@/views/BoardContentView.vue";
 import ChatView from "@/views/ChatView.vue";
 import BoardDetailView from "@/views/BoardDetailView.vue";
 import { useToast } from "vue-toastification";
+import ChatBot from "@/components/chatbot/ChatBot.vue";
 
 const routes = [
   {
@@ -57,6 +58,12 @@ const routes = [
     name: "boardDetail",
     component: BoardDetailView,
     props: true,
+  },
+  {
+    path: "/chatbot",
+    name: "chatbot",
+    component: ChatBot,
+    meta: { requiresAuth: true },
   },
 ];
 

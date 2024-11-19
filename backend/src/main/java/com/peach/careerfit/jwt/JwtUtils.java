@@ -24,7 +24,7 @@ public class JwtUtils {
 
     private SecretKey secretKey;
     public static final String AUTHORIZATION_HEADER = "Authorization"; // 헤더 이름
-    public static final long ACCESS_TOKEN_VALIDATE = 1000L * 60 * 60 * 48;
+    public static final long ACCESS_TOKEN_VALIDATE = 1000L * 60 /** 60 * 48*/;
     public static final long REFRESH_TOKEN_EXPIRE_TIME = 1000L * 60 * 60 * 24 * 15; // 15일로 설정
     /**
      * @Value 어노테이션을 사용하여 application.properties 파일에서 JWT 비밀키를 주입받는다.

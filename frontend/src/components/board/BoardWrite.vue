@@ -146,6 +146,10 @@ const removeImage = (index) => {
 const setBoard = async () => {
   const check = confirm("정말 수정하시겠습니까?");
   if (!check) return;
+  if (title.value === "" || content.value === "") {
+    alert("게시글 내용과 제목을 작성해주세요");
+    return;
+  }
   try {
     const formData = new FormData();
     const board = {
@@ -182,6 +186,10 @@ const setBoard = async () => {
 };
 
 const registBoard = async () => {
+  if (title.value === "" || content.value === "") {
+    alert("게시글 내용과 제목을 작성해주세요");
+    return;
+  }
   try {
     const formData = new FormData();
     const board = {

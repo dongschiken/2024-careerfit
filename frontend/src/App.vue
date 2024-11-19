@@ -10,7 +10,8 @@
 <script setup>
 import { useCounterStore } from "@/stores/counter";
 import { ref } from "vue";
-import api2 from "./api/axiosInstance";
+import axios from "axios";
+import api from "./api/axiosInstance";
 const store = useCounterStore();
 const increment = () => {
   store.increment();
@@ -18,10 +19,18 @@ const increment = () => {
 
 const refresh = async () => {
   try {
-    alert("버튼");
-    const response = await api2.post("/api/refresh-token");
-    console.log("리프레시 토큰 성공:", response.data);
+    const refreshToken = sessionStorage.getItem("refreshToken");
+    if (!refreshToken) {
+      throw new Error("리프레시 토큰이 없습니다. 로그인이 필요합니다.");
+    }
+
+    // Axios 요청 보내기
+    const response = await axios.post(
+      "http://localhost:8080/api/refresh-token",
+      { refreshToken } // 요청 본문에 토큰 포함
+    );
     // 응답 데이터를 활용한 추가 작업
+    console.log(response.data);
   } catch (error) {
     console.error("리프레시 토큰 요청 실패:", error);
   }

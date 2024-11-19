@@ -51,11 +51,16 @@ CREATE TABLE `reply` (
 	`reply_id`	INT	NOT NULL,
 	`user_id`	INT	NOT NULL,
 	`board_id`	INT	NOT NULL,
-	`parent_reply_id`	INT	NOT NULL,
+	`parent_reply_id`	INT,
 	`content`	VARCHAR(1000)	NULL,
 	`depth`	INT	NULL,
 	`created_at`	TIMESTAMP	NOT NULL,
-	`updated_at`	TIMESTAMP	NOT NULL
+	`updated_at`	TIMESTAMP	NOT NULL,
+	PRIMARY KEY (`reply_id`),
+    CONSTRAINT `fk_parent_reply`
+        FOREIGN KEY (`parent_reply_id`) 
+        REFERENCES `reply` (`reply_id`)
+        ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `meal_food`;
@@ -104,7 +109,6 @@ CREATE TABLE `user` (
 	`user_id`	INT	NOT NULL,
 	`email`	VARCHAR(320)	NOT NULL UNIQUE,
 	`password`	VARCHAR(200)	NOT NULL,
-	`name`	VARCHAR(15)	NOT NULL,
 	`nickname`	VARCHAR(20)	NOT NULL,
 	`profile_url`	VARCHAR(330)	NULL,
 	`phone`	VARCHAR(13)	NULL,

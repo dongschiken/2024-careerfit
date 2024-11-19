@@ -1,6 +1,7 @@
 package com.peach.careerfit.reply.model.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -20,31 +21,36 @@ public class ReplyServiceImpl implements ReplyService{
 	@Override
 	public List<ResponseReply> getReply(int boardId) {
 		List<ResponseReply> parents = replyDao.selectReplyByBoardId(boardId);
-		System.out.println(parents);
-		for (ResponseReply replyResponse : parents) {
-			replyResponse.setReplyResponses(replyDao.selectReplyChildByParentId(replyResponse.getReplyId()));		
+		List<ResponseReply> childs = replyDao.selectReplyChildByParentId(boardId);
+		for (int i = 0; i < parents.size(); i++) {
+			List<ResponseReply> child = new ArrayList<>();
+			for (int j = 0; j < childs.size(); j++) {
+				if(parents.get(i).getReplyId() == childs.get(j).getParentReplyId()) {
+					child.add(childs.get(j));
+				}
+			}
+			parents.get(i).setReplyResponses(child);
 		}
 		return parents;
 	}
 
 	@Override
 	public int registReply(Reply reply) {
-		reply.setCreatedAt(LocalDateTime.now());
-		reply.setUpdatedAt(LocalDateTime.now());
+		reply.setCreatedAt(LocalDateTime.now().minusSeconds(1));
+		reply.setUpdatedAt(LocalDateTime.now().minusSeconds(1));
 		int status = replyDao.insertReply(reply);
 		return status;
 	}
 
 	@Override
 	public int setReply(Reply reply) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 	@Override
 	public int deleteReply(int replyId) {
-		// TODO Auto-generated method stub
-		return 0;
+		return replyDao.deleteReplyByReplyId(replyId);
 	}
 	
 }

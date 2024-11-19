@@ -3,7 +3,6 @@ package com.peach.careerfit.reply.controller;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.peach.careerfit.jwt.JwtUtils;
 import com.peach.careerfit.reply.model.dto.Reply;
 import com.peach.careerfit.reply.model.dto.ResponseReply;
 import com.peach.careerfit.reply.model.service.ReplyService;
@@ -45,13 +43,14 @@ public class ReplyController {
 	
 	@PostMapping
 	public ResponseEntity<Object> registReply(@RequestBody Reply reply) {
+		System.out.println(reply);
 		try {
 			int status = replyService.registReply(reply);
 			if(status == 0) {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 등록중 오류 발생");
 			}else {
 				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("댓글 등록에 성공했습니다.");
-			}
+			}	
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 등록중 오류 발생");
@@ -74,6 +73,7 @@ public class ReplyController {
 	
 	@DeleteMapping("/{replyId}")
 	public ResponseEntity<Object> deleteReply(@PathVariable("replyId") int replyId) {
+		System.out.println("36 맞나"+replyId);
 		try {
 			int status = replyService.deleteReply(replyId);
 			if(status == 0) {
