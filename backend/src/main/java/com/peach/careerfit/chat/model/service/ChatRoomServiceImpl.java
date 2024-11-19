@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.peach.careerfit.chat.model.dao.ChatRoomMapper;
 import com.peach.careerfit.chat.model.dto.ChatParticipantResponse;
+import com.peach.careerfit.chat.model.dto.ChatRoom;
 import com.peach.careerfit.chat.model.dto.ChatRoomRequest;
 import com.peach.careerfit.chat.model.dto.ChatRoomUserRequest;
 
@@ -45,4 +46,12 @@ public class ChatRoomServiceImpl implements ChatRoomService{
 		int offset = page * size;
 		return chatRoomMapper.selectParticipantsByChatRoom(chatRoomId, offset, size);
 	}
+
+	@Override
+	public ChatRoom getChatRoomById(int chatRoomId) {
+		 return chatRoomMapper.getChatRoomById(chatRoomId);
+	}
+
+
+
 }

@@ -9,6 +9,7 @@ import ChatView from "@/views/ChatView.vue";
 import BoardDetailView from "@/views/BoardDetailView.vue";
 import { useToast } from "vue-toastification";
 import ChatBot from "@/components/chatbot/ChatBot.vue";
+import MapView from "@/components/map/MapView.vue";
 
 const routes = [
   {
@@ -63,7 +64,12 @@ const routes = [
     path: "/chatbot",
     name: "chatbot",
     component: ChatBot,
+  }
+  {
     meta: { requiresAuth: true },
+    path: "/mate",
+    name: "Mate",
+    component: MapView,
   },
 ];
 

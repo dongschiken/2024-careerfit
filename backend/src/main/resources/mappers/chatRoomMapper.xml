@@ -40,4 +40,17 @@
 	WHERE chat_room_id = #{chatRoomId}
 	LIMIT #{size} OFFSET #{offset}
 </select>
+
+<!-- 특정 채팅방 조회 -->
+<select id="getChatRoomById" resultType="ChatRoom">
+    SELECT 
+        chat_room_id AS chatRoomId,
+        title,
+        created_at AS createdAt,
+        updated_at AS updatedAt,
+        last_at AS lastAt
+    FROM chat_room
+    WHERE chat_room_id = #{chatRoomId}
+</select>
+
 </mapper>
