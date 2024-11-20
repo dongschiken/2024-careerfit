@@ -18,62 +18,73 @@
 
         <form @submit.prevent="handlejoin" class="join-form">
           <!-- 이메일 필드 -->
-<div class="input-group">
-  <div class="input-with-button">
-    <input
-      type="email"
-      id="email"
-      v-model="formData.email"
-      class="input-field"
-      placeholder="이메일"
-      required
-      @input="validateEmailFormat"
-    />
-    <button
-      type="button"
-      class="check-verification-button"
-      @click="sendEmailVerification"
-    >
-      이메일 인증
-    </button>
-  </div>
-  <!-- 에러 메시지 -->
-  <span class="error-text" v-if="errors.email">{{ errors.email }}</span>
-  <!-- 성공 메시지 -->
-  <span class="success-text" v-if="emailVerificationSent"
-    >인증 코드가 발송되었습니다.</span
-  >
-</div>
-
-             <div class="input-group">
-              <div class="input-with-button">
-                <!-- 인증 코드 입력 필드 -->
-                <input
-                  type="text"
-                  id="verificationCode"
-                  v-model="formData.verificationCode"
-                  class="input-field"
-                  placeholder="인증 코드"
-                  required
-                />
-                <!-- 타이머 표시 -->
-                <span v-if="timer > 0" class="timer-text">{{ formattedTimer }}</span>
-                <!-- 인증 확인 버튼 -->
-                <button type="button" class="check-button" @click="verifyEmailCode">
-                  인증 확인
-                </button>
-              </div>
-
-              <!-- 인증 결과 메시지 -->
-              <!-- 실패 메시지 -->
-              <span class="error-text" v-if="!isEmailVerified && verificationMessage">
-                {{ verificationMessage }}
-              </span>
-              <!-- 성공 메시지 -->
-              <span class="success-text" v-if="isEmailVerified">
-                이메일 인증에 성공하였습니다.
-              </span>
+          <div class="input-group">
+            <div class="input-with-button">
+              <input
+                type="email"
+                id="email"
+                v-model="formData.email"
+                class="input-field"
+                placeholder="이메일"
+                required
+                @input="validateEmailFormat"
+              />
+              <button
+                type="button"
+                class="check-verification-button"
+                @click="sendEmailVerification"
+              >
+                이메일 인증
+              </button>
             </div>
+            <!-- 에러 메시지 -->
+            <span class="error-text" v-if="errors.email">{{
+              errors.email
+            }}</span>
+            <!-- 성공 메시지 -->
+            <span class="success-text" v-if="emailVerificationSent"
+              >인증 코드가 발송되었습니다.</span
+            >
+          </div>
+
+          <div class="input-group">
+            <div class="input-with-button">
+              <!-- 인증 코드 입력 필드 -->
+              <input
+                type="text"
+                id="verificationCode"
+                v-model="formData.verificationCode"
+                class="input-field"
+                placeholder="인증 코드"
+                required
+              />
+              <!-- 타이머 표시 -->
+              <span v-if="timer > 0" class="timer-text">{{
+                formattedTimer
+              }}</span>
+              <!-- 인증 확인 버튼 -->
+              <button
+                type="button"
+                class="check-button"
+                @click="verifyEmailCode"
+              >
+                인증 확인
+              </button>
+            </div>
+
+            <!-- 인증 결과 메시지 -->
+            <!-- 실패 메시지 -->
+            <span
+              class="error-text"
+              v-if="!isEmailVerified && verificationMessage"
+            >
+              {{ verificationMessage }}
+            </span>
+            <!-- 성공 메시지 -->
+            <span class="success-text" v-if="isEmailVerified">
+              이메일 인증에 성공하였습니다.
+            </span>
+          </div>
 
           <!-- 비밀번호 필드 -->
           <div class="input-group">
@@ -322,51 +333,54 @@ export default {
       }).open();
     },
     async checkEmailDuplicate() {
-  try {
-    const response = await api.get("/api/check-email", {
-      params: { email: this.formData.email },
-    });
+      try {
+        const response = await api.get("/api/check-email", {
+          params: { email: this.formData.email },
+        });
 
-    if (response.data.available) {
-      this.errors.email = ""; // 사용 가능하면 오류 메시지 제거
-    } else {
-      this.errors.email = "이미 사용 중인 이메일입니다.";
-    }
-  } catch (error) {
-    console.error("이메일 중복 확인 중 오류 발생:", error);
-    this.errors.email = "이메일 중복 확인에 실패했습니다.";
-  }
-},
-async verifyEmailCode() {
-  if (!this.formData.verificationCode) {
-    this.verificationMessage = "인증 코드를 입력해주세요.";
-    this.isEmailVerified = false;
-    return;
-  }
+        if (response.data.available) {
+          this.errors.email = ""; // 사용 가능하면 오류 메시지 제거
+        } else {
+          this.errors.email = "이미 사용 중인 이메일입니다.";
+        }
+      } catch (error) {
+        console.error("이메일 중복 확인 중 오류 발생:", error);
+        this.errors.email = "이메일 중복 확인에 실패했습니다.";
+      }
+    },
+    async verifyEmailCode() {
+      if (!this.formData.verificationCode) {
+        this.verificationMessage = "인증 코드를 입력해주세요.";
+        this.isEmailVerified = false;
+        return;
+      }
 
-  try {
-    const response = await api.post("/auth/verify-email-code", {
-      email: this.formData.email,
-      code: this.formData.verificationCode,
-    });
+      try {
+        const response = await api.post("/auth/verify-email-code", {
+          email: this.formData.email,
+          code: this.formData.verificationCode,
+        });
 
-    if (response.data.isValid) {
-      // 성공 시
-      this.isEmailVerified = true;
-      this.verificationMessage = response.data.message || "인증에 성공하였습니다.";
-    } else {
-      // 실패 시
-      this.isEmailVerified = false;
-      this.verificationMessage = response.data.message || "인증 코드가 일치하지 않습니다.";
-    }
-  } catch (error) {
-    console.error("인증 확인 중 오류 발생:", error);
-    this.isEmailVerified = false;
-    this.verificationMessage = "인증 코드 확인에 실패했습니다. 다시 시도해주세요.";
-  }
-},
+        if (response.data.isValid) {
+          // 성공 시
+          this.isEmailVerified = true;
+          this.verificationMessage =
+            response.data.message || "인증에 성공하였습니다.";
+        } else {
+          // 실패 시
+          this.isEmailVerified = false;
+          this.verificationMessage =
+            response.data.message || "인증 코드가 일치하지 않습니다.";
+        }
+      } catch (error) {
+        console.error("인증 확인 중 오류 발생:", error);
+        this.isEmailVerified = false;
+        this.verificationMessage =
+          "인증 코드 확인에 실패했습니다. 다시 시도해주세요.";
+      }
+    },
 
-async sendEmailVerification() {
+    async sendEmailVerification() {
       this.errors.email = ""; // 기존 에러 메시지 초기화
       this.emailVerificationSent = false; // 초기화
 
@@ -437,33 +451,33 @@ async sendEmailVerification() {
       this.checkNicknameDuplicate();
     },
     async checkNicknameDuplicate() {
-  // 오류 메시지 초기화
-  this.errors.nickname = "";
-  this.nicknameAvailable = false;
-
-  if (!this.formData.nickname.trim()) {
-    this.errors.nickname = "닉네임을 입력해주세요.";
-    return;
-  }
-
-  try {
-    const response = await api.get("/api/check-nickname", {
-      params: { nickname: this.formData.nickname },
-    });
-
-    if (response.data.available) {
-      this.nicknameAvailable = true;
-      this.errors.nickname = ""; // 오류 메시지 초기화
-    } else {
+      // 오류 메시지 초기화
+      this.errors.nickname = "";
       this.nicknameAvailable = false;
-      this.errors.nickname = "사용할 수 없는 닉네임입니다.";
-    }
-  } catch (error) {
-    console.error("닉네임 중복 확인 실패:", error);
-    this.nicknameAvailable = false;
-    this.errors.nickname = "닉네임 중복 확인 중 오류가 발생했습니다.";
-  }
-},
+
+      if (!this.formData.nickname.trim()) {
+        this.errors.nickname = "닉네임을 입력해주세요.";
+        return;
+      }
+
+      try {
+        const response = await api.get("/api/check-nickname", {
+          params: { nickname: this.formData.nickname },
+        });
+
+        if (response.data.available) {
+          this.nicknameAvailable = true;
+          this.errors.nickname = ""; // 오류 메시지 초기화
+        } else {
+          this.nicknameAvailable = false;
+          this.errors.nickname = "사용할 수 없는 닉네임입니다.";
+        }
+      } catch (error) {
+        console.error("닉네임 중복 확인 실패:", error);
+        this.nicknameAvailable = false;
+        this.errors.nickname = "닉네임 중복 확인 중 오류가 발생했습니다.";
+      }
+    },
     formatPhoneNumber() {
       // 숫자만 남기고 하이픈 추가
       let cleaned = this.formData.phone.replace(/\D/g, "");
@@ -499,48 +513,50 @@ async sendEmailVerification() {
       }
     },
     async handlejoin() {
-  // 오류 메시지 초기화
-  this.errors = {
-    nickname: "",
-    email: "",
-    password: "",
-    phone: "",
-    verificationCode: "",
-  };
+      // 오류 메시지 초기화
+      this.errors = {
+        nickname: "",
+        email: "",
+        password: "",
+        phone: "",
+        verificationCode: "",
+      };
 
-  // 유효성 검사
-  if (!this.validateForm()) {
-    alert("모든 필수 항목을 올바르게 입력해 주세요.");
-    return;
-  }
+      // 유효성 검사
+      if (!this.validateForm()) {
+        alert("모든 필수 항목을 올바르게 입력해 주세요.");
+        return;
+      }
 
-  console.log("회원가입 시도 전 formData 확인:", this.formData);
+      console.log("회원가입 시도 전 formData 확인:", this.formData);
 
-  try {
-    const response = await api.post("/api/join", this.formData, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    console.log("회원가입 성공:", response);
-    alert("회원가입이 완료되었습니다!");
-    window.location.href = "http://localhost:3000/user/login";
-  } catch (error) {
-    if (error.response) {
-      console.error("회원가입 실패 - 서버 응답 에러:", error.response.data);
-      alert("회원가입에 실패하였습니다: 이메일 또는 닉네임이 중복되었습니다.");
-    } else if (error.request) {
-      console.error(
-        "회원가입 실패 - 서버에 요청을 보내지 못함:",
-        error.request
-      );
-      alert("서버에 요청을 보내지 못했습니다. 네트워크 상태를 확인하세요.");
-    } else {
-      console.error("회원가입 실패 - 설정 오류:", error.message);
-      alert("회원가입 과정에서 문제가 발생했습니다. 다시 시도해주세요.");
-    }
-  }
-},
+      try {
+        const response = await api.post("/api/join", this.formData, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        console.log("회원가입 성공:", response);
+        alert("회원가입이 완료되었습니다!");
+        window.location.href = "http://localhost:3000/user/login";
+      } catch (error) {
+        if (error.response) {
+          console.error("회원가입 실패 - 서버 응답 에러:", error.response.data);
+          alert(
+            "회원가입에 실패하였습니다: 이메일 또는 닉네임이 중복되었습니다."
+          );
+        } else if (error.request) {
+          console.error(
+            "회원가입 실패 - 서버에 요청을 보내지 못함:",
+            error.request
+          );
+          alert("서버에 요청을 보내지 못했습니다. 네트워크 상태를 확인하세요.");
+        } else {
+          console.error("회원가입 실패 - 설정 오류:", error.message);
+          alert("회원가입 과정에서 문제가 발생했습니다. 다시 시도해주세요.");
+        }
+      }
+    },
 
     validateForm() {
       let isValid = true;
@@ -578,10 +594,10 @@ async sendEmailVerification() {
       }
 
       // 닉네임 중복 확인
-  if (!this.nicknameAvailable) {
-    this.errors.nickname = "닉네임 중복 확인이 필요합니다.";
-    isValid = false;
-  }
+      if (!this.nicknameAvailable) {
+        this.errors.nickname = "닉네임 중복 확인이 필요합니다.";
+        isValid = false;
+      }
 
       return isValid;
     },
