@@ -246,7 +246,8 @@
 </template>
 
 <script>
-import api from "@/api/axiosInstance";
+import ncapi from "@/api/noTokenAxiosInstance";
+import axios from "axios";
 
 export default {
   name: "joinView",
@@ -334,7 +335,7 @@ export default {
     },
     async checkEmailDuplicate() {
       try {
-        const response = await api.get("/api/check-email", {
+        const response = await ncapi.get("/check-email", {
           params: { email: this.formData.email },
         });
 
@@ -356,7 +357,7 @@ export default {
       }
 
       try {
-        const response = await api.post("/auth/verify-email-code", {
+        const response = await ncapi.post("/auth/verify-email-code", {
           email: this.formData.email,
           code: this.formData.verificationCode,
         });
@@ -392,7 +393,7 @@ export default {
       if (this.errors.email) return;
 
       try {
-        const response = await api.post("/auth/send-email-verification", {
+        const response = await ncapi.post("/auth/send-email-verification", {
           email: this.formData.email,
         });
 
@@ -531,7 +532,7 @@ export default {
       console.log("회원가입 시도 전 formData 확인:", this.formData);
 
       try {
-        const response = await api.post("/api/join", this.formData, {
+        const response = await ncapi.post(`/api/join`, this.formData, {
           headers: {
             "Content-Type": "application/json",
           },

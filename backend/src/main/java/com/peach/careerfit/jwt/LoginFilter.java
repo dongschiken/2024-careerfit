@@ -41,7 +41,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException {
-    	
     	 ObjectMapper objectMapper = new ObjectMapper();
          // request의 InputStream에서 JSON 데이터를 Map으로 변환
          Map<String, String> credentials;
@@ -62,7 +61,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	    
 	    String userEmail = authResult.getName();
 	    User user = userMapper.findByUserEmail(userEmail);
-
 	    // role을 뽑아내기 위해 collection 형태로 변환 후 role을 뽑아냄
 	    Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>)authResult.getAuthorities();
 	    Iterator<GrantedAuthority> iterator = authorities.iterator();

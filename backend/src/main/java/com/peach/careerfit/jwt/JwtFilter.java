@@ -31,6 +31,7 @@ public class JwtFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		// Authorization 헤더에서 JWT 토큰을 추출
 		String token = jwtUtils.getAccessToken(request); // 헤더에서 토큰 추출
+		System.out.println("token : " + token);
 		try {
 			if (token != null && jwtUtils.validateToken(token)) {
 				// 토큰이 유효한지 검사
@@ -48,11 +49,15 @@ public class JwtFilter extends OncePerRequestFilter {
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
 			// 다음 필터로 요청을 전달
+			System.out.println("다음 필터로");
 			filterChain.doFilter(request, response);
 		} catch (ExpiredJwtException e) {
+			e.printStackTrace();
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 반환
 			response.getWriter().write("{\"error\": \"Access token expired\"}");
 		} catch (Exception e) {
+			System.out.println("403 반환됨");
+			e.printStackTrace();
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403 반환
 			response.getWriter().write("{\"error\": \"Invalid token\"}");
 		}
