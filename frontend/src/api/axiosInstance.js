@@ -27,6 +27,7 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     // 액세스 토큰이 만료되었을 때 리프레시 토큰을 이용해 새로운 액세스 토큰을 요청
+    console.log(error);
     if (
       error.response &&
       (error.response.status === 401 || error.response.status === 403) &&

@@ -104,7 +104,6 @@ CREATE TABLE `user` (
 	`user_id`	INT	NOT NULL,
 	`email`	VARCHAR(320)	NOT NULL UNIQUE,
 	`password`	VARCHAR(200)	NOT NULL,
-	`name`	VARCHAR(15)	NOT NULL,
 	`nickname`	VARCHAR(20)	NOT NULL,
 	`profile_url`	VARCHAR(330)	NULL,
 	`phone`	VARCHAR(13)	NULL,
@@ -326,7 +325,9 @@ ALTER TABLE `reply` ADD CONSTRAINT `FK_reply_TO_reply_1` FOREIGN KEY (
 )
 REFERENCES `reply` (
 	`reply_id`
-);
+)
+ON DELETE CASCADE 
+ON UPDATE CASCADE;
 
 ALTER TABLE `meal_food` ADD CONSTRAINT `FK_meal_TO_meal_food_1` FOREIGN KEY (
 	`meal_id`
