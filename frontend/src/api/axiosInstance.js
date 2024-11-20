@@ -10,7 +10,6 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = sessionStorage.getItem("accessToken");
-    console.log("token" + token);
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
@@ -63,7 +62,6 @@ api.interceptors.response.use(
         originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
-        console.error("No refresh token found. Redirecting to login...");
         window.location.href = "/login"; // 로그인 페이지로 리다이렉트
         return Promise.reject(error);
       }

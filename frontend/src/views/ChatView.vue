@@ -8,28 +8,28 @@
 
 <script>
 // ChatRoom 컴포넌트를 임포트합니다.
-import ChatRoom from '@/components/chat/ChatRoom.vue';
+import ChatRoom from "@/components/chat/ChatRoom.vue";
 
 export default {
   methods: {
-  getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-    return null;
+    getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(";").shift();
+      return null;
+    },
+    checkRefreshToken() {
+      const refreshToken = this.getCookie("refreshToken");
+      if (refreshToken) {
+        console.log("Refresh Token:", refreshToken);
+      } else {
+        console.error("Refresh Token이 존재하지 않습니다.");
+      }
+    },
   },
-  checkRefreshToken() {
-    const refreshToken = this.getCookie('refreshToken');
-    if (refreshToken) {
-      console.log('Refresh Token:', refreshToken);
-    } else {
-      console.error('Refresh Token이 존재하지 않습니다.');
-    }
+  mounted() {
+    this.checkRefreshToken();
   },
-},
-mounted() {
-  this.checkRefreshToken();
-},
   components: {
     ChatRoom,
   },

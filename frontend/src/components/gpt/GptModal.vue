@@ -22,7 +22,6 @@
 <script setup>
 import { ref } from "vue";
 import api from "@/api/axiosInstance";
-
 </script>
 
 <style lang="css" scoped>

@@ -7,7 +7,7 @@ const KAKAO_API_KEY = "YOUR_KAKAO_REST_API_KEY"; // 실제 키로 변경하세�
 export const searchPlaces = async (query, location, radius = 5000) => {
   const { lat, lng } = location;
   const url = `https://dapi.kakao.com/v2/local/search/keyword.json`;
-  
+
   try {
     const response = await axios.get(url, {
       headers: {
