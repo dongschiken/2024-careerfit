@@ -48,7 +48,9 @@ public class UserRestController {
 	@DeleteMapping("/logout")
 	public ResponseEntity<Object> doLogout(@RequestBody TokenRequest tokenRequest) {
 		String refreshToken = tokenRequest.getRefreshToken();
+		System.out.println("refreshToken : " + refreshToken);
 	    String email = jwtUtils.getUserEmail(refreshToken);
+	    System.out.println(email);
 	    if (email == null) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
 	    }

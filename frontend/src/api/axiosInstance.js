@@ -18,7 +18,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = sessionStorage.getItem("accessToken");
-
+    console.log("token" + token);
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
@@ -34,7 +34,6 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-
     // 액세스 토큰이 만료되었을 때 리프레시 토큰을 이용해 새로운 액세스 토큰을 요청
     console.log(error);
     if (
@@ -46,17 +45,15 @@ api.interceptors.response.use(
 
       // sessionStorage에서 refreshToken 가져오기
       const refreshToken = sessionStorage.getItem("refreshToken");
-      alert(refreshToken);
       if (!refreshToken) {
-        console.error("리프레시 토큰이 없습니다.");
-        router.replace("/login"); // 로그인 페이지로 이동
+        window.location.href = "/login";
         return Promise.reject(error);
       }
 
       try {
         // 리프레시 토큰을 이용해 새로운 액세스 토큰 요청
-        const response = await api.post(
-          "/api/refresh-token", // 상대경로로 변경
+        const response = await axios.post(
+          "http://localhost:8080/api/refresh-token", // 상대경로로 변경
           {
             refreshToken,
           },
@@ -67,11 +64,9 @@ api.interceptors.response.use(
           }
         );
 
-        const newAccessToken = response.data.accessToken;
-
+        const newAccessToken = response.data;
         // 새로운 액세스 토큰을 세션 스토리지에 저장
         sessionStorage.setItem("accessToken", newAccessToken);
-
         // 실패했던 요청에 새로운 액세스 토큰을 추가하고 재시도
         originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
         return api(originalRequest);
