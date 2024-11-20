@@ -47,11 +47,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void registUser(User user) {
-	
+		
 	    String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
 	    user.setRole(role);
 	    user.setPassword(encodedPassword);
 		userMapper.insertUser(user);
+		System.out.println("회원 등록 완료!!!!!!!");
 	}
 
 	@Override

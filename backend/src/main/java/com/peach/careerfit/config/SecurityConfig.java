@@ -74,10 +74,10 @@ public class SecurityConfig  {
         // 경로별 인가 작업
         // static한 값들에 대해서도 경로를 지정해 줘야한다.
         http.authorizeHttpRequests((auth) -> auth
-        		.requestMatchers("/", "/index", "/main", "/api/login/**", "/chat/**", "/api/join", "/api/login", "/error" , "/main", "/api/user/**", "/api/chat-rooms/**", "/auth/**", "/api/check-nickname", "/join", "/resource/**").permitAll()
+        		.requestMatchers("/", "/index", "/main", "/chat/**", "/error" , "/main", "/api/user/**", "/api/chat-rooms/**", "/auth/**", "/api/check-nickname", "/resource/**").permitAll()
         		.requestMatchers(HttpMethod.GET,"/api/token-user", "/api/board/**", "/uploads/**",
         				"/api/board/category", "/api/reply/**").permitAll()
-        		.requestMatchers(HttpMethod.POST, "/api/refresh-token").permitAll()
+        		.requestMatchers(HttpMethod.POST, "/api/refresh-token", "/api/join").permitAll()
         		.requestMatchers(HttpMethod.DELETE, "/api/logout").permitAll()
                 .requestMatchers("/assets/**", "/js/**", "/img/**").permitAll() // 정적 리소스 접근 허용
                 .requestMatchers("/admin").hasRole("ADMIN")

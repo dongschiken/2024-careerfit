@@ -48,8 +48,9 @@
 </template>
 
 <script>
-import api from "@/api/axiosInstance";
+import ncapi from "@/api/noTokenAxiosInstance";
 import { useUserStore } from "@/stores/userStore";
+import axios from "axios";
 export default {
   name: "LoginComponent",
   data() {
@@ -66,7 +67,7 @@ export default {
 
       try {
         // 로그인 요청을 보냅니다.
-        const response = await api.post("/login", this.formData);
+        const response = await ncapi.post("/login", this.formData);
 
         // 응답 확인
         console.log("로그인 응답:", response);
