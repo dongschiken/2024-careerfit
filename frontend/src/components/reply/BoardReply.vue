@@ -309,12 +309,8 @@ watch(
 onMounted(() => {
   const accessToken = sessionStorage.getItem("accessToken");
   if (accessToken) {
-    axios
-      .get("http://localhost:8080/api/token-user", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
+    api
+      .get("api/token-user")
       .then((response) => {
         replyData.value.userId = response.data.userId;
         console.log(response.data.userId);

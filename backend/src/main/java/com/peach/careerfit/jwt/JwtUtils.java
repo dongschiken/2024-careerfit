@@ -24,7 +24,7 @@ public class JwtUtils {
 
     private SecretKey secretKey;
     public static final String AUTHORIZATION_HEADER = "Authorization"; // 헤더 이름
-    public static final long ACCESS_TOKEN_VALIDATE = 1000L * 60 * 60 * 48;
+    public static final long ACCESS_TOKEN_VALIDATE = 1000L * 60 * 60; // 1시간으로 설정
     public static final long REFRESH_TOKEN_EXPIRE_TIME = 1000L * 60 * 60 * 24 * 15; // 15일로 설정
     /**
      * @Value 어노테이션을 사용하여 application.properties 파일에서 JWT 비밀키를 주입받는다.
@@ -41,14 +41,14 @@ public class JwtUtils {
      */
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
-            return true;
+        	Claims claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+            return !claims.getExpiration().before(new Date());
         } catch (SignatureException e) {
-            System.out.println("잘못된 토큰 서명입니다.");
+            System.out.println("잘못된 토큰 서명입니다." + e.getMessage());
         } catch (ExpiredJwtException e) {
-            System.out.println("만료된 토큰입니다.");
+            System.out.println("만료된 토큰입니다." + e.getMessage());
         } catch (IllegalArgumentException | MalformedJwtException e) {
-            System.out.println("잘못된 토큰입니다.");
+            System.out.println("잘못된 토큰입니다." + e.getMessage());
         }
         return false;
     }
@@ -57,8 +57,18 @@ public class JwtUtils {
      * 주어진 토큰에서 "email" 클레임을 추출한다.
      */
     public String getUserEmail(String token) {
-        Claims claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
-        return claims.get("email", String.class);
+    	try {
+            Claims claims = Jwts
+                    .parserBuilder() // 비밀 키 확인
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.get("email", String.class); // email 클레임 추출
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null; // 토큰 파싱 실패
+        }
     }
 
     /**
@@ -113,7 +123,7 @@ public class JwtUtils {
      */
     public String createJwt(Integer userId, String role, String email, String nickname) {
         Date now = new Date();
-        Date expiration = new Date(now.getTime() + ACCESS_TOKEN_VALIDATE);
+        Date expiration = new Date(now.getTime() + 1000 * 60/*ACCESS_TOKEN_VALIDATE*/);
         return builder()
         		.claim("userId", Integer.valueOf(userId))
                 .claim("role", role)
