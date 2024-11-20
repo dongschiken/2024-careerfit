@@ -11,6 +11,8 @@ export const useUserStore = defineStore({
     email: null,
     accessToken: sessionStorage.getItem("accessToken") || "", // 세션에서 access token을 가져옴
     refreshToken: sessionStorage.getItem("refreshToken") || "",
+    REST_API: 'http://localhost:8080/api',
+    HOST: 'http://localhost:8080'
   }),
   actions: {
     setUser(user) {

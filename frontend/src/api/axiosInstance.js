@@ -1,11 +1,4 @@
 import axios from "axios";
-
-const api2 = axios.create({
-  baseURL: "http://localhost:8080",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
 const api = axios.create({
   baseURL: "http://localhost:8080", // 백엔드의 기본 API URL로 설정
   headers: {

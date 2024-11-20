@@ -61,12 +61,13 @@ public class UserRestController {
 	// 회원가입
 	@PostMapping("/join")
 	public ResponseEntity<Object> doRegist(@RequestBody User user) {
-		System.out.println(user);
+		System.out.println("user : "+user);
 		LocalDate ld = LocalDate.now();
 		user.setCreatedAt(ld);
 		user.setUpdatedAt(ld);
 		user.setStatus(1);
 		userService.registUser(user);
+		System.out.println("회원 등록 완료!!!");
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
