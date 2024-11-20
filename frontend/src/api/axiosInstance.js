@@ -1,4 +1,5 @@
 import axios from "axios";
+import router from "@/router";
 
 const api2 = axios.create({
   baseURL: "http://localhost:8080",
@@ -35,18 +36,20 @@ api.interceptors.response.use(
     const originalRequest = error.config;
 
     // 액세스 토큰이 만료되었을 때 리프레시 토큰을 이용해 새로운 액세스 토큰을 요청
+    console.log(error);
     if (
       error.response &&
-      error.response.status === 401 &&
+      (error.response.status === 401 || error.response.status === 403) &&
       !originalRequest._retry
     ) {
       originalRequest._retry = true;
 
       // sessionStorage에서 refreshToken 가져오기
       const refreshToken = sessionStorage.getItem("refreshToken");
-
+      alert(refreshToken);
       if (!refreshToken) {
-        console.error("No refresh token found");
+        console.error("리프레시 토큰이 없습니다.");
+        router.replace("/login"); // 로그인 페이지로 이동
         return Promise.reject(error);
       }
 
