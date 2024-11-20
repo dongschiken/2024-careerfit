@@ -12,14 +12,21 @@ import com.peach.careerfit.chat.model.dto.ChatRoomRequest;
 import com.peach.careerfit.chat.model.dto.ChatRoomUserRequest;
 
 @Service
-public class ChatRoomServiceImpl implements ChatRoomService{
+public class ChatRoomServiceImpl implements ChatRoomService {
 
 	@Autowired
 	private ChatRoomMapper chatRoomMapper;
-	
+
 	@Override
-	public void createChatRoom(ChatRoomRequest request) {
-		chatRoomMapper.insertChatRoom(request.getTitle());
+	public ChatRoom createChatRoom(ChatRoomRequest request) {
+		// 채팅방 생성
+		chatRoomMapper.insertChatRoom(request.getTitle(), request.getPlaceId(), request.getCreatorId(), request.getCreatorNickname(), request.getCreatorProfile());
+
+		// 마지막으로 생성된 채팅방 ID 조회
+		int chatRoomId = chatRoomMapper.getLastInsertedId();
+
+		// 생성된 채팅방 정보 반환
+		return chatRoomMapper.getChatRoomById(chatRoomId);
 	}
 
 	@Override
@@ -49,9 +56,19 @@ public class ChatRoomServiceImpl implements ChatRoomService{
 
 	@Override
 	public ChatRoom getChatRoomById(int chatRoomId) {
-		 return chatRoomMapper.getChatRoomById(chatRoomId);
+		return chatRoomMapper.getChatRoomById(chatRoomId);
 	}
 
+	@Override
+	public List<ChatRoom> getAllChatRooms() {
+		return chatRoomMapper.getAllChatRooms();
+	}
 
+	@Override
+	public List<ChatRoom> getChatRoomsByPlaceId(int placeId) {
+		  List<ChatRoom> chatRooms = chatRoomMapper.getChatRoomsByPlaceId(placeId);
+
+		    return chatRooms;
+		}
 
 }

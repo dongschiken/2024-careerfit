@@ -13,7 +13,7 @@ import io.lettuce.core.dynamic.annotation.Param;
 
 @Service
 public interface ChatRoomService {
-	void createChatRoom(ChatRoomRequest request);
+	ChatRoom createChatRoom(ChatRoomRequest request);
 	
 	void deleteChatRoom(int chatRoomId);
 	
@@ -27,4 +27,9 @@ public interface ChatRoomService {
 	
     ChatRoom getChatRoomById(int chatRoomId);
 	
+    List<ChatRoom> getAllChatRooms();
+    
+    List<ChatRoom> getChatRoomsByPlaceId(int placeId);
+    
+    
 }
