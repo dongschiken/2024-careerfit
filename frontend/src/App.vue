@@ -3,7 +3,6 @@
     <router-view />
     <!-- <button @click="increment()">증가</button>
     <div>{{ store.count }}</div> -->
-    <button @click="refresh()">리프레시 토큰</button>
   </div>
 </template>
 

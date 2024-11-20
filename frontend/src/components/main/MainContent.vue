@@ -9,7 +9,8 @@
             오직 <span class="highlight-orange">CAREER FIT</span> 에서
           </div>
         </div>
-        <div class="main-ai-chatbot" id="chatbot">
+        <!-- AI 버튼을 클릭하면 모달을 여는 이벤트 연결 -->
+        <div class="main-ai-chatbot" id="chatbot" @click="openChatbot">
           <svg
             style="width: 40px; height: 43px; margin-left: 5px"
             xmlns="http://www.w3.org/2000/svg"
@@ -26,7 +27,33 @@
           </svg>
         </div>
       </div>
-
+      <!-- 모달창 표시 여부에 따라 모달을 띄운다 -->
+      <div v-if="showModal" class="modal-overlay" @click="closeChatbot">
+        <div class="modal-content" @click.stop>
+          <div class="chat-header">
+            <h3>AI와 대화하기</h3>
+            <button @click="closeChatbot" class="close-btn">X</button>
+          </div>
+          <div class="chat-body">
+            <div
+              v-for="(message, index) in messages"
+              :key="index"
+              class="chat-message"
+            >
+              <div class="message">{{ message }}</div>
+            </div>
+          </div>
+          <div class="chat-input">
+            <input
+              v-model="userMessage"
+              @keyup.enter="sendMessage"
+              type="text"
+              placeholder="메시지를 입력하세요..."
+            />
+            <button @click="sendMessage">전송</button>
+          </div>
+        </div>
+      </div>
       <div class="main-board-group">
         <div class="comunity-group">
           <div class="comunity-header">
@@ -117,12 +144,119 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { ref } from "vue";
+import api from "@/api/axiosInstance";
+const showModal = ref(false);
+const userMessage = ref("");
+const messages = ref([]);
+
+// 모달 창 열기
+const openChatbot = () => {
+  showModal.value = true;
+};
+
+// 모달 창 닫기
+const closeChatbot = () => {
+  showModal.value = false;
+};
+
+// 메시지 전송
+const sendMessage = async () => {
+  alert(userMessage.value);
+  if (userMessage.value.trim() === "") return;
+
+  const userMessageData = { role: "user", content: userMessage.value };
+  userMessage.value = "";
+  messages.value.push(userMessageData);
+  try {
+    const response = await api.post("/api/gpt", {
+      message: userMessageData.content,
+    });
+    const botMessage = { role: "bot", content: response.data.reply };
+    messages.value.push(botMessage);
+  } catch (error) {
+    console.error("Error sending message:", error);
+  }
+};
+</script>
 
 <style lang="css" scoped>
 @import url(@/assets/css/main-content.css);
 .comunity-header-text > a {
   text-decoration: none;
   color: black;
+}
+/* 모달 스타일 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  width: 400px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.chat-body {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.chat-message {
+  padding: 8px;
+  margin-bottom: 5px;
+}
+
+.chat-message .message {
+  font-size: 14px;
+}
+
+.chat-input {
+  display: flex;
+  justify-content: space-between;
+}
+
+.chat-input input {
+  width: 80%;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.chat-input button {
+  padding: 10px 15px;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 4px;
 }
 </style>

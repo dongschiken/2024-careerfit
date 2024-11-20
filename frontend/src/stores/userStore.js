@@ -30,9 +30,10 @@ export const useUserStore = defineStore({
       const accessToken = this.accessToken;
       const refreshToken = this.refreshToken;
       if (!accessToken || !refreshToken) {
-        alert("로그아웃에 필요한 토큰이 없습니다.");
         return;
       }
+      sessionStorage.removeItem("accessToken");
+      this.accessToken = "";
       try {
         // 로그아웃 API 요청을 보냄
         const response = await axios.delete(
@@ -55,10 +56,7 @@ export const useUserStore = defineStore({
           this.email = null;
 
           // sessionStorage에서 토큰 삭제
-          sessionStorage.removeItem("accessToken");
           sessionStorage.removeItem("refreshToken");
-
-          console.log("로그아웃 성공");
           alert("로그아웃 성공");
         }
       } catch (error) {
