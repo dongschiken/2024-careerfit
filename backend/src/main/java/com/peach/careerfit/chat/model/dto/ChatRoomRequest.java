@@ -11,4 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChatRoomRequest {
 	private String title;
+	private int placeId;
+	private String creatorNickname;
+	private String creatorProfile;
+	private int creatorId;
 }

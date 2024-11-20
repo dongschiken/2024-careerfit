@@ -12,7 +12,7 @@ import io.lettuce.core.dynamic.annotation.Param;
 @Mapper
 public interface ChatRoomMapper {
 	// 채팅방 생성
-	void insertChatRoom(@Param("title") String title);
+	void insertChatRoom(@Param("title") String title, @Param("placeId") int placeId, @Param("creatorId") int creatorId, @Param("creatorNickname") String creatorNickname, @Param("creatorProfile") String creatorProfile);
 	
 	// 채팅방 삭제
 	void deleteChatRoom(@Param("chat_room_id") int chatRoomId);
@@ -35,5 +35,15 @@ public interface ChatRoomMapper {
     
     // 특정 채팅방 정보 조회
     ChatRoom getChatRoomById(@Param("chatRoomId") int chatRoomId);
+    
+    // 채팅방 목록 조회
+    List<ChatRoom> getAllChatRooms();
+    
+    // 마지막으로 생성된 채팅방 ID 가져오기
+    int getLastInsertedId();
+    
+    // 해당 장소의 채팅방 리스트 반환
+    List<ChatRoom> getChatRoomsByPlaceId(@Param("placeId") int placeId);
+    
 }
 

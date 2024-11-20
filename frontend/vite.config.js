@@ -14,8 +14,14 @@ export default defineConfig({
     },
   },
   server: {
-    //host: "192.168.210.52", // 서버의 IP 주소
-    port: 3000, // 포트 번호
+    port: 3000, // 프론트엔드 개발 서버 포트 번호
+    proxy: {
+      "/api": {
+        target: "http://localhost:8080", // Spring Boot 서버 URL
+        changeOrigin: true, // CORS 문제 해결
+        rewrite: (path) => path.replace(/^\/api/, ""), // /api 제거
+      },
+    },
   },
   define: {
     global: {},
