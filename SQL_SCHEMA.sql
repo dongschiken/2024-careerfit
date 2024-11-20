@@ -51,7 +51,7 @@ CREATE TABLE `reply` (
 	`reply_id`	INT	NOT NULL,
 	`user_id`	INT	NOT NULL,
 	`board_id`	INT	NOT NULL,
-	`parent_reply_id`	INT	NOT NULL,
+	`parent_reply_id`	INT,
 	`content`	VARCHAR(1000)	NULL,
 	`depth`	INT	NULL,
 	`created_at`	TIMESTAMP	NOT NULL,

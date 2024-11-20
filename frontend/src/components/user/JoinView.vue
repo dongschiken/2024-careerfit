@@ -462,7 +462,7 @@ export default {
       }
 
       try {
-        const response = await api.get("/api/check-nickname", {
+        const response = await ncapi.get("/api/check-nickname", {
           params: { nickname: this.formData.nickname },
         });
 

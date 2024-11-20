@@ -150,10 +150,23 @@ import api from "@/api/axiosInstance";
 const showModal = ref(false);
 const userMessage = ref("");
 const messages = ref([]);
+const isFirst = ref("true");
 
 // 모달 창 열기
-const openChatbot = () => {
+const openChatbot = async () => {
   showModal.value = true;
+  if (isFirst) {
+    try {
+      const response = await api.post("/api/gpt/first");
+      const botMessage = { role: "bot", content: response.data.stringBuffer };
+      alert(botMessage);
+      messages.value.push(botMessage);
+    } catch (error) {
+      console.error("Error sending message:", error);
+      ``;
+    }
+    isFirst = !isFirst;
+  }
 };
 
 // 모달 창 닫기
@@ -216,12 +229,34 @@ const sendMessage = async () => {
 }
 
 .close-btn {
-  background: none;
-  border: none;
+  background: #e0e0e0; /* 밝은 회색 배경 */
+  border: 1px solid #bdbdbd; /* 테두리를 약간 더 진한 회색으로 */
+  border-radius: 50%; /* 원형 모양 */
   font-size: 16px;
+  font-weight: bold;
+  width: 36px; /* 버튼 크기 */
+  height: 36px;
+  display: flex;
+  justify-content: center; /* 텍스트 중앙 정렬 */
+  align-items: center;
   cursor: pointer;
+  color: #757575; /* 텍스트 색상을 진한 회색으로 */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 은은한 그림자 */
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* 부드러운 효과 */
 }
 
+.close-btn:hover {
+  background: #bdbdbd; /* 호버 시 더 진한 회색 */
+  color: #ffffff; /* 텍스트를 흰색으로 */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* 그림자 강조 */
+  transform: scale(1.05); /* 살짝 확대 */
+}
+
+.close-btn:active {
+  background: #9e9e9e; /* 클릭 시 어두운 회색 */
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.15); /* 그림자 줄임 */
+  transform: scale(0.95); /* 클릭감 */
+}
 .chat-body {
   max-height: 300px;
   overflow-y: auto;

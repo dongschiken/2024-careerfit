@@ -1,5 +1,7 @@
 package com.peach.careerfit.meal.model.dto;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +11,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Food {
+public class Food implements Serializable{
+	private static final long serialVersionUID = 1L;
 	private int foodId;
 	private String name;
 	private int kcal;

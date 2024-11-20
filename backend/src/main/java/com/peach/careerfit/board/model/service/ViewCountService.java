@@ -3,7 +3,9 @@ package com.peach.careerfit.board.model.service;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -14,11 +16,18 @@ import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 
 @EnableScheduling // spring에서 스케쥴링 관련 기능을 제공하는 어노테이션
-@RequiredArgsConstructor
 @Service
 public class ViewCountService {
-	private final RedisTemplate<String, String> redisTemplate;
+	
+	
+	private final StringRedisTemplate stringRedisTemplate;
 	private final BoardDao boardDao;
+	
+	
+	public ViewCountService(StringRedisTemplate stringRedisTemplate, BoardDao boardDao) {
+		this.stringRedisTemplate = stringRedisTemplate;
+		this.boardDao = boardDao;
+	}
 	
 	/**
 	 * 서버 종료시 동기화
@@ -40,13 +49,13 @@ public class ViewCountService {
 			return false;
 		}
 		String viewKey = "board:view:" + boardId + ":userId:" + userId;
-		Boolean isViewed = redisTemplate.hasKey(viewKey);
+		Boolean isViewed = stringRedisTemplate.hasKey(viewKey);
 		if (Boolean.TRUE.equals(isViewed)) {
 			return false;
 		}
-		redisTemplate.opsForValue().set(viewKey, String.valueOf(true), 1, TimeUnit.DAYS);
+		stringRedisTemplate.opsForValue().set(viewKey, String.valueOf(true), 1, TimeUnit.DAYS);
 		String viewCountKey = "board:view:" + boardId;
-		redisTemplate.opsForValue().increment(viewCountKey);
+		stringRedisTemplate.opsForValue().increment(viewCountKey);
 		return true;
 	}
 	
@@ -58,7 +67,7 @@ public class ViewCountService {
 	 */
 	public Integer getViewCount(Integer boardId) {
 		String viewCountKey = "board:view:" + boardId;
-		Object viewCount = redisTemplate.opsForValue().get(viewCountKey);
+		Object viewCount = stringRedisTemplate.opsForValue().get(viewCountKey);
 		if (viewCount != null) {
 			return Integer.parseInt(viewCount.toString());
 		}
@@ -67,7 +76,7 @@ public class ViewCountService {
 		if (dbViewCount == null) {
 			dbViewCount = 0;
 		}
-		redisTemplate.opsForValue().set(viewCountKey, String.valueOf(dbViewCount), 1, TimeUnit.DAYS);
+		stringRedisTemplate.opsForValue().set(viewCountKey, String.valueOf(dbViewCount), 1, TimeUnit.DAYS);
 		return dbViewCount;
 	}
 	
@@ -76,23 +85,23 @@ public class ViewCountService {
 	 */
 	@Scheduled(cron = "0 */20 * * * *") // 매 5분마다 실행
 	public void syncViewCountsToDatabase() {
-		Set<String> keys = redisTemplate.keys("board:view:*");
+		Set<String> keys = stringRedisTemplate.keys("board:view:*");
 		System.out.println(keys);
 		if (keys != null) {
 	        for (String key : keys) {
 	            if (key.contains(":userId:")) {
-	                redisTemplate.delete(key); 
+	            	stringRedisTemplate.delete(key); 
 	            } else {
 	                // 게시글 조회수 동기화
 	                Integer boardId = Integer.parseInt(key.split(":")[2]);
-	                Integer viewCount = Integer.parseInt(redisTemplate.opsForValue().get(key).toString());
+	                Integer viewCount = Integer.parseInt(stringRedisTemplate.opsForValue().get(key).toString());
 	                boardDao.updateViewCount(boardId, viewCount); 
-	                redisTemplate.delete(key); // Redis에서 삭제
+	                stringRedisTemplate.delete(key); // Redis에서 삭제
 	            }
 	        }
 	    }
 	}
-
+	
 	/**
 	 * 어떤 작업이 일어났을 때 db에 조회수 동기화 작업 하기위한 코드
 	 * @param boardId
@@ -100,11 +109,11 @@ public class ViewCountService {
 	public void syncViewCountImmediately(Integer boardId) {
 		String viewCountKey = "board:view:" + boardId;
 
-		Object count = redisTemplate.opsForValue().get(viewCountKey);
+		Object count = stringRedisTemplate.opsForValue().get(viewCountKey);
 		if (count != null) {
 			Integer viewCount = Integer.parseInt(count.toString());
 			boardDao.updateViewCount(boardId, viewCount);
-			redisTemplate.delete(viewCountKey);
+			stringRedisTemplate.delete(viewCountKey);
 		}
 	}
 }
