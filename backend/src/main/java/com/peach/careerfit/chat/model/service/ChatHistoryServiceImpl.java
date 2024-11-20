@@ -28,22 +28,15 @@ public class ChatHistoryServiceImpl implements ChatHistoryService{
 			throw new IllegalArgumentException("메세지 내용이 유효하지 않습니다.");
 		}
 		
+		 var user = userService.getUserById(sendUserId);
+		
 		// 메세지를 DB에 저장
-		 chatHistoryMapper.insertMessage(chatRoomId, sendUserId, request.getMessage());
+		 chatHistoryMapper.insertMessage(chatRoomId, sendUserId, request.getMessage(), user.getNickname(), user.getProfileUrl());
 		 chatHistoryMapper.updateLastMessageTime(chatRoomId);		// 마지막 메시지 시간 업데이트
 	}
 
 	@Override
-	public List<ChatMessageResponse> getMessage(int chatRoomId) {
-		// 특정 채팅방의 메세지 목록을 조회
-		List<ChatMessageResponse> messages = chatHistoryMapper.getMessagesByChatRoomId(chatRoomId);
-		
-		// 각 메시지에 대한 발신자의 닉네임과 프로필 사진을 추가로 조회하여 설정
-		for(ChatMessageResponse message : messages) {
-			var user = userService.getUserById(message.getSendUserId());
-			message.setSenderNickname(user.getNickname());
-			message.setSenderProfileUrl(user.getProfileUrl());
-		}
-		return messages;
-	}
+    public List<ChatMessageResponse> getMessage(int chatRoomId) {
+        return chatHistoryMapper.getMessagesByChatRoomId(chatRoomId);
+    }
 }

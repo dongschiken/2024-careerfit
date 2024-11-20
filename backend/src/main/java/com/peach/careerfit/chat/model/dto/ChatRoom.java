@@ -17,6 +17,6 @@ public class ChatRoom {
     private Timestamp createdAt;   // 생성 시간
     private Timestamp updatedAt;   // 마지막 수정 시간
     private Timestamp lastAt;      // 마지막 메시지 시간
-    private String creatorNickname;
-    private String creatorProfile;
+    private String userNickname;
+    private String userProfile;
 }

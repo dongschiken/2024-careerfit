@@ -6,9 +6,9 @@
 	namespace="com.peach.careerfit.chat.model.dao.ChatHistoryMapper">
 	<!-- 메세지 삽입 -->
 	<insert id="insertMessage">
-		INSERT INTO chat_message (chat_room_id, send_user_id, message, send_date)
-		VALUES (#{chatRoomId}, #{sendUserId}, #{message}, NOW());
-	</insert>
+    INSERT INTO chat_message (chat_room_id, send_user_id, message, send_date, sender_nickname, sender_profile_url)
+    VALUES (#{chatRoomId}, #{sendUserId}, #{message}, NOW(), #{nickname}, #{profileUrl});
+</insert>
 
 
 	<!-- 채팅방의 메세지 목록 조회 -->
