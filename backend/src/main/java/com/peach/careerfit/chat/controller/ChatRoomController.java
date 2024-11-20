@@ -19,7 +19,9 @@ import com.peach.careerfit.chat.model.dto.ChatRoom;
 import com.peach.careerfit.chat.model.dto.ChatRoomRequest;
 import com.peach.careerfit.chat.model.dto.ChatRoomUserRequest;
 import com.peach.careerfit.chat.model.service.ChatRoomService;
+import com.peach.careerfit.jwt.JwtResponse;
 import com.peach.careerfit.jwt.JwtUtils;
+import com.peach.careerfit.user.model.dto.ResponseTokenUser;
 import com.peach.careerfit.user.model.dto.User;
 import com.peach.careerfit.user.model.service.UserService;
 
@@ -33,7 +35,9 @@ public class ChatRoomController {
 
 	private final ChatRoomService chatRoomService;
 	private final UserService userService;
+	private final JwtResponse jwtResponse;
 	private final JwtUtils jwtUtils;
+	
 
 	// 채팅방 생성
 	@PostMapping("/chat-room")
@@ -43,9 +47,9 @@ public class ChatRoomController {
 		User user = userService.getUserById(jwtUtils.getUserIdFromToken(token));
 
 	    // 요청에 로그인된 사용자 정보를 추가
-	    chatRoomRequest.setCreatorId(user.getUserId());
-	    chatRoomRequest.setCreatorNickname(user.getNickname());
-	    chatRoomRequest.setCreatorProfile(user.getProfileUrl());
+	    chatRoomRequest.setUserId(user.getUserId());
+	    chatRoomRequest.setUserNickname(user.getNickname());
+	    chatRoomRequest.setUserProfile(user.getProfileUrl());
 
 	    // 서비스 호출
 	    ChatRoom createdChatRoom = chatRoomService.createChatRoom(chatRoomRequest);
@@ -68,9 +72,15 @@ public class ChatRoomController {
 	@PostMapping("/chat-room/{chat_room_id}/users")
 	public ResponseEntity<String> joinChatRoom(
 	    @PathVariable("chat_room_id") int chatRoomId,
-	    @RequestBody ChatRoomUserRequest request,
-	    @AuthenticationPrincipal User user) { // 로그인 사용자 정보 확인
+	    @RequestBody ChatRoomUserRequest chatRoomUserRequest,
+	    HttpServletRequest request) {
+		ResponseTokenUser user = jwtResponse.extractTokenUser(request);
+	    if (user == null) {
+	    	System.out.println("유저가 없음");
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+	    }
 	    try {
+	    	System.out.println(user.getUserId());
 	        boolean alreadyJoined = chatRoomService.isUserAlreadyInChatRoom(chatRoomId, user.getUserId());
 	        if (alreadyJoined) {
 	            return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 참여한 채팅방입니다.");
@@ -82,6 +92,7 @@ public class ChatRoomController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("채팅방 참여 중 오류 발생");
 	    }
 	}
+
 
 
 	// 채팅방 나가기

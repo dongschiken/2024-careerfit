@@ -13,5 +13,6 @@ public class ChatMessageRequest {
 	private int sendUserId; // 발신자 ID
 	private int chatRoomId; // 채팅방 ID
 	private String message; // 메시지 내용
-	private String senderNickname; // 발신자 닉네임 (선택 사항)
+	private String senderNickname; 
+	private String senderProfileUrl;
 }

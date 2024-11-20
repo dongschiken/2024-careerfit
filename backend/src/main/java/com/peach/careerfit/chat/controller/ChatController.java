@@ -1,5 +1,7 @@
 package com.peach.careerfit.chat.controller;
 
+import java.sql.Timestamp;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -27,9 +29,10 @@ public class ChatController {
 	                .chatRoomId(chatRoomId)
 	                .sendUserId(request.getSendUserId())
 	                .message(request.getMessage())
-	                .sendDate(new java.sql.Timestamp(System.currentTimeMillis()))
+	                .sendDate(new Timestamp(System.currentTimeMillis()))
+	                .senderNickname(request.getSenderNickname())
+	                .senderProfileUrl(request.getSenderProfileUrl())
 	                .build();
-
 	        return response; // 클라이언트로 브로드캐스트
 	    }
 

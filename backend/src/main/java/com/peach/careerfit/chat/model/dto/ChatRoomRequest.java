@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class ChatRoomRequest {
 	private String title;
 	private int placeId;
-	private String creatorNickname;
-	private String creatorProfile;
-	private int creatorId;
+	private String userNickname;
+	private String userProfile;
+	private int userId;
 }
