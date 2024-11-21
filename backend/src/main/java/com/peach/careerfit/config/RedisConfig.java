@@ -30,15 +30,6 @@ public class RedisConfig {
 		template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
 		return template;
 	}
-	
-    @Bean(name = "gptRedisTemplate")
-    public RedisTemplate<String, Object> gptRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory);
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
-        return redisTemplate;
-    }
     
     @Bean(name = "chatRedisTemplate")
     public RedisTemplate<String, Object> chatRedisTemplate(RedisConnectionFactory connectionFactory) {
