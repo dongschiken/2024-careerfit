@@ -3,6 +3,7 @@ package com.peach.careerfit.gpt.model.service;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,7 @@ import com.peach.careerfit.gpt.model.dto.GptResponse.Choice;
 @Service
 public class GptServiceImpl implements GptService {
 
-	private final static String MODEL = "gpt-4o";
+	private final static String MODEL = "gpt-4o-mini";
 	private final static String API_URL = "https://api.openai.com/v1/chat/completions";
 	private final GptDao gptDao;
 	private final RestTemplate restTemplate;
@@ -35,6 +36,7 @@ public class GptServiceImpl implements GptService {
 	public GptResponse initailGpt(int userId) {
 		StringBuffer stringBuffer = new StringBuffer();
 		String redisKey = "gpt_chat_history" + userId;
+		gptChatHistoryService.removeAllMessages(redisKey);
 		try (InputStream inputStream = Test.class.getClassLoader().getResourceAsStream("prompt");
 				BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
 			if (inputStream == null) {
@@ -48,8 +50,7 @@ public class GptServiceImpl implements GptService {
 			e.printStackTrace();
 		}
 		GptRequest gptRequest = new GptRequest(MODEL, stringBuffer.toString(), "system");
-		gptChatHistoryService.saveMessage(redisKey, "system :"+createSystemMessage(stringBuffer.toString()));
-//		System.out.println("system:"+stringBuffer.toString());
+		gptChatHistoryService.saveMessage(redisKey, "system :"+createSystemMessage(stringBuffer.toString()+"현재 날짜는"+LocalDateTime.now().toString()+"야"));
 		GptResponse response = restTemplate.postForObject(API_URL, gptRequest, GptResponse.class);
 		return response;
 	}
@@ -64,35 +65,25 @@ public class GptServiceImpl implements GptService {
 		if (userHistory != null && !userHistory.isEmpty()) {
 			for (Object history : userHistory) {
 				String historyString = history.toString();
-//				System.out.println("히스토린ㅇㄹㄴㅇㄹㅇㄹㅇㄴㄹ" + historyString);
 				if (historyString.startsWith("user ")) {
-//					System.out.println("user: 메시지 !#!!@!@!@!@"+historyString);
 					gptMessages.add(Map.of("role", "user", "content", historyString.substring(6)));
 				} else if (historyString.startsWith("assistant ")) {
-					System.out.println("assistant 메시지!!!@!@!@!@!@!@ :"+historyString);
 					gptMessages.add(Map.of("role", "assistant", "content", historyString.substring(11)));
 				} else if (historyString.startsWith("system ")) {
-//					System.out.println("system 메시지!!!!@!@!@!@!@ :"+historyString);
 					gptMessages.add(Map.of("role", "system", "content", historyString.substring(11)));					
 				}
 			}
 		}
-//		System.out.println(gptMessages);
 		gptMessages.add(Map.of("role", "user", "content", message));
-//		System.out.println(gptMessages);
-//		System.out.println(Map.of("model", MODEL, "messages", gptMessages));
 		try {
 			// OpenAI GPT API 요청 생성
 			GptResponse gptResponse = restTemplate.postForObject(API_URL,
 					Map.of("model", MODEL, "messages", gptMessages), // **messages로 수정**
 					GptResponse.class);
-//			System.out.println(gptResponse);
-//	        System.out.println("지피티 응답"+gptResponse);
 			for (Choice responses : gptResponse.getChoices()) {
-//				System.out.println("지피티 메시지 : !!"+responses.getMessage().getContent());
 				String content = responses.getMessage().getContent(); 
 				gptChatHistoryService.saveMessage(redisKey,
-						"assistant :"+createSystemMessage(content));
+						"assistant :"+content);
 			}
 			return gptResponse;
 		} catch (Exception e) {
