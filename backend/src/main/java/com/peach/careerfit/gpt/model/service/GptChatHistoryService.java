@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class GptChatHistoryService {
 	
 	private final RedisTemplate<String, Object> redisTemplate;
-    private static final int MAX_HISTORY = 10; // 최대 메시지 개수	
+    private static final int MAX_HISTORY = 20; // 최대 메시지 개수	
     
     public GptChatHistoryService(@Qualifier("gptRedisTemplate") RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
@@ -24,15 +24,15 @@ public class GptChatHistoryService {
   	 */
     public void saveMessage(String userId, String message) {
         String key = "gpt_chat_history:" + userId;
-
+//        System.out.println(message);
         // 메시지 추가
         redisTemplate.opsForList().rightPush(key, message);
         redisTemplate.expire("gpt_chat_history:" + userId, 20, TimeUnit.MINUTES); // 10분 후 자동 삭제
         Long size = redisTemplate.opsForList().size(key);
         System.out.println(size);
-        if (size != null && size > MAX_HISTORY) {
-            redisTemplate.opsForList().trim(key, size - MAX_HISTORY, size - 1);
-        }
+//        if (size != null && size > MAX_HISTORY) {
+//            redisTemplate.opsForList().trim(key, size - MAX_HISTORY, size - 1);
+//        }
     }
     
     /**
