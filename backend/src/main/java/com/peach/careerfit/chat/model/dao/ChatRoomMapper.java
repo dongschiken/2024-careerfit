@@ -12,7 +12,7 @@ import io.lettuce.core.dynamic.annotation.Param;
 @Mapper
 public interface ChatRoomMapper {
 	// 채팅방 생성
-	void insertChatRoom(@Param("title") String title, @Param("placeId") int placeId, @Param("creatorId") int creatorId, @Param("creatorNickname") String creatorNickname, @Param("creatorProfile") String creatorProfile);
+	void insertChatRoom(@Param("title") String title, @Param("placeId") int placeId, @Param("userId") int userId, @Param("userNickname") String userNickname, @Param("userProfile") String userProfile);
 	
 	// 채팅방 삭제
 	void deleteChatRoom(@Param("chat_room_id") int chatRoomId);

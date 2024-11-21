@@ -20,7 +20,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 	@Override
 	public ChatRoom createChatRoom(ChatRoomRequest request) {
 		// 채팅방 생성
-		chatRoomMapper.insertChatRoom(request.getTitle(), request.getPlaceId(), request.getCreatorId(), request.getCreatorNickname(), request.getCreatorProfile());
+		chatRoomMapper.insertChatRoom(request.getTitle(), request.getPlaceId(), request.getUserId(), request.getUserNickname(), request.getUserProfile());
 
 		// 마지막으로 생성된 채팅방 ID 조회
 		int chatRoomId = chatRoomMapper.getLastInsertedId();

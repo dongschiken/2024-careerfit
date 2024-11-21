@@ -6,13 +6,11 @@
 <mapper
 	namespace="com.peach.careerfit.chat.model.dao.ChatRoomMapper">
 	<!-- 채팅방 생성 -->
-	<insert id="insertChatRoom" parameterType="ChatRoomRequest">
-		INSERT INTO chat_room (title, place_id, creator_id, creator_nickname,
-		creator_profile)
-		VALUES (#{title}, #{placeId}, #{creatorId}, #{creatorNickname},
-		#{creatorProfile});
+	<insert id="insertChatRoom">
+		INSERT INTO chat_room (title, place_id, user_id, user_nickname,
+		user_profile)
+		VALUES (#{title}, #{placeId}, #{userId}, #{userNickname}, #{userProfile});
 	</insert>
-
 
 	<!-- 채팅방 삭제 -->
 	<delete id="deleteChatRoom" parameterType="int">
@@ -21,29 +19,35 @@
 	</delete>
 
 	<!-- 채팅방에 유저 추가 -->
-	<insert id="insertChatRoomUser">
-		INSERT INTO chat_room_user (chat_room_id, user_id,
+	<insert id="insertChatRoomUser" parameterType="map">
+		INSERT INTO
+		chat_room_user (chat_room_id, user_id,
 		joined_at)
-		VALUES (#{chatRoomId}, #{userId}, NOW())
+		VALUES (#{chatRoomId},
+		#{userId}, NOW())
 	</insert>
 
 	<!-- 유저가 이미 채팅방에 있는지 확인 -->
-	<select id="countChatRoomUser" resultType="int">
+	<select id="countChatRoomUser" parameterType="map"
+		resultType="int">
 		SELECT COUNT(*) FROM
 		chat_room_user
-		WHERE chat_room_id = #{chatRoomId} AND user_id =
+		WHERE chat_room_id =
+		#{chatRoomId} AND user_id =
 		#{userId}
 	</select>
 
 	<!-- 채팅방 나가기 -->
-	<delete id="deleteChatRoomUser">
-		DELETE FROM chat_room_user
+	<delete id="deleteChatRoomUser" parameterType="map">
+		DELETE FROM
+		chat_room_user
 		WHERE chat_room_id =
-		#{chatRoomId} AND user_id = #{userId}
+		#{chatRoomId} AND user_id =
+		#{userId}
 	</delete>
 
 	<!-- 채팅방 회원 목록 조회 -->
-	<select id="selectParticipantsByChatRoom"
+	<select id="selectParticipantsByChatRoom" parameterType="map"
 		resultType="ChatParticipantResponse">
 		SELECT user_id, joined_at
 		FROM chat_room_user
@@ -85,27 +89,26 @@
 	</select>
 
 	<!-- 해당 장소에 연동된 채팅방 반환 -->
-	<select id="getChatRoomsByPlaceId"
+	<select id="getChatRoomsByPlaceId" parameterType="map"
 		resultType="com.peach.careerfit.chat.model.dto.ChatRoom">
 		SELECT
 		cr.chat_room_id AS chatRoomId,
 		cr.title,
 		cr.last_at AS
 		lastAt,
-		u.nickname AS creatorNickname,
+		u.nickname AS userNickname,
 		COALESCE(u.profile_url,
-		'/default-profile.png') AS creatorProfile
+		'/default-profile.png') AS userProfile
 		FROM
 		chat_room cr
 		JOIN
 		user u ON
-		cr.creator_id = u.user_id
+		cr.user_id = u.user_id
 		WHERE
 		cr.place_id = #{placeId}
 		ORDER BY
-		cr.last_at DESC;
+		cr.last_at
+		DESC;
 	</select>
-
-
 
 </mapper>

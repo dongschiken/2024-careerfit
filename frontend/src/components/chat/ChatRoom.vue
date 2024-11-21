@@ -6,8 +6,9 @@
     </div>
     <div class="chat-history">
       <ul>
-        <li v-for="message in messages" :key="message.id">
-          <strong>{{ message.senderNickname }}</strong>: {{ message.message }}
+        <li v-for="(message, index) in messages" :key="index">
+          <strong>{{ message.senderNickname }}</strong
+          >: {{ message.message }}
         </li>
       </ul>
     </div>
@@ -30,16 +31,16 @@ export default {
   props: ["chatRoomId"],
   data() {
     return {
-      messages: [],
-      newMessage: "",
-      stompClient: null,
+      messages: [], // 채팅 메시지 목록
+      newMessage: "", // 입력한 메시지
+      stompClient: null, // STOMP 클라이언트
       chatRoom: {}, // 채팅방 정보
     };
   },
   mounted() {
-    this.connectToChat();
-    this.loadChatRoomInfo();
-    this.loadChatHistory();
+    this.connectToChat(); // WebSocket 연결
+    this.loadChatRoomInfo(); // 채팅방 정보 로드
+    this.loadChatHistory(); // 채팅 기록 로드
   },
   methods: {
     connectToChat() {
@@ -51,23 +52,29 @@ export default {
         self.stompClient.subscribe(
           `/topic/chatRoom/${self.chatRoomId}`,
           function (message) {
-            self.messages.push(JSON.parse(message.body));
+            const parsedMessage = JSON.parse(message.body);
+            self.messages.push(parsedMessage); // 수신 메시지 추가
           }
         );
       });
     },
     sendMessage() {
       if (!this.newMessage.trim()) return;
+
+      // 메시지 객체 생성
       const message = {
         message: this.newMessage,
-        senderNickname: "사용자 닉네임", // 실제 닉네임으로 변경 필요
+        senderNickname:
+          sessionStorage.getItem("nickname") || "알 수 없는 사용자", // 닉네임 가져오기
       };
+
+      // 메시지 전송
       this.stompClient.send(
         `/app/sendMessage/${this.chatRoomId}`,
         {},
         JSON.stringify(message)
       );
-      this.newMessage = "";
+      this.newMessage = ""; // 입력창 초기화
     },
     loadChatRoomInfo() {
       fetch(`/api/chat-room/${this.chatRoomId}`)
