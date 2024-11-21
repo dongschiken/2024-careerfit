@@ -34,6 +34,7 @@ public class GptServiceImpl implements GptService {
 	@Override
 	public GptResponse initailGpt(int userId) {
 		StringBuffer stringBuffer = new StringBuffer();
+		String redisKey = "gpt_chat_history" + userId;
 		try (InputStream inputStream = Test.class.getClassLoader().getResourceAsStream("prompt");
 				BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
 			if (inputStream == null) {
@@ -47,7 +48,8 @@ public class GptServiceImpl implements GptService {
 			e.printStackTrace();
 		}
 		GptRequest gptRequest = new GptRequest(MODEL, stringBuffer.toString(), "system");
-		gptChatHistoryService.saveMessage(MODEL, "system:"+stringBuffer.toString());
+		gptChatHistoryService.saveMessage(redisKey, "system :"+createSystemMessage(stringBuffer.toString()));
+//		System.out.println("system:"+stringBuffer.toString());
 		GptResponse response = restTemplate.postForObject(API_URL, gptRequest, GptResponse.class);
 		return response;
 	}
@@ -55,30 +57,52 @@ public class GptServiceImpl implements GptService {
 	@Override
 	public GptResponse registAndRequestGpt(int userId, String message) {
 		String redisKey = "gpt_chat_history" + userId;
-		gptChatHistoryService.saveMessage(redisKey, message);
+		gptChatHistoryService.saveMessage(redisKey,  message);
 		List<Object> userHistory = gptChatHistoryService.getAllMessages(redisKey);
 		List<Map<String, String>> gptMessages = new ArrayList<>();
-		System.out.println(userHistory);
-		// GPT 요청 생성
-		if(userHistory != null && !userHistory.isEmpty()) {
+		
+		if (userHistory != null && !userHistory.isEmpty()) {
 			for (Object history : userHistory) {
-				System.out.println(history);
-				if(history.toString().startsWith("user") ) {
-					gptMessages.add(Map.of("role", "user", "content", history.toString().substring(5)));
-				}else if(history.toString().startsWith("assistance")){
-					gptMessages.add(Map.of("role", "assistance", "content", history.toString().substring(11)));
-				}else if(history.toString().startsWith("system")) {
-					gptMessages.add(Map.of("role", "system", "content", history.toString().substring(7)));
+				String historyString = history.toString();
+//				System.out.println("히스토린ㅇㄹㄴㅇㄹㅇㄹㅇㄴㄹ" + historyString);
+				if (historyString.startsWith("user ")) {
+//					System.out.println("user: 메시지 !#!!@!@!@!@"+historyString);
+					gptMessages.add(Map.of("role", "user", "content", historyString.substring(6)));
+				} else if (historyString.startsWith("assistant ")) {
+					System.out.println("assistant 메시지!!!@!@!@!@!@!@ :"+historyString);
+					gptMessages.add(Map.of("role", "assistant", "content", historyString.substring(11)));
+				} else if (historyString.startsWith("system ")) {
+//					System.out.println("system 메시지!!!!@!@!@!@!@ :"+historyString);
+					gptMessages.add(Map.of("role", "system", "content", historyString.substring(11)));					
 				}
 			}
 		}
-		System.out.println(gptMessages);
+//		System.out.println(gptMessages);
 		gptMessages.add(Map.of("role", "user", "content", message));
-		GptResponse gptResponse = restTemplate.postForObject(API_URL, Map.of("model", MODEL, "message", gptMessages), GptResponse.class);
-		for (Choice responses : gptResponse.getChoices()) {
-			gptChatHistoryService.saveMessage(redisKey, responses.getMessage().getRole() + ":" + responses.getMessage().getContent());
+//		System.out.println(gptMessages);
+//		System.out.println(Map.of("model", MODEL, "messages", gptMessages));
+		try {
+			// OpenAI GPT API 요청 생성
+			GptResponse gptResponse = restTemplate.postForObject(API_URL,
+					Map.of("model", MODEL, "messages", gptMessages), // **messages로 수정**
+					GptResponse.class);
+//			System.out.println(gptResponse);
+//	        System.out.println("지피티 응답"+gptResponse);
+			for (Choice responses : gptResponse.getChoices()) {
+//				System.out.println("지피티 메시지 : !!"+responses.getMessage().getContent());
+				String content = responses.getMessage().getContent(); 
+				gptChatHistoryService.saveMessage(redisKey,
+						"assistant :"+createSystemMessage(content));
+			}
+			return gptResponse;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		return gptResponse;
+		System.out.println("응답 못받고 나옴");
+		return null;
 	}
-
+	
+	public String createSystemMessage(String messageContent) {
+	    return "{ \"message\":\"" + messageContent + "\" }";
+	}
 }
