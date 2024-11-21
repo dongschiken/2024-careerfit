@@ -13,7 +13,7 @@ public class GptChatHistoryService {
 	private final RedisTemplate<String, Object> redisTemplate;
     private static final int MAX_HISTORY = 20; // 최대 메시지 개수	
     
-    public GptChatHistoryService(@Qualifier("gptRedisTemplate") RedisTemplate<String, Object> redisTemplate) {
+    public GptChatHistoryService(@Qualifier("chatRedisTemplate") RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
     
