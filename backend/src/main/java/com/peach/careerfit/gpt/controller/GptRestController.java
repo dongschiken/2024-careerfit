@@ -17,53 +17,35 @@ import com.peach.careerfit.Test;
 import com.peach.careerfit.gpt.model.dto.Gpt;
 import com.peach.careerfit.gpt.model.dto.GptRequest;
 import com.peach.careerfit.gpt.model.dto.GptResponse;
-import com.peach.careerfit.gpt.model.dto.Message;
 import com.peach.careerfit.gpt.model.service.GptService;
+import com.peach.careerfit.jwt.JwtResponse;
 import com.peach.careerfit.jwt.JwtUtils;
+import com.peach.careerfit.user.model.dto.ResponseTokenUser;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/gpt")
 public class GptRestController {
 
-	private final RestTemplate restTemplate;
-	private final static String MODEL = "gpt-3.5-turbo";
-	private final static String API_URL = "https://api.openai.com/v1/chat/completions";
 	private final JwtUtils jwtUtils;
 	private final GptService gptService;
+	private final JwtResponse jwtResponse;
 
-	public GptRestController(@Qualifier("openapiRestTemplate") RestTemplate restTemplate, JwtUtils jwtUtils,
-			GptService gptService) {
-		this.restTemplate = restTemplate;
+	public GptRestController(JwtUtils jwtUtils, GptService gptService, JwtResponse jwtResponse) {
 		this.jwtUtils = jwtUtils;
 		this.gptService = gptService;
+		this.jwtResponse = jwtResponse;
 	}
 
 	// 처음 gpt 페이지를 오픈하면 안녕하세요 ~~ 하는 gpt를 받아와야함
 	@PostMapping("/first")
-	public ResponseEntity<Object> initialGpt() {
-		StringBuffer stringBuffer = new StringBuffer();
-		try (InputStream inputStream = Test.class.getClassLoader().getResourceAsStream("prompt"); 
-				BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-		            if (inputStream == null) {
-		                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("파일을 찾을 수 없습니다.");
-		            }
-		            String line;
-		            while ((line = reader.readLine()) != null) {
-		            	stringBuffer.append(line);
-		            }
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		GptRequest gptRequest = new GptRequest(MODEL, stringBuffer.toString(), "system");
-		System.out.println(gptRequest);
-		restTemplate.postForObject(API_URL, gptRequest, GptResponse.class);
-		gptRequest = new GptRequest(MODEL, "식단관리 도와줘", "user");
-		System.out.println(gptRequest);
-		GptResponse response = restTemplate.postForObject(API_URL, gptRequest, GptResponse.class);
-		System.out.println("respsonse : " + response);
+	public ResponseEntity<Object> initialGpt(HttpServletRequest request) {
+		ResponseTokenUser user = jwtResponse.extractTokenUser(request);
+		GptResponse response = gptService.initailGpt(user.getUserId());
+		if(response == null) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body("읽어올 프롬프트 파일이 없습니다.");
+		}
 		return ResponseEntity.ok(response);
 	}
 	
@@ -77,21 +59,9 @@ public class GptRestController {
 	 */
 	@PostMapping
 	public ResponseEntity<Object> registMessage(HttpServletRequest request, @RequestBody String prompt) {
-		String token = jwtUtils.getAccessToken(request);
-		int userId = jwtUtils.getUserIdFromToken(token);
-		Gpt userGpt = new Gpt().builder().userId(userId).context(prompt).isUserChat("Y").build();
-		int status = gptService.registMessage(userGpt);
-		GptRequest gptRequest = new GptRequest(MODEL, prompt, "user");
-		System.out.println(gptRequest);
-		GptResponse response = restTemplate.postForObject(API_URL, gptRequest, GptResponse.class);
-		if (response == null || response.getChoices() == null || response.getChoices().isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body("GPT 메시지 응답 오류");
-		}
-		Gpt gptGpt = new Gpt().builder().userId(userId).context(response.getChoices().get(0).getMessage().getContent()).isUserChat("N").build();
-		gptService.registMessage(gptGpt);
-		System.out.println(userGpt);
-		System.out.println(gptGpt);
-		return ResponseEntity.status(HttpStatus.OK).body(gptGpt);
+		ResponseTokenUser user = jwtResponse.extractTokenUser(request);
+		GptResponse response = gptService.registAndRequestGpt(user.getUserId(), prompt);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
 }

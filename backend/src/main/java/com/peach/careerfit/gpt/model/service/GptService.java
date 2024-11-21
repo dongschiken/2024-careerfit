@@ -1,7 +1,9 @@
 package com.peach.careerfit.gpt.model.service;
 
 import com.peach.careerfit.gpt.model.dto.Gpt;
+import com.peach.careerfit.gpt.model.dto.GptResponse;
 
 public interface GptService {
-	int registMessage(Gpt gpt);
+	GptResponse initailGpt(int userId);
+	GptResponse registAndRequestGpt(int userId, String message);
 }
