@@ -31,16 +31,18 @@
       <div v-if="showModal" class="modal-overlay" @click="closeChatbot">
         <div class="modal-content" @click.stop>
           <div class="chat-header">
-            <h3>AI와 대화하기</h3>
+            <h3>careerfit 식단관리사 마이구민입니다!</h3>
             <button @click="closeChatbot" class="close-btn">X</button>
           </div>
           <div class="chat-body">
             <div
               v-for="(message, index) in messages"
               :key="index"
-              class="chat-message"
+              :class="['chat-message', message.role]"
             >
-              <div class="message">{{ message }}</div>
+              <div class="message">
+                {{ message.content }}
+              </div>
             </div>
           </div>
           <div class="chat-input">
@@ -155,17 +157,18 @@ const isFirst = ref("true");
 // 모달 창 열기
 const openChatbot = async () => {
   showModal.value = true;
-  if (isFirst) {
+  if (isFirst.value) {
     try {
+      console.log(isFirst.value);
       const response = await api.post("/api/gpt/first");
-      const botMessage = { role: "bot", content: response.data.stringBuffer };
-      alert(botMessage);
-      messages.value.push(botMessage);
+      const botMessage = response.data.choices[0].message.content;
+      console.log(botMessage);
+      messages.value.push({ role: "assistance", content: botMessage });
     } catch (error) {
       console.error("Error sending message:", error);
       ``;
     }
-    isFirst = !isFirst;
+    isFirst.value = false;
   }
 };
 
@@ -186,8 +189,15 @@ const sendMessage = async () => {
     const response = await api.post("/api/gpt", {
       message: userMessageData.content,
     });
-    const botMessage = { role: "bot", content: response.data.reply };
-    messages.value.push(botMessage);
+    const botMessage = {
+      role: "assistance",
+      content: response.data.choices[0].message.content,
+    };
+    // GPT 응답 처리
+    const botMessageContent = response.data.choices[0].message.content; // content 가져오기
+
+    // 메시지를 한 번에 추가 (줄바꿈 포함)
+    messages.value.push({ role: "assistant", content: botMessageContent });
   } catch (error) {
     console.error("Error sending message:", error);
   }
@@ -216,7 +226,7 @@ const sendMessage = async () => {
 .modal-content {
   background: white;
   padding: 20px;
-  width: 400px;
+  width: 700px;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
@@ -293,5 +303,50 @@ const sendMessage = async () => {
   background-color: #4caf50;
   color: white;
   border-radius: 4px;
+}
+
+.chat-message {
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  max-width: 70%;
+  font-size: 14px;
+}
+
+.chat-message.user {
+  background-color: #d1f7c4; /* 사용자 메시지의 배경색 */
+  align-self: flex-end; /* 오른쪽 정렬 */
+  text-align: right;
+}
+
+.chat-message.assistance {
+  background-color: #f1f0f0; /* 봇 메시지의 배경색 */
+  align-self: flex-start; /* 왼쪽 정렬 */
+  text-align: left;
+}
+.chat-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* 메시지 간 간격 */
+}
+
+.chat-message {
+  white-space: pre-wrap; /* 줄바꿈을 유지 */
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #f1f0f0; /* 봇 메시지 배경색 */
+}
+
+.chat-message.user {
+  background-color: #d1f7c4; /* 사용자 메시지 배경색 */
+  text-align: right;
+}
+
+.chat-message.assistance {
+  background-color: #f1f0f0;
+  align-self: flex-start;
+  color: #000000;
 }
 </style>
