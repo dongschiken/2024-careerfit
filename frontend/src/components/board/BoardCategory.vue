@@ -80,7 +80,6 @@ import axios from "axios";
 import { onMounted, ref, computed } from "vue";
 const boardStore = useBoardStore();
 const router = useRouter();
-const token = ref("");
 function mainImage(board) {
   return board.boardImgs.find((img) => img.mainWhether === "M");
 }

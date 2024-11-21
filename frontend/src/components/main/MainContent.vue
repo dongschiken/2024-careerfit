@@ -40,9 +40,7 @@
               :key="index"
               :class="['chat-message', message.role]"
             >
-              <div class="message">
-                {{ message.content }}
-              </div>
+              <p v-html="message.content" class="message"></p>
             </div>
           </div>
           <div class="chat-input">
@@ -149,6 +147,8 @@
 <script setup>
 import { ref } from "vue";
 import api from "@/api/axiosInstance";
+import { marked } from "marked";
+
 const showModal = ref(false);
 const userMessage = ref("");
 const messages = ref([]);
@@ -179,9 +179,7 @@ const closeChatbot = () => {
 
 // 메시지 전송
 const sendMessage = async () => {
-  alert(userMessage.value);
   if (userMessage.value.trim() === "") return;
-
   const userMessageData = { role: "user", content: userMessage.value };
   userMessage.value = "";
   messages.value.push(userMessageData);
@@ -195,9 +193,12 @@ const sendMessage = async () => {
     };
     // GPT 응답 처리
     const botMessageContent = response.data.choices[0].message.content; // content 가져오기
+    const formattedBotMessageContent = marked(botMessageContent);
 
-    // 메시지를 한 번에 추가 (줄바꿈 포함)
-    messages.value.push({ role: "assistant", content: botMessageContent });
+    messages.value.push({
+      role: "assistant",
+      content: formattedBotMessageContent,
+    });
   } catch (error) {
     console.error("Error sending message:", error);
   }
@@ -224,9 +225,14 @@ const sendMessage = async () => {
 }
 
 .modal-content {
+  display: flex;
   background: white;
+  flex-direction: column; /* 세로 방향 정렬 */
+  justify-content: space-between; /* 위아래 공간 분배 */
   padding: 20px;
   width: 700px;
+  min-height: 900px;
+  max-height: 900px;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
@@ -268,7 +274,8 @@ const sendMessage = async () => {
   transform: scale(0.95); /* 클릭감 */
 }
 .chat-body {
-  max-height: 300px;
+  flex-grow: 1; /* 중간 영역 확장 */
+  max-height: 800px;
   overflow-y: auto;
   margin-bottom: 20px;
 }
@@ -284,7 +291,11 @@ const sendMessage = async () => {
 
 .chat-input {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* 입력창과 버튼 간격 유지 */
+  align-items: center; /* 수직 정렬 */
+  margin-top: auto; /* 위쪽 여백 자동 */
+  padding-top: 10px;
+  border-top: 1px solid #ccc; /* 상단 경계선 */
 }
 
 .chat-input input {
@@ -300,7 +311,7 @@ const sendMessage = async () => {
   font-size: 14px;
   cursor: pointer;
   border: none;
-  background-color: #4caf50;
+  background-color: #ff7f32;
   color: white;
   border-radius: 4px;
 }

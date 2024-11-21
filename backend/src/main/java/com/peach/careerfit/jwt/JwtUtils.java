@@ -123,7 +123,7 @@ public class JwtUtils {
      */
     public String createJwt(Integer userId, String role, String email, String nickname) {
         Date now = new Date();
-        Date expiration = new Date(now.getTime() + 1000 * 60/*ACCESS_TOKEN_VALIDATE*/);
+        Date expiration = new Date(now.getTime() + ACCESS_TOKEN_VALIDATE);
         return builder()
         		.claim("userId", Integer.valueOf(userId))
                 .claim("role", role)
