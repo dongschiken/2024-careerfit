@@ -10,6 +10,8 @@ import com.peach.careerfit.chat.model.dto.ChatMessageRequest;
 import com.peach.careerfit.chat.model.dto.ChatMessageResponse;
 import com.peach.careerfit.chat.model.service.ChatHistoryService;
 import com.peach.careerfit.chat.model.service.RedisPublisher;
+import com.peach.careerfit.user.model.dto.User;
+import com.peach.careerfit.user.model.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,14 +21,15 @@ public class ChatController {
 
     private final RedisPublisher redisPublisher; // Redis 메시지 발행 서비스
     private final ChatHistoryService chatHistoryService; // 채팅 히스토리 관리 서비스
-
+    private final UserService userService;
+    
     @MessageMapping("/sendMessage/{chatRoomId}")
     public void sendMessage(@DestinationVariable int chatRoomId, ChatMessageRequest request) {
         try {
             System.out.println("요청받음: chatRoomId=" + chatRoomId + ", request=" + request);
 
-            chatHistoryService.sendMessage(chatRoomId, request.getUserId(), request);
-
+            User user = userService.getUserById(request.getUserId());
+           
             ChatMessageResponse response = ChatMessageResponse.builder()
                     .chatRoomId(chatRoomId)
                     .userId(request.getUserId())
