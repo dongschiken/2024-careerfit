@@ -42,19 +42,30 @@ public class ChatRoomController {
 	// 채팅방 생성
 	@PostMapping("/chat-room")
 	public ResponseEntity<ChatRoom> createChatRoom(@RequestBody ChatRoomRequest chatRoomRequest, HttpServletRequest request) {
-	    // 로그인된 사용자 정보
+	   System.out.println("호출");
+		
+		// 로그인된 사용자 정보
 		String token = jwtUtils.getAccessToken(request);
 		User user = userService.getUserById(jwtUtils.getUserIdFromToken(token));
 
 	    // 요청에 로그인된 사용자 정보를 추가
 	    chatRoomRequest.setUserId(user.getUserId());
 	    chatRoomRequest.setUserNickname(user.getNickname());
-	    chatRoomRequest.setUserProfile(user.getProfileUrl());
 
+
+	    // 프로필이 NULL일 경우 기본값 설정
+	    if (user.getProfileUrl() == null || user.getProfileUrl().isEmpty()) {
+	        chatRoomRequest.setUserProfile("/default-profile.png");
+	    } else {
+	        chatRoomRequest.setUserProfile(user.getProfileUrl());
+	    }
+	    
 	    // 서비스 호출
 	    ChatRoom createdChatRoom = chatRoomService.createChatRoom(chatRoomRequest);
 
 	    return ResponseEntity.ok(createdChatRoom);
+		
+
 	}
 
 	// 채팅방 삭제

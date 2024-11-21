@@ -5,11 +5,16 @@
 
 <mapper
 	namespace="com.peach.careerfit.chat.model.dao.ChatRoomMapper">
-	<!-- 채팅방 생성 -->
 	<insert id="insertChatRoom">
 		INSERT INTO chat_room (title, place_id, user_id, user_nickname,
 		user_profile)
-		VALUES (#{title}, #{placeId}, #{userId}, #{userNickname}, #{userProfile});
+		VALUES (
+		#{title},
+		#{placeId},
+		#{userId},
+		#{userNickname},
+		COALESCE(#{userProfile}, '/default-profile.png')
+		);
 	</insert>
 
 	<!-- 채팅방 삭제 -->
@@ -94,21 +99,16 @@
 		SELECT
 		cr.chat_room_id AS chatRoomId,
 		cr.title,
-		cr.last_at AS
-		lastAt,
-		u.nickname AS userNickname,
-		COALESCE(u.profile_url,
-		'/default-profile.png') AS userProfile
+		cr.last_at AS lastAt,
+		COALESCE(cr.user_nickname, '익명') AS userNickname,
+		COALESCE(cr.user_profile, '/default-profile.png') AS userProfile
 		FROM
 		chat_room cr
-		JOIN
-		user u ON
-		cr.user_id = u.user_id
 		WHERE
 		cr.place_id = #{placeId}
 		ORDER BY
-		cr.last_at
-		DESC;
+		cr.last_at DESC;
 	</select>
+
 
 </mapper>

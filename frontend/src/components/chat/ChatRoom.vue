@@ -1,24 +1,14 @@
 <template>
   <div>
+    <ul>
+      <li v-for="message in messages" :key="message.id">
+        <span class="sender">{{ message.senderNickname }}:</span>
+        <span class="text">{{ message.message }}</span>
+      </li>
+    </ul>
     <div>
-      <h2>{{ chatRoom.title }}</h2>
-      <p>{{ chatRoom.description }}</p>
-    </div>
-    <div class="chat-history">
-      <ul>
-        <li v-for="(message, index) in messages" :key="index">
-          <strong>{{ message.senderNickname }}</strong
-          >: {{ message.message }}
-        </li>
-      </ul>
-    </div>
-    <div class="chat-input">
-      <input
-        v-model="newMessage"
-        placeholder="메시지를 입력하세요..."
-        @keyup.enter="sendMessage"
-      />
-      <button @click="sendMessage">전송</button>
+      <input v-model="newMessage" placeholder="메시지를 입력하세요" />
+      <button @click="sendMessage(currentChatRoomId, newMessage)">전송</button>
     </div>
   </div>
 </template>
@@ -28,67 +18,55 @@ import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 
 export default {
-  props: ["chatRoomId"],
   data() {
     return {
-      messages: [], // 채팅 메시지 목록
-      newMessage: "", // 입력한 메시지
+      messages: [], // 수신된 메시지
+      newMessage: "", // 새 메시지 입력
       stompClient: null, // STOMP 클라이언트
-      chatRoom: {}, // 채팅방 정보
+      currentChatRoomId: 1, // 현재 채팅방 ID (임시 값)
     };
   },
   mounted() {
-    this.connectToChat(); // WebSocket 연결
-    this.loadChatRoomInfo(); // 채팅방 정보 로드
-    this.loadChatHistory(); // 채팅 기록 로드
+    const socket = new SockJS("http://localhost:8080/chat");
+    this.stompClient = Stomp.over(socket);
+    this.stompClient.connect({}, this.onConnected, this.onError);
   },
   methods: {
-    connectToChat() {
-      const socket = new SockJS("http://localhost:8080/chat");
-      this.stompClient = Stomp.over(socket);
-      const self = this;
+    onConnected() {
+  if (!this.currentChatRoomId) {
+    console.error("currentChatRoomId가 설정되지 않았습니다.");
+    return;
+  }
+  this.stompClient.subscribe(`/topic/chatRoom/${this.currentChatRoomId}`, this.onMessageReceived);
+  console.log("WebSocket 연결 성공");
+},
 
-      this.stompClient.connect({}, function () {
-        self.stompClient.subscribe(
-          `/topic/chatRoom/${self.chatRoomId}`,
-          function (message) {
-            const parsedMessage = JSON.parse(message.body);
-            self.messages.push(parsedMessage); // 수신 메시지 추가
-          }
-        );
-      });
-    },
-    sendMessage() {
-      if (!this.newMessage.trim()) return;
+sendMessage(chatRoomId, message) {
+    const chatMessage = {
+      chatRoomId: chatRoomId,
+      userId: sessionStorage.getItem("userId"), // 보낸 사용자 ID
+      message: message,
+      userNickname: sessionStorage.getItem("userNickname"), // 닉네임
+      userProfile: sessionStorage.getItem("userProfile"), // 프로필 사진
+    };
 
-      // 메시지 객체 생성
-      const message = {
-        message: this.newMessage,
-        senderNickname:
-          sessionStorage.getItem("nickname") || "알 수 없는 사용자", // 닉네임 가져오기
-      };
+    // WebSocket 메시지 전송
+    this.stompClient.send(`/app/sendMessage/${chatRoomId}`, {}, JSON.stringify(chatMessage));
 
-      // 메시지 전송
-      this.stompClient.send(
-        `/app/sendMessage/${this.chatRoomId}`,
-        {},
-        JSON.stringify(message)
-      );
-      this.newMessage = ""; // 입력창 초기화
-    },
-    loadChatRoomInfo() {
-      fetch(`/api/chat-room/${this.chatRoomId}`)
-        .then((response) => response.json())
-        .then((data) => {
-          this.chatRoom = data;
-        });
-    },
-    loadChatHistory() {
-      fetch(`/api/chat-room/${this.chatRoomId}/history`)
-        .then((response) => response.json())
-        .then((data) => {
-          this.messages = data;
-        });
+    // 바로 클라이언트 상태에 추가
+    this.messages.push(chatMessage); // 브로드캐스트 수신 전에 즉각 반영
+    this.newMessage = ""; // 입력창 초기화
+  },
+
+  onMessageReceived(payload) {
+    const message = JSON.parse(payload.body);
+    console.log("WebSocket 메시지 수신:", message);
+
+    // **로컬 상태에 수신된 메시지 추가**
+    this.chatRoomMessages.unshift(message);
+  },
+    onError(error) {
+      console.error("WebSocket 연결 오류:", error);
     },
   },
 };
