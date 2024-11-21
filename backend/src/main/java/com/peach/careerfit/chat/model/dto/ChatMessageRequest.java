@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatMessageRequest {
-	private int sendUserId; // 발신자 ID
+	private int userId; // 발신자 ID
 	private int chatRoomId; // 채팅방 ID
 	private String message; // 메시지 내용
-	private String senderNickname; 
-	private String senderProfileUrl;
+	private String userNickname; 
+	private String userProfile;
 }
