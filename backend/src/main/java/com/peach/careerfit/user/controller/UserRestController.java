@@ -189,4 +189,53 @@ public class UserRestController {
 		return ResponseEntity.status(HttpStatus.OK).body(responseTokenUser);
 	}
 	
+	// UserRestController.java
+
+	@GetMapping("/user/{user_id}/profile")
+	public ResponseEntity<Map<String, String>> getUserProfile(@PathVariable("user_id") int userId) {
+	    try {
+	        User user = userService.getUserById(userId);
+	        if (user == null) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+	                    .body(Collections.singletonMap("error", "User not found"));
+	        }
+
+	        // 필요한 데이터만 반환
+	        Map<String, String> userProfile = Map.of(
+	                "nickname", user.getNickname(),
+	                "profile", user.getProfileUrl() != null ? user.getProfileUrl() : "/img/default-profile.png"
+	        );
+	        return ResponseEntity.ok(userProfile);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .body(Collections.singletonMap("error", "Failed to retrieve user profile"));
+	    }
+	}
+	
+	@GetMapping("/user/current")
+	public ResponseEntity<User> getCurrentUser(HttpServletRequest request) {
+	    // JWT 토큰에서 사용자 정보 추출
+	    String token = jwtUtils.getAccessToken(request);
+	    if (token == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+	    }
+
+	    // 토큰에서 userId 추출
+	    int userId = jwtUtils.getUserIdFromToken(token);
+
+	    // userId로 사용자 정보 조회
+	    User user = userService.getUserById(userId);
+
+	    // 사용자 정보가 없으면 NOT_FOUND 반환
+	    if (user == null) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	    }
+
+	    // 사용자 정보 반환
+	    return ResponseEntity.ok(user);
+	}
+
+
 }
