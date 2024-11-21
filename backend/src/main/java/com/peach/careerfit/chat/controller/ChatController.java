@@ -2,50 +2,59 @@ package com.peach.careerfit.chat.controller;
 
 import java.sql.Timestamp;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
 import com.peach.careerfit.chat.model.dto.ChatMessageRequest;
 import com.peach.careerfit.chat.model.dto.ChatMessageResponse;
 import com.peach.careerfit.chat.model.service.ChatHistoryService;
+import com.peach.careerfit.chat.model.service.RedisPublisher;
+
+import lombok.RequiredArgsConstructor;
 
 @Controller
+@RequiredArgsConstructor
 public class ChatController {
-	
-	@Autowired
-	private ChatHistoryService chatHistoryService;
 
-	  @MessageMapping("/sendMessage/{chatRoomId}")
-	    @SendTo("/topic/chatRoom/{chatRoomId}")
-	    public ChatMessageResponse sendMessage(@DestinationVariable int chatRoomId, ChatMessageRequest request) {
-	        // 메시지를 DB에 저장
-	        chatHistoryService.sendMessage(chatRoomId, request.getSendUserId(), request);
+    private final RedisPublisher redisPublisher; // Redis 메시지 발행 서비스
+    private final ChatHistoryService chatHistoryService; // 채팅 히스토리 관리 서비스
 
-	        // 클라이언트로 전송할 메시지 생성
-	        ChatMessageResponse response = ChatMessageResponse.builder()
-	                .chatRoomId(chatRoomId)
-	                .sendUserId(request.getSendUserId())
-	                .message(request.getMessage())
-	                .sendDate(new Timestamp(System.currentTimeMillis()))
-	                .senderNickname(request.getSenderNickname())
-	                .senderProfileUrl(request.getSenderProfileUrl())
-	                .build();
-	        return response; // 클라이언트로 브로드캐스트
-	    }
+    @MessageMapping("/sendMessage/{chatRoomId}")
+    public void sendMessage(@DestinationVariable int chatRoomId, ChatMessageRequest request) {
+        try {
+            System.out.println("요청받음: chatRoomId=" + chatRoomId + ", request=" + request);
 
-	    @MessageMapping("/enterChat")
-	    @SendTo("/topic/chatRoom/{chatRoomId}")
-	    public ChatMessageResponse userEntered(ChatMessageRequest request) {
-	        ChatMessageResponse response = ChatMessageResponse.builder()
-	                .chatRoomId(request.getChatRoomId())
-	                .sendUserId(request.getSendUserId())
-	                .message(request.getSenderNickname() + "님이 채팅방에 입장했습니다.")
-	                .sendDate(new java.sql.Timestamp(System.currentTimeMillis()))
-	                .build();
+            chatHistoryService.sendMessage(chatRoomId, request.getUserId(), request);
 
-	        return response; // 입장 메시지 전송
+            ChatMessageResponse response = ChatMessageResponse.builder()
+                    .chatRoomId(chatRoomId)
+                    .userId(request.getUserId())
+                    .message(request.getMessage())
+                    .sendDate(new Timestamp(System.currentTimeMillis()))
+                    .userNickname(request.getUserNickname())
+                    .userProfile(request.getUserProfile())
+                    .build();
+
+            redisPublisher.publish(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("메시지 전송 실패: " + e.getMessage());
+        }
+    }
+
+
+    @MessageMapping("/enterChat/{chatRoomId}")
+    public void userEntered(@DestinationVariable int chatRoomId, ChatMessageRequest request) {
+        // 사용자 입장 메시지 생성
+        ChatMessageResponse response = ChatMessageResponse.builder()
+                .chatRoomId(chatRoomId)
+                .userId(request.getUserId()) // getUserId로 수정
+                .message(request.getUserNickname() + "님이 채팅방에 입장했습니다.") // getUserNickname으로 수정
+                .sendDate(new Timestamp(System.currentTimeMillis()))
+                .build();
+
+        // Redis를 통해 메시지 발행
+        redisPublisher.publish(response);
     }
 }
