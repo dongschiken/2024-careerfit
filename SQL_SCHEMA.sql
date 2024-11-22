@@ -407,3 +407,4 @@ ALTER TABLE `chat_history`
     ADD CONSTRAINT `FK_chat_history_to_user` FOREIGN KEY (`send_user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE;
 
 ALTER TABLE meal ADD INDEX (user_id);
+
