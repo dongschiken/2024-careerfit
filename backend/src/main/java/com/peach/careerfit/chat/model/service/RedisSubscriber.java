@@ -10,7 +10,12 @@ public class RedisSubscriber {
     private final SimpMessagingTemplate messagingTemplate;
 
     public void handleMessage(String message) {
-        // 수신 메시지를 WebSocket으로 브로드캐스트
-        messagingTemplate.convertAndSend("/topic/chatroom", message);
-    }
+    	 try {
+             // Redis로부터 수신된 메시지를 WebSocket으로 전송
+             messagingTemplate.convertAndSend("/topic/chatRoom", message);
+         } catch (Exception e) {
+             e.printStackTrace();
+             System.err.println("Redis 메시지 처리 중 오류: " + e.getMessage());
+         }
+}
 }

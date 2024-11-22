@@ -194,10 +194,13 @@ import ncapi from "@/api/noTokenAxiosInstance";
 import MainHeader from "@/components/module/MainHeader.vue";
 import MainFooter from "@/components/module/MainFooter.vue";
 import api from "@/api/axiosInstance"; // 인증이 필요한 요청을 위해 추가
+import WebSocketService from "@/services/WebSocketService";
+import { reactive } from "vue";
 
 export default {
   data() {
     return {
+      currentUser: null,
       map: null,
       markers: [],
       centerLat: null,
@@ -212,16 +215,54 @@ export default {
       defaultProfile: "/img/default-profile.png", // 기본 프로필 이미지 경로
       showEnterRoomModal: false, // 입장 모달 표시 여부
       selectedChatRoomId: null, // 선택된 채팅방 ID
+      selectedChatRoom: null, // 선택된 채팅방 정보
       showChatRoomModal: false, // 채팅방 모달 표시 여부
       chatRoomMessages: [], // 해당 채팅방의 메시지 목록
       newChatMessage: "", // 새로운 메시지 입력 필드 값
-      message: [],
+      messages: {},
+      chatRoomsByPlace: reactive({}), // 장소별 채팅방 데이터를 저장
+      selectedPlaceId: null, // 선택된 장소 ID
+      isConnected: false,
     };
   },
-  mounted() {
-    this.getUserLocation();
+  async mounted() {
+    try {
+      await this.getCurrentUser(); // 사용자 정보 가져오기 완료 대기
+      this.getUserLocation(); // 위치 정보 가져오기
+      WebSocketService.connect(this.onConnected, this.onError); // WebSocket 연결
+    } catch (error) {
+      console.error("초기화 중 오류 발생:", error);
+    }
   },
+
   methods: {
+    onConnected() {
+      if (this.selectedChatRoomId) {
+        console.log("WebSocket 연결 성공");
+        this.isConnected = true;
+        WebSocketService.subscribe(
+          `/topic/chatRoom/${this.selectedChatRoomId}`,
+          this.onMessageReceived
+        );
+      } else {
+        console.error("선택된 채팅방 ID가 없습니다.");
+      }
+    },
+    onError(error) {
+      console.error("WebSocket 연결 오류:", error);
+      this.isConnected = false;
+    },
+    async getCurrentUser() {
+      try {
+        const response = await api.get(`/api/user/current`); // 사용자 정보 API 호출
+        this.currentUser = response.data; // 사용자 정보 저장
+        console.log("현재 사용자 정보:", this.currentUser);
+      } catch (error) {
+        console.error("사용자 정보를 가져오는 중 오류 발생:", error);
+        alert("로그인 정보가 없습니다. 다시 로그인 해주세요.");
+        this.$router.push("/login"); // 로그인 페이지로 이동
+      }
+    },
     getUserLocation() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -253,49 +294,56 @@ export default {
       this.selectedChatRoomId = null;
     },
     // 채팅방 입장 확인
+    // 채팅방 입장 확인
     async confirmEnterChatRoom() {
-      console.log(
-        "확인 버튼 클릭 - 선택된 채팅방 ID:",
-        this.selectedChatRoomId
-      );
-
-      // 선택된 채팅방 ID가 없으면 오류 처리
       if (!this.selectedChatRoomId) {
         alert("선택된 채팅방 ID가 없습니다.");
         return;
       }
 
-      try {
-        this.showEnterRoomModal = false; // 입장 모달 닫기
+      if (!this.currentUser || !this.currentUser.userId) {
+        alert("사용자 정보가 없습니다. 다시 로그인 해주세요.");
+        return;
+      }
 
-        // 채팅방 정보 가져오기
-        this.selectedChatRoom = this.chatRooms.find(
-          (room) => room.chatRoomId === this.selectedChatRoomId
+      try {
+        WebSocketService.subscribe(
+          `/topic/chatRoom/${this.selectedChatRoomId}`,
+          this.onMessageReceived
         );
 
-        // 선택된 채팅방이 없을 경우 처리
-        if (!this.selectedChatRoom) {
-          alert("선택된 채팅방 정보를 찾을 수 없습니다.");
-          return;
-        }
-
+        this.showEnterRoomModal = false; // 입장 모달 닫기
         this.showChatRoomModal = true; // 채팅 모달 열기
-        await this.loadChatRoomMessages(this.selectedChatRoomId); // 메시지 로드
+        await this.loadChatRoomMessages(this.selectedChatRoomId);
       } catch (error) {
         console.error("채팅방 입장 처리 중 오류:", error);
         alert("채팅방 입장에 실패했습니다.");
       }
+    },
+
+    onMessageReceived(payload) {
+      const message = JSON.parse(payload.body);
+      console.log("수신한 메시지:", message);
+
+      // chatRoomId 기반 메시지 저장
+      const chatRoomId = message.chatRoomId;
+      if (!this.messages[chatRoomId]) {
+        this.messages[chatRoomId] = [];
+      }
+      this.messages[chatRoomId].unshift(message);
     },
     closeChatRoomModal() {
       this.showChatRoomModal = false;
       this.chatRoomMessages = [];
       this.selectedChatRoom = null;
     },
+    getChatRoomsForPlace(placeId) {
+      // 해당 장소의 채팅방 목록 반환
+      return this.chatRoomsByPlace[placeId] || [];
+    },
     async loadChatRoomMessages(chatRoomId) {
       try {
-        const response = await ncapi.get(
-          `/api/chat-room/${chatRoomId}/history`
-        );
+        const response = await api.get(`/api/chat-room/${chatRoomId}/history`);
         this.chatRoomMessages = response.data || []; // 메시지 데이터가 없으면 빈 배열 설정
       } catch (error) {
         console.error("채팅 메시지 로드 실패:", error);
@@ -305,37 +353,33 @@ export default {
     },
 
     // 메시지 전송
-    async sendMessage(chatRoomId, message) {
-      console.log(
-        "sendMessage 호출됨 - 채팅방 ID:",
-        chatRoomId,
-        "메시지:",
-        message
-      );
+    sendMessage(chatRoomId, message) {
+      // currentUser가 정의되어 있는지 확인
+      if (!this.currentUser || !this.currentUser.userId) {
+        alert("사용자 정보가 없습니다. 다시 로그인 해주세요.");
+        return;
+      }
 
-      // 예외 처리: 채팅방 ID와 메시지 확인
-      if (!chatRoomId || !message) {
-        alert("채팅방 ID와 메시지를 확인하세요.");
+      if (!message.trim()) {
+        alert("메시지를 입력하세요.");
         return;
       }
 
       const chatMessage = {
-        chatRoomId: chatRoomId,
-        userId: sessionStorage.getItem("userId"), // 세션에서 유저 ID 가져오기
-        message: message,
-        userNickname: sessionStorage.getItem("userNickname"), // 세션에서 유저 닉네임 가져오기
-        userProfile: sessionStorage.getItem("userProfile"), // 세션에서 유저 프로필 가져오기
+        chatRoomId,
+        userId: this.currentUser.userId,
+        message,
+        userNickname: this.currentUser.userNickname || "익명",
+        userProfile: this.currentUser.userProfile || this.defaultProfile,
       };
 
-      try {
-        // 서버로 메시지 전송
-        await api.post(`/api/chat-rooms/${chatRoomId}/history`, chatMessage);
-        console.log("메시지 전송 성공");
-        this.newChatMessage = ""; // 메시지 입력 초기화
-      } catch (error) {
-        console.error("메시지 전송 실패:", error);
-        alert("메시지 전송 중 오류가 발생했습니다.");
+      WebSocketService.send(`/app/sendMessage/${chatRoomId}`, chatMessage);
+
+      if (!this.messages[chatRoomId]) {
+        this.messages[chatRoomId] = [];
       }
+      this.messages[chatRoomId].unshift(chatMessage);
+      this.newChatMessage = ""; // 입력창 초기화
     },
 
     initMap() {
@@ -431,38 +475,56 @@ export default {
         });
 
         kakao.maps.event.addListener(marker, "click", () => {
+          console.log("Marker 클릭 - placeId:", place.id); // 디버깅용 로그
           this.selectedPlace = {
             id: place.id,
             name: place.place_name,
             address:
               place.road_address_name || place.address_name || "주소 정보 없음",
           };
+          this.selectedPlaceId = place.id;
           this.loadChatRooms(place.id);
         });
 
         this.markers.push(marker);
       });
     },
+
     async loadChatRooms(placeId) {
+      console.log("loadChatRooms 호출 - placeId:", placeId); // 디버깅용 로그
       try {
-        const response = await ncapi.get(`/api/chat-rooms`, {
+        const response = await api.get(`/api/chat-rooms`, {
           params: { placeId },
         });
+        console.log("API 응답 데이터:", response.data); // 응답 확인
+
         if (Array.isArray(response.data)) {
-          this.chatRooms = response.data.map((room) => ({
-            ...room,
-            creatorProfile: room.userProfile || this.defaultProfile, // 기본 이미지 설정
-            creatorNickname: room.userNickname || "익명", // 기본 닉네임
-          }));
+          // 장소별 채팅방 목록 저장
+          this.chatRoomsByPlace = {
+            ...this.chatRoomsByPlace,
+            [placeId]: response.data.map((room) => ({
+              ...room,
+              creatorProfile: room.userProfile || this.defaultProfile,
+              creatorNickname: room.userNickname || "익명",
+            })),
+          };
         } else {
           console.error("응답 데이터가 배열이 아닙니다:", response.data);
-          this.chatRooms = [];
+          this.chatRoomsByPlace = {
+            ...this.chatRoomsByPlace,
+            [placeId]: [], // 비어있는 배열로 초기화
+          };
         }
       } catch (error) {
-        console.error("채팅방 목록 로드 실패:", error);
+        console.error("채팅방 목록 로드 실패 - API 요청 에러:", error);
         alert("채팅방 목록을 불러오지 못했습니다.");
+        this.chatRoomsByPlace = {
+          ...this.chatRoomsByPlace,
+          [placeId]: [], // 오류 발생 시 초기화
+        };
       }
     },
+
     openCreateRoomModal() {
       this.showCreateRoomModal = true;
     },
@@ -529,6 +591,9 @@ export default {
       return `${d.getFullYear()}-${
         d.getMonth() + 1
       }-${d.getDate()} ${d.getHours()}:${d.getMinutes()}`;
+    },
+    getMessagesForChatRoom(chatRoomId) {
+      return this.messages[chatRoomId] || [];
     },
   },
   components: {
