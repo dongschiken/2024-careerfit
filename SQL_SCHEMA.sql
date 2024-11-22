@@ -1,3 +1,4 @@
+
 DROP TABLE IF EXISTS `like`;
 
 CREATE TABLE `like` (
@@ -51,7 +52,7 @@ CREATE TABLE `reply` (
 	`reply_id`	INT	NOT NULL,
 	`user_id`	INT	NOT NULL,
 	`board_id`	INT	NOT NULL,
-	`parent_reply_id`	INT,
+	`parent_reply_id`	INT	NOT NULL,
 	`content`	VARCHAR(1000)	NULL,
 	`depth`	INT	NULL,
 	`created_at`	TIMESTAMP	NOT NULL,
@@ -125,9 +126,9 @@ DROP TABLE IF EXISTS `chat_room`;
 CREATE TABLE `chat_room` (
 	`chat_room_id`	INT	NOT NULL,
 	`title`	VARCHAR(100)	NOT NULL,
-	`last_at`	TIMESTAMP	NOT NULL,
-	`created_at`	TIMESTAMP	NOT NULL,
-	`updated_at`	TIMESTAMP	NOT NULL
+	`last_at`	TIMESTAMP	DEFAULT CURRENT_TIMESTAMP,
+	`created_at`	TIMESTAMP	DEFAULT CURRENT_TIMESTAMP,
+	`updated_at`	TIMESTAMP	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 DROP TABLE IF EXISTS `chat_history`;
@@ -144,8 +145,8 @@ DROP TABLE IF EXISTS `chat_room_user`;
 
 CREATE TABLE `chat_room_user` (
 	`chat_room_user_id`	INT	NOT NULL,
-	`user_id2`	INT	NOT NULL,
-	`chat_room_id2`	INT	NOT NULL,
+	`user_id`	INT	NOT NULL,
+	`chat_room_id`	INT	NOT NULL,
 	`joined_at`	TIMESTAMP	NOT NULL
 );
 
@@ -189,6 +190,13 @@ ALTER TABLE `chat_room` ADD CONSTRAINT `PK_CHAT_ROOM` PRIMARY KEY (
 	`chat_room_id`
 );
 
+ALTER TABLE chat_room ADD COLUMN place_id INT NOT NULL;
+ALTER TABLE chat_room
+ADD COLUMN user_nickname VARCHAR(255) NOT NULL,
+ADD COLUMN user_profile VARCHAR(255),
+ADD COLUMN user_id INT NOT NULL;
+
+
 ALTER TABLE `chat_history` ADD CONSTRAINT `PK_CHAT_HISTORY` PRIMARY KEY (
 	`chat_history_id`
 );
@@ -214,15 +222,6 @@ MODIFY COLUMN `reply_id` INT NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `board_category`
 MODIFY COLUMN `board_category_id` INT NOT NULL AUTO_INCREMENT;
-
-ALTER TABLE `food`
-MODIFY COLUMN `food_id` INT NOT NULL AUTO_INCREMENT;
-
-ALTER TABLE `meal_food`
-MODIFY COLUMN `meal_food_id` INT NOT NULL AUTO_INCREMENT;
-
-ALTER TABLE `meal_plan`
-MODIFY COLUMN `meal_plan_id` INT NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `meal`
 MODIFY COLUMN `meal_id` INT NOT NULL AUTO_INCREMENT;
@@ -291,27 +290,6 @@ REFERENCES `reply` (
 	`reply_id`
 );
 
-ALTER TABLE `meal_food` ADD CONSTRAINT `FK_meal_TO_meal_food_1` FOREIGN KEY (
-	`meal_id`
-)
-REFERENCES `meal` (
-	`meal_id`
-);
-
-ALTER TABLE `meal_food` ADD CONSTRAINT `FK_food_TO_meal_food_1` FOREIGN KEY (
-	`food_id`
-)
-REFERENCES `food` (
-	`food_id`
-);
-
-ALTER TABLE `meal` ADD CONSTRAINT `FK_meal_plan_TO_meal_1` FOREIGN KEY (
-	`meal_plan_id`
-)
-REFERENCES `meal_plan` (
-	`meal_plan_id`
-);
-
 ALTER TABLE `meal_plan` ADD CONSTRAINT `FK_user_TO_meal_plan_1` FOREIGN KEY (
 	`user_id`
 )
@@ -348,17 +326,39 @@ REFERENCES `user` (
 );
 
 ALTER TABLE `chat_room_user` ADD CONSTRAINT `FK_user_TO_chat_room_user_1` FOREIGN KEY (
-	`user_id2`
+	`user_id`
 )
 REFERENCES `user` (
 	`user_id`
 );
 
 ALTER TABLE `chat_room_user` ADD CONSTRAINT `FK_chat_room_TO_chat_room_user_1` FOREIGN KEY (
-	`chat_room_id2`
+	`chat_room_id`
 )
 REFERENCES `chat_room` (
 	`chat_room_id`
 );
 
+
+ALTER TABLE `meal` ADD CONSTRAINT `FK_user_TO_meal_1` FOREIGN KEY (
+	`user_id`
+)
+REFERENCES `user` (
+	`user_id`
+);
+
+ALTER TABLE `chat_room`
+    ADD CONSTRAINT `FK_chat_room_to_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE;
+
+ALTER TABLE `chat_room_user`
+    ADD CONSTRAINT `FK_chat_room_user_to_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE,
+    ADD CONSTRAINT `FK_chat_room_user_to_chat_room` FOREIGN KEY (`chat_room_id`) REFERENCES `chat_room` (`chat_room_id`) ON DELETE CASCADE;
+
+ALTER TABLE `chat_history`
+    ADD CONSTRAINT `FK_chat_history_to_chat_room` FOREIGN KEY (`chat_room_id`) REFERENCES `chat_room` (`chat_room_id`) ON DELETE CASCADE,
+    ADD CONSTRAINT `FK_chat_history_to_user` FOREIGN KEY (`send_user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE;
+
 ALTER TABLE meal ADD INDEX (user_id);
+
+ALTER TABLE reply
+MODIFY parent_reply_id INT NULL;
