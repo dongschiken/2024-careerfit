@@ -71,7 +71,6 @@
         신체 기록
       </button>
     </div>
-
     <!-- Detailed Meal Record -->
     <div class="detailed-record" v-if="selectedTab === 'meal'">
       <div
@@ -90,129 +89,96 @@
     <MainFooter />
   </div>
 </template>
-<script>
+
+<script setup>
 import { ref, computed } from "vue";
 import MainHeader from "@/components/module/MainHeader.vue";
 import MainFooter from "@/components/module/MainFooter.vue";
-export default {
-  setup() {
-    const currentYear = ref(new Date().getFullYear());
-    const currentMonth = ref(new Date().getMonth());
-    const selectedDate = ref(new Date());
-    const selectedTab = ref("meal");
+import api from "@/api/axiosInstance";
 
-    const days = ["일", "월", "화", "수", "목", "금", "토"];
+const currentYear = ref(new Date().getFullYear());
+const currentMonth = ref(new Date().getMonth());
+const selectedDate = ref(new Date());
+const selectedTab = ref("meal");
 
-    const meals = [
-      {
-        type: "아침",
-        details: "닭가슴살 100g, 현미밥 130g, 브로콜리2, 파프리카 조금",
-        nutrients: "kcal: 250 | fat: 10g | protein: 30g | carbohydrates: 43g",
-      },
-      {
-        type: "점심",
-        details: "닭가슴살 100g, 현미밥 130g, 브로콜리2, 파프리카 조금",
-        nutrients: "kcal: 250 | fat: 10g | protein: 30g | carbohydrates: 43g",
-      },
-      {
-        type: "저녁",
-        details: "닭가슴살 100g, 현미밥 130g, 브로콜리2, 파프리카 조금",
-        nutrients: "kcal: 250 | fat: 10g | protein: 30g | carbohydrates: 43g",
-      },
-    ];
+const days = ["일", "월", "화", "수", "목", "금", "토"];
 
-    const detailedMeals = [
-      {
-        type: "아침",
-        time: "오전 09:30",
-        details: "닭가슴살 100g, 현미밥 130g, 브로콜리2, 파프리카 조금",
-      },
-      {
-        type: "점심",
-        time: "오전 11:30",
-        details: "닭가슴살 100g, 현미밥 130g, 브로콜리2, 파프리카 조금",
-      },
-      {
-        type: "저녁",
-        time: "오후 06:30",
-        details: "닭가슴살 100g, 현미밥 130g, 브로콜리2, 파프리카 조금",
-      },
-    ];
+// 기본 식단 데이터
+const meals = [];
 
-    const dates = computed(() => {
-      const end = new Date(currentYear.value, currentMonth.value + 1, 0);
-      const datesArray = [];
-      for (let i = 1; i <= end.getDate(); i++) {
-        datesArray.push(new Date(currentYear.value, currentMonth.value, i));
-      }
-      return datesArray;
-    });
+// 모달창 띄워서 회원의 식단 기록 등록할 수 있게 하기
+// 잔디밭 만들어서 회원이 얼마만큼의 식단을 기록하고 있는지 알려주기, 100일 -> 365일 순으로 달성할 때 선물 주기
+// 상세 식단 데이터
+// 처음에 회원의 현재 날짜에 해당하는 식단 리스트 전부 가져오기
+const detailedMeals = [];
 
-    const startDayOfMonth = computed(() => {
-      const firstDay = new Date(currentYear.value, currentMonth.value, 1);
-      return firstDay.getDay(); // Number of empty cells at the start of the month
-    });
+// 해당 월의 날짜 리스트
+const dates = computed(() => {
+  const end = new Date(currentYear.value, currentMonth.value + 1, 0);
+  const datesArray = [];
+  for (let i = 1; i <= end.getDate(); i++) {
+    datesArray.push(new Date(currentYear.value, currentMonth.value, i));
+  }
+  return datesArray;
+});
 
-    function prevMonth() {
-      if (currentMonth.value === 0) {
-        currentMonth.value = 11;
-        currentYear.value -= 1;
-      } else {
-        currentMonth.value -= 1;
-      }
-    }
+// 해당 월 시작 요일 계산
+const startDayOfMonth = computed(() => {
+  const firstDay = new Date(currentYear.value, currentMonth.value, 1);
+  return firstDay.getDay();
+});
 
-    function nextMonth() {
-      if (currentMonth.value === 11) {
-        currentMonth.value = 0;
-        currentYear.value += 1;
-      } else {
-        currentMonth.value += 1;
-      }
-    }
+// 이전 달로 이동
+const prevMonth = () => {
+  if (currentMonth.value === 0) {
+    currentMonth.value = 11;
+    currentYear.value -= 1;
+  } else {
+    currentMonth.value -= 1;
+  }
+};
 
-    function selectDate(date) {
-      selectedDate.value = date;
-    }
+// 다음 달로 이동
+const nextMonth = () => {
+  if (currentMonth.value === 11) {
+    currentMonth.value = 0;
+    currentYear.value += 1;
+  } else {
+    currentMonth.value += 1;
+  }
+};
+// 날짜 선택
+const selectDate = async (date) => {
+  const nowDate = `${currentYear.value}-${
+    currentMonth.value + 1
+  }-${date.getDate()}`;
+  try {
+    const response = await api.get(`/api/meal/${nowDate}`);
+    console.log(response.data.meals);
+    console.log(response);
+  } catch (error) {
+    console.log(error);
+    alert("날짜에 해당하는 데이터를 가져오는 중 문제가 발생했습니다.");
+  }
+};
 
-    function isSelectedDate(date) {
-      return (
-        date.getFullYear() === selectedDate.value.getFullYear() &&
-        date.getMonth() === selectedDate.value.getMonth() &&
-        date.getDate() === selectedDate.value.getDate()
-      );
-    }
+// 선택된 날짜인지 확인
+const isSelectedDate = (date) => {
+  return (
+    date.getFullYear() === selectedDate.value.getFullYear() &&
+    date.getMonth() === selectedDate.value.getMonth() &&
+    date.getDate() === selectedDate.value.getDate()
+  );
+};
 
-    function isToday(date) {
-      const today = new Date();
-      return (
-        date.getFullYear() === today.getFullYear() &&
-        date.getMonth() === today.getMonth() &&
-        date.getDate() === today.getDate()
-      );
-    }
-
-    return {
-      currentYear,
-      currentMonth,
-      selectedDate,
-      selectedTab,
-      days,
-      meals,
-      detailedMeals,
-      dates,
-      startDayOfMonth,
-      prevMonth,
-      nextMonth,
-      selectDate,
-      isSelectedDate,
-      isToday,
-    };
-  },
-  components: {
-    MainHeader,
-    MainFooter,
-  },
+// 오늘 날짜인지 확인
+const isToday = (date) => {
+  const today = new Date();
+  return (
+    date.getFullYear() === today.getFullYear() &&
+    date.getMonth() === today.getMonth() &&
+    date.getDate() === today.getDate()
+  );
 };
 </script>
 <style scoped>
@@ -249,6 +215,7 @@ export default {
   color: #333;
   cursor: pointer;
 }
+
 .days,
 .dates {
   display: grid;

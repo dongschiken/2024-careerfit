@@ -14,7 +14,15 @@
 	
 	<delete id="deleteUserMeals" parameterType="int">
 		DELETE FROM meal 
-		WHERE user_id = #{userId}
+		WHERE user_id = #{userId} AND date IN
+		<foreach collection="dates" item="date" open="(" separator="," close=")">
+			#{date}
+		</foreach>
 	</delete>
+	
+	<select id="selectUserMeals" resultType="Meal">
+		SELECT * FROM meal
+		WHERE user_id = #{userId} AND date = #{date};
+	</select>
 	
 </mapper>

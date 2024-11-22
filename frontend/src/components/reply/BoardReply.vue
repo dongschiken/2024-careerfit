@@ -115,6 +115,7 @@
 <script setup>
 import axios from "axios";
 import api from "@/api/axiosInstance";
+import ncapi from "@/api/noTokenAxiosInstance";
 import { ref, onMounted, watch } from "vue";
 import { defineProps } from "vue";
 import router from "@/router";
@@ -151,8 +152,8 @@ const deleteReply = async (replyId) => {
   if (!isDelete) return;
   try {
     const response = await api.delete("/api/reply" + `/${replyId}`);
-    axios
-      .get(`http://localhost:8080/api/reply/${reply.boardId}`)
+    ncapi
+      .get(`/api/reply/${reply.boardId}`)
       .then((response) => {
         replies.value = response.data;
         // 대댓글이 있을 경우에만 toggleRereply 호출
@@ -213,8 +214,8 @@ const submitReply = async (replyId) => {
       },
     });
     replyData.value.content = "";
-    axios
-      .get(`http://localhost:8080/api/reply/${reply.boardId}`)
+    ncapi
+      .get(`/api/reply/${reply.boardId}`)
       .then((response) => {
         replies.value = response.data;
         toggleRereply(reply.replyId);
@@ -271,8 +272,8 @@ const registReply = async () => {
       },
     });
     replyData.value.content = "";
-    axios
-      .get(`http://localhost:8080/api/reply/${props.boardId}`)
+    ncapi
+      .get(`/api/reply/${props.boardId}`)
       .then((response) => {
         replies.value = response.data;
         console.log(response.data);
@@ -293,8 +294,8 @@ watch(
   () => props.boardId,
   (newBoardId) => {
     if (newBoardId) {
-      axios
-        .get(`http://localhost:8080/api/reply/${newBoardId}`)
+      ncapi
+        .get(`/api/reply/${newBoardId}`)
         .then((response) => {
           replies.value = response.data;
           console.log(response.data);
@@ -323,8 +324,8 @@ onMounted(() => {
   }
 
   if (props.boardId) {
-    axios
-      .get(`http://localhost:8080/api/reply/${props.boardId}`)
+    ncapi
+      .get(`/api/reply/${props.boardId}`)
       .then((response) => {
         replies.value = response.data;
         console.log(response.data);

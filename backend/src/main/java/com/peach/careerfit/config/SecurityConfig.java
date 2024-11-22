@@ -83,7 +83,7 @@ public class SecurityConfig  {
                 .requestMatchers("/admin").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST,"/api/reply", "/api/board", "/api/board/category", "/api/chat-room/**").hasRole("USER")
                 .requestMatchers(HttpMethod.PUT, "/api/board/**").hasRole("USER")
-                .requestMatchers(HttpMethod.DELETE, "/api/board/**", "/api/chat-room/**").hasRole("USER")   
+                .requestMatchers(HttpMethod.DELETE, "/api/board/**", "/api/chat-room/**").hasRole("USER")
                 .anyRequest().authenticated());
         
         
