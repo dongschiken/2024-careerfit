@@ -395,21 +395,16 @@ REFERENCES `chat_room` (
 	`chat_room_id`
 );
 
-<<<<<<< HEAD
--- chat_room 외래 키 추가
 ALTER TABLE `chat_room`
     ADD CONSTRAINT `FK_chat_room_to_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE;
 
--- chat_room_user 외래 키 추가
 ALTER TABLE `chat_room_user`
     ADD CONSTRAINT `FK_chat_room_user_to_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE,
     ADD CONSTRAINT `FK_chat_room_user_to_chat_room` FOREIGN KEY (`chat_room_id`) REFERENCES `chat_room` (`chat_room_id`) ON DELETE CASCADE;
 
--- chat_history 외래 키 추가
 ALTER TABLE `chat_history`
     ADD CONSTRAINT `FK_chat_history_to_chat_room` FOREIGN KEY (`chat_room_id`) REFERENCES `chat_room` (`chat_room_id`) ON DELETE CASCADE,
     ADD CONSTRAINT `FK_chat_history_to_user` FOREIGN KEY (`send_user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE;
 
-=======
 ALTER TABLE meal ADD INDEX (user_id);
->>>>>>> 11b401b3b18d9eeeb3ccc60e922ac10b6daafd41
+
