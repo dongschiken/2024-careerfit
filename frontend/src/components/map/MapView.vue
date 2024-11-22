@@ -61,9 +61,12 @@
       <div class="chat-list-modal">
         <h2 class="modal-title">📃 채팅 목록</h2>
 
-        <ul v-show="chatRooms.length !== 0" class="chat-rooms">
+        <ul
+          v-show="getChatRoomsForPlace(selectedPlace.id).length !== 0"
+          class="chat-rooms"
+        >
           <li
-            v-for="room in chatRooms"
+            v-for="room in getChatRoomsForPlace(selectedPlace.id)"
             :key="room.chatRoomId"
             class="chat-room-item"
             @click="openEnterRoomModal(room.chatRoomId)"
@@ -88,9 +91,10 @@
             </div>
           </li>
         </ul>
+
         <div class="chat-none">
           <p
-            v-if="chatRooms.length === 0"
+            v-if="getChatRoomsForPlace(selectedPlace?.id).length === 0"
             class="empty-message"
             style="margin-bottom: 120px"
           >
@@ -154,11 +158,15 @@
         <h3 class="modal-title">{{ selectedChatRoom?.title }}</h3>
         <ul class="chat-messages">
           <li
-            v-for="(message, index) in messages"
+            v-for="(message, index) in getMessagesForChatRoom(
+              selectedChatRoomId
+            )"
             :key="index"
             :class="[
               'message',
-              message.userId === sessionStorage.getItem('userId') ? 'self' : '',
+              currentUser?.userId && message.userId === currentUser.userId
+                ? 'self'
+                : '',
             ]"
           >
             <img
@@ -167,7 +175,7 @@
               class="message-profile"
             />
             <div class="message-content">
-              <span class="nickname">{{ message.userNickname }}</span>
+              <span class="nickname">{{ message.userNickname || "익명" }}</span>
               <p>{{ message.message }}</p>
             </div>
           </li>
@@ -493,7 +501,7 @@ export default {
     async loadChatRooms(placeId) {
       console.log("loadChatRooms 호출 - placeId:", placeId); // 디버깅용 로그
       try {
-        const response = await api.get(`/api/chat-rooms`, {
+        const response = await ncapi.get(`/api/chat-rooms`, {
           params: { placeId },
         });
         console.log("API 응답 데이터:", response.data); // 응답 확인
@@ -543,24 +551,24 @@ export default {
       }
 
       try {
-        // 채팅방 생성 API 호출
         const response = await api.post("/api/chat-room", {
           title: this.newChatRoomTitle,
           placeId: this.selectedPlace.id,
         });
 
-        // 3번: 서버 응답 데이터를 로컬에 즉시 반영
+        // 새 채팅방을 장소별 데이터에 추가
         const newRoom = {
           ...response.data,
-          creatorProfile: response.data.userProfile || this.defaultProfile, // 프로필
-          creatorNickname: response.data.userNickname || "익명", // 닉네임
+          creatorProfile: response.data.userProfile || this.defaultProfile,
+          creatorNickname: response.data.userNickname || "익명",
         };
-        this.chatRooms.unshift(newRoom); // 즉시 목록에 추가
 
-        // 2번: 서버에서 전체 목록 재요청 (최신 상태 보장)
-        await this.loadChatRooms(this.selectedPlace.id);
+        if (!this.chatRoomsByPlace[this.selectedPlace.id]) {
+          this.$set(this.chatRoomsByPlace, this.selectedPlace.id, []);
+        }
 
-        // 초기화 및 알림
+        this.chatRoomsByPlace[this.selectedPlace.id].unshift(newRoom);
+
         this.newChatRoomTitle = ""; // 입력 필드 초기화
         this.showCreateRoomModal = false; // 모달 닫기
         alert("채팅방 생성 성공!");
@@ -603,7 +611,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .chat-none {
   display: flex;
   align-items: center;
