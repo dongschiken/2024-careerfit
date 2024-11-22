@@ -64,6 +64,7 @@ DROP TABLE IF EXISTS `meal`;
 
 CREATE TABLE `meal` (
 	`meal_id`	INT	NOT NULL,
+    `user_id` INT NOT NULL,
     `name`	VARCHAR(100) NOT NULL,
 	`date`	DATE	NOT NULL,
 	`type`	CHAR(10)	NOT NULL,
@@ -71,17 +72,6 @@ CREATE TABLE `meal` (
 	`protein`	INT	NULL,
 	`fat`	INT	NULL,
 	`carbs`	INT	NULL
-);
-
-DROP TABLE IF EXISTS `meal_plan`;
-
-CREATE TABLE `meal_plan` (
-	`meal_plan_id`	INT	NOT NULL,
-	`user_id`	INT	NOT NULL,
-	`name`	VARCHAR(50)	NOT NULL,
-	`start_date`	TIMESTAMP	NOT NULL,
-	`end_date`	TIMESTAMP	NOT NULL,
-	`goal`	VARCHAR(50)	NOT NULL
 );
 
 DROP TABLE IF EXISTS `user`;
@@ -179,20 +169,8 @@ ALTER TABLE `reply` ADD CONSTRAINT `PK_REPLY` PRIMARY KEY (
 	`reply_id`
 );
 
-ALTER TABLE `meal_food` ADD CONSTRAINT `PK_MEAL_FOOD` PRIMARY KEY (
-	`meal_food_id`
-);
-
-ALTER TABLE `food` ADD CONSTRAINT `PK_FOOD` PRIMARY KEY (
-	`food_id`
-);
-
 ALTER TABLE `meal` ADD CONSTRAINT `PK_MEAL` PRIMARY KEY (
 	`meal_id`
-);
-
-ALTER TABLE `meal_plan` ADD CONSTRAINT `PK_MEAL_PLAN` PRIMARY KEY (
-	`meal_plan_id`
 );
 
 ALTER TABLE `user` ADD CONSTRAINT `PK_USER` PRIMARY KEY (
