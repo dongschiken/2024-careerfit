@@ -1,8 +1,4 @@
-CREATE DATABASE careerfit;
 
-SELECT * FROM USER;
-
-USE careerfit;
 DROP TABLE IF EXISTS `like`;
 
 CREATE TABLE `like` (
@@ -69,6 +65,7 @@ DROP TABLE IF EXISTS `meal`;
 
 CREATE TABLE `meal` (
 	`meal_id`	INT	NOT NULL,
+    `user_id` INT NOT NULL,
     `name`	VARCHAR(100) NOT NULL,
 	`date`	DATE	NOT NULL,
 	`type`	CHAR(10)	NOT NULL,
@@ -357,10 +354,9 @@ REFERENCES `chat_room` (
 ALTER TABLE `meal` ADD CONSTRAINT `FK_user_TO_meal_1` FOREIGN KEY (
 	`user_id`
 )
-REFERENCES `chat_room` (
+REFERENCES `user` (
 	`user_id`
 );
-
 
 ALTER TABLE `chat_room`
     ADD CONSTRAINT `FK_chat_room_to_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE;
@@ -375,3 +371,5 @@ ALTER TABLE `chat_history`
 
 ALTER TABLE meal ADD INDEX (user_id);
 
+ALTER TABLE reply
+MODIFY parent_reply_id INT NULL;

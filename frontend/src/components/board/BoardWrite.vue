@@ -214,7 +214,6 @@ const registBoard = async () => {
     imageFiles.value.forEach((file) => {
       formData.append("files", file);
     });
-    console.log(`Bearer ${token.value}`); // 값 출력 확인
     const response = await api.post("/api/board", formData, {
       headers: {
         "Content-Type": "multipart/form-data",

@@ -5,8 +5,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.ibatis.io.ResolverUtil.Test;
 import org.springframework.stereotype.Service;
@@ -109,7 +111,11 @@ public class GptServiceImpl implements GptService {
 				if ((message.contains("아침") || message.contains("점심") || message.contains("저녁"))
 						&& message.contains("날짜") && message.contains("식단") && message.contains("kcal")) {			
 					List<Meal> meals = regexComponent.regexMeal(message, userId);
-					mealDao.deleteUserMeals(userId);
+					Set<String> mealDates = new LinkedHashSet<>();
+					for (Meal meal : meals) {
+						mealDates.add(meal.getDate());
+					}
+					mealDao.deleteUserMeals(userId, mealDates);
 					int status = mealDao.insertUserMeals(meals);
 				}
 			}

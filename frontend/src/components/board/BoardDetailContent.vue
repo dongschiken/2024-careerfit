@@ -48,7 +48,7 @@
     >
       <img
         class="board-image"
-        :src="`http://localhost:8080/uploads/${image.path}${image.systemName}`"
+        :src="`http://192.168.210.52:8080/uploads/${image.path}${image.systemName}`"
       />
     </div>
   </div>

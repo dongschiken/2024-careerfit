@@ -9,9 +9,6 @@
           <router-link to="/board"> 커뮤니티 </router-link>
         </div>
         <div>
-          <router-link to=""> 헬스장 </router-link>
-        </div>
-        <div>
           <router-link to=""> 공지 </router-link>
         </div>
         <div>
