@@ -116,6 +116,22 @@ defineProps({
   },
 });
 
+const validateBoardInputs = () => {
+  if (!category.value) {
+    alert("카테고리를 선택해주세요.");
+    return false;
+  }
+  if (!title.value.trim()) {
+    alert("제목을 입력해주세요.");
+    return false;
+  }
+  if (!content.value.trim()) {
+    alert("내용을 입력해주세요.");
+    return false;
+  }
+  return true;
+};
+
 const boardId = ref(Number(route.params.boardId)); // 명시적 변환
 const addImage = (event) => {
   console.log(event);
@@ -144,6 +160,7 @@ const removeImage = (index) => {
 };
 
 const setBoard = async () => {
+  if (!validateBoardInputs()) return; // 유효성 검사 추가
   const check = confirm("정말 수정하시겠습니까?");
   if (!check) return;
   try {
@@ -182,6 +199,7 @@ const setBoard = async () => {
 };
 
 const registBoard = async () => {
+  if (!validateBoardInputs()) return; // 유효성 검사 추가
   try {
     const formData = new FormData();
     const board = {

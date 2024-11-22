@@ -29,7 +29,9 @@
           ></div>
           <div class="user-profile-name">{{ board.user.nickname }}</div>
         </div>
-        <div class="board-content-left-category">{{ board.category.name }}</div>
+        <div class="board-content-left-category">
+          <b> {{ board.category.name }}</b>
+        </div>
       </div>
       <div class="board-content-right">
         <div class="board-content-right-img obj-div">
@@ -58,7 +60,7 @@
               src="@/assets/img/chat_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
               alt=""
             />
-            <span>10개</span>
+            <span>{{ board.replyCount }}</span>
           </span>
           <span class="view-count">
             <img

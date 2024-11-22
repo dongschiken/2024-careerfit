@@ -1,21 +1,12 @@
 package com.peach.careerfit.gpt.controller;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
-import com.peach.careerfit.Test;
-import com.peach.careerfit.gpt.model.dto.Gpt;
-import com.peach.careerfit.gpt.model.dto.GptRequest;
 import com.peach.careerfit.gpt.model.dto.GptResponse;
 import com.peach.careerfit.gpt.model.service.GptService;
 import com.peach.careerfit.jwt.JwtResponse;

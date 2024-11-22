@@ -12,9 +12,6 @@
           <router-link to=""> 헬스장 </router-link>
         </div>
         <div>
-          <router-link to=""> Q&A </router-link>
-        </div>
-        <div>
           <router-link to=""> 공지 </router-link>
         </div>
         <div>
@@ -87,5 +84,5 @@ export default {
 </script>
 
 <style lang="css" scoped>
-@import url(../../assets/css/header.css);
+@import url(@/assets/css/header.css);
 </style>

@@ -5,7 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.peach.careerfit.body.model.dao.BodyRecordDao;
 import com.peach.careerfit.body.model.dto.BodyRecord;
-import com.peach.careerfit.file.component.FileStorageComponent;
+import com.peach.careerfit.component.FileStorageComponent;
 
 @Service
 public class BodyRecordServiceImpl implements BodyRecordService{

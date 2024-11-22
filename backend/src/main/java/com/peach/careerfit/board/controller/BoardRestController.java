@@ -37,12 +37,12 @@ public class BoardRestController {
 	private final BoardService boardService;
 	private final JwtUtils jwtUtils;
 	private final JwtResponse jwtResponse;
-	
+
 	@GetMapping("/{boardId}")
-	public ResponseEntity<Object> getBoardById(@PathVariable("boardId") int boardId,
-											   HttpServletRequest request) {
+	public ResponseEntity<Object> getBoardById(@PathVariable("boardId") int boardId, HttpServletRequest request) {
 		ResponseTokenUser responseTokenUser = jwtResponse.extractTokenUser(request);
-		ResponseBoard board = boardService.getBoardById(boardId, responseTokenUser != null ? responseTokenUser.getUserId() : 0);
+		ResponseBoard board = boardService.getBoardById(boardId,
+				responseTokenUser != null ? responseTokenUser.getUserId() : 0);
 		Map<String, Object> response = new HashMap<>();
 		response.put("board", board);
 		response.put("user", responseTokenUser);
@@ -60,9 +60,9 @@ public class BoardRestController {
 	// 페이징 처리
 	@GetMapping
 	public ResponseEntity<Object> getBoardList(@RequestParam(required = false) String searchWord,
-											   @RequestParam(required = false, defaultValue = "1") int page,
-											   @RequestParam(required = false, defaultValue = "0") int categoryId,
-											   @RequestParam(required = false) String sortOrder) {
+			@RequestParam(required = false, defaultValue = "1") int page,
+			@RequestParam(required = false, defaultValue = "0") int categoryId,
+			@RequestParam(required = false) String sortOrder) {
 		BoardSearch boardSearch = new BoardSearch(page, searchWord, categoryId, sortOrder);
 		Map<String, Object> response = boardService.getBoardList(boardSearch);
 		try {
@@ -72,15 +72,15 @@ public class BoardRestController {
 				return ResponseEntity.status(HttpStatus.OK).body(response);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	
+
 	@PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
 	public ResponseEntity<Object> Registboard(@RequestPart(name = "board") Board board,
-											  @RequestPart(name = "files", required = false) List<MultipartFile> files,
-											  HttpServletRequest request) {
-		
+			@RequestPart(name = "files", required = false) List<MultipartFile> files, HttpServletRequest request) {
+
 		try {
 			String token = jwtUtils.getAccessToken(request);
 			board.setUserId(jwtUtils.getUserIdFromToken(token));
@@ -106,8 +106,8 @@ public class BoardRestController {
 
 	@PutMapping
 	public ResponseEntity<Object> setboard(@RequestPart(value = "board") Board board,
-										   @RequestPart(value = "files", required = false) List<MultipartFile> files,
-										   HttpServletRequest request) {
+			@RequestPart(value = "files", required = false) List<MultipartFile> files, 
+			HttpServletRequest request) {
 		try {
 			int status = boardService.setBoard(board, files);
 			if (status < 1) {

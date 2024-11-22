@@ -22,6 +22,7 @@ public class ResponseBoard {
 	private String content;
 	private int likeCount;
 	private int viewCount;
+	private int replyCount;
 	private LocalDateTime createdAt;
 	private String timeAgo;
 	private LocalDateTime updatedAt;

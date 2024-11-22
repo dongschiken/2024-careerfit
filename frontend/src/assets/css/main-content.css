@@ -46,19 +46,25 @@
   cursor: pointer;
   width: 50px;
   height: 40px;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
+
+.main-ai-chatbot:hover {
+  transform: scale(1.15);
+}
+
 .main-board-group {
   margin-top: 400px;
 }
 
 .comunity-header {
-  background-color: #d7e3e1; 
-  border-radius: 15px; 
-  width: 390px; 
-  height: 90px; 
+  background-color: #d7e3e1;
+  border-radius: 15px;
+  width: 390px;
+  height: 90px;
   display: flex;
-  align-items: center; 
-  justify-content: center; 
+  align-items: center;
+  justify-content: center;
   background-image: linear-gradient(45deg, #c0d0ce 25%, transparent 25%),
     linear-gradient(-45deg, #c0d0ce 25%, transparent 25%),
     linear-gradient(45deg, transparent 75%, #c0d0ce 75%),
