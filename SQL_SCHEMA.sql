@@ -184,20 +184,8 @@ ALTER TABLE `reply` ADD CONSTRAINT `PK_REPLY` PRIMARY KEY (
 	`reply_id`
 );
 
-ALTER TABLE `meal_food` ADD CONSTRAINT `PK_MEAL_FOOD` PRIMARY KEY (
-	`meal_food_id`
-);
-
-ALTER TABLE `food` ADD CONSTRAINT `PK_FOOD` PRIMARY KEY (
-	`food_id`
-);
-
 ALTER TABLE `meal` ADD CONSTRAINT `PK_MEAL` PRIMARY KEY (
 	`meal_id`
-);
-
-ALTER TABLE `meal_plan` ADD CONSTRAINT `PK_MEAL_PLAN` PRIMARY KEY (
-	`meal_plan_id`
 );
 
 ALTER TABLE `user` ADD CONSTRAINT `PK_USER` PRIMARY KEY (
@@ -248,15 +236,6 @@ MODIFY COLUMN `reply_id` INT NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `board_category`
 MODIFY COLUMN `board_category_id` INT NOT NULL AUTO_INCREMENT;
-
-ALTER TABLE `food`
-MODIFY COLUMN `food_id` INT NOT NULL AUTO_INCREMENT;
-
-ALTER TABLE `meal_food`
-MODIFY COLUMN `meal_food_id` INT NOT NULL AUTO_INCREMENT;
-
-ALTER TABLE `meal_plan`
-MODIFY COLUMN `meal_plan_id` INT NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `meal`
 MODIFY COLUMN `meal_id` INT NOT NULL AUTO_INCREMENT;
@@ -325,27 +304,6 @@ REFERENCES `reply` (
 	`reply_id`
 );
 
-ALTER TABLE `meal_food` ADD CONSTRAINT `FK_meal_TO_meal_food_1` FOREIGN KEY (
-	`meal_id`
-)
-REFERENCES `meal` (
-	`meal_id`
-);
-
-ALTER TABLE `meal_food` ADD CONSTRAINT `FK_food_TO_meal_food_1` FOREIGN KEY (
-	`food_id`
-)
-REFERENCES `food` (
-	`food_id`
-);
-
-ALTER TABLE `meal` ADD CONSTRAINT `FK_meal_plan_TO_meal_1` FOREIGN KEY (
-	`meal_plan_id`
-)
-REFERENCES `meal_plan` (
-	`meal_plan_id`
-);
-
 ALTER TABLE `meal_plan` ADD CONSTRAINT `FK_user_TO_meal_plan_1` FOREIGN KEY (
 	`user_id`
 )
@@ -394,6 +352,15 @@ ALTER TABLE `chat_room_user` ADD CONSTRAINT `FK_chat_room_TO_chat_room_user_1` F
 REFERENCES `chat_room` (
 	`chat_room_id`
 );
+
+
+ALTER TABLE `meal` ADD CONSTRAINT `FK_user_TO_meal_1` FOREIGN KEY (
+	`user_id`
+)
+REFERENCES `chat_room` (
+	`user_id`
+);
+
 
 ALTER TABLE `chat_room`
     ADD CONSTRAINT `FK_chat_room_to_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE;
