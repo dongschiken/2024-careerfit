@@ -24,7 +24,7 @@
           ><img
             src="@/assets/img/chat_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
           />
-          <span>{{ board.viewCount }}</span></span
+          <span>{{ board.replyCount }}</span></span
         >
         <div v-if="loginUser != null && board.user.email == loginUser.email">
           <span class="board-detail-user-btn"

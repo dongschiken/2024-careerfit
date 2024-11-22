@@ -75,7 +75,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .chat-room-list {
   padding: 20px;
   max-width: 600px;

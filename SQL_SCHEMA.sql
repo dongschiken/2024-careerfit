@@ -58,33 +58,19 @@ CREATE TABLE `reply` (
 	`updated_at`	TIMESTAMP	NOT NULL
 );
 
-DROP TABLE IF EXISTS `meal_food`;
 
-CREATE TABLE `meal_food` (
-	`meal_food_id`	INT	NOT NULL,
-	`meal_id`	INT	NOT NULL,
-	`food_id`	INT	NOT NULL,
-	`quantity`	INT	NOT NULL
-);
-
-DROP TABLE IF EXISTS `food`;
-
-CREATE TABLE `food` (
-	`food_id`	INT	NOT NULL,
-	`name`	VARCHAR(100) NOT NULL,
-	`kcal`	INT	NOT NULL,
-	`protein`	INT	NULL,
-	`fat`	INT	NULL,
-	`carbohydrates`	INT	NULL
-);
 
 DROP TABLE IF EXISTS `meal`;
 
 CREATE TABLE `meal` (
 	`meal_id`	INT	NOT NULL,
-	`meal_plan_id`	INT	NOT NULL,
+    `name`	VARCHAR(100) NOT NULL,
 	`date`	DATE	NOT NULL,
-	`type`	CHAR(10)	NOT NULL
+	`type`	CHAR(10)	NOT NULL,
+    `kcal`	INT	NOT NULL,
+	`protein`	INT	NULL,
+	`fat`	INT	NULL,
+	`carbs`	INT	NULL
 );
 
 DROP TABLE IF EXISTS `meal_plan`;
@@ -325,9 +311,7 @@ ALTER TABLE `reply` ADD CONSTRAINT `FK_reply_TO_reply_1` FOREIGN KEY (
 )
 REFERENCES `reply` (
 	`reply_id`
-)
-ON DELETE CASCADE 
-ON UPDATE CASCADE;
+);
 
 ALTER TABLE `meal_food` ADD CONSTRAINT `FK_meal_TO_meal_food_1` FOREIGN KEY (
 	`meal_id`
@@ -398,3 +382,5 @@ ALTER TABLE `chat_room_user` ADD CONSTRAINT `FK_chat_room_TO_chat_room_user_1` F
 REFERENCES `chat_room` (
 	`chat_room_id`
 );
+
+ALTER TABLE meal ADD INDEX (user_id);

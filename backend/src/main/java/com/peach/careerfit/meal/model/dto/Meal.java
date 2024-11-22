@@ -1,7 +1,5 @@
 package com.peach.careerfit.meal.model.dto;
 
-import java.time.LocalDate;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,8 +10,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Meal {
+	
 	private int mealId;
-	private int mealPlanId;
-	private LocalDate date;
-	private String type; // 아침, 점심, 저녁
+	private int userId;
+	private String date;
+	private String type;
+	private String name;
+	private int kcal;
+	private double protein;
+	private double fat;
+	private double carbs;
 }
