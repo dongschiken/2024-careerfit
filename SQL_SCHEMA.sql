@@ -63,33 +63,19 @@ CREATE TABLE `reply` (
 	`updated_at`	TIMESTAMP	NOT NULL
 );
 
-DROP TABLE IF EXISTS `meal_food`;
 
-CREATE TABLE `meal_food` (
-	`meal_food_id`	INT	NOT NULL,
-	`meal_id`	INT	NOT NULL,
-	`food_id`	INT	NOT NULL,
-	`quantity`	INT	NOT NULL
-);
-
-DROP TABLE IF EXISTS `food`;
-
-CREATE TABLE `food` (
-	`food_id`	INT	NOT NULL,
-	`name`	VARCHAR(100) NOT NULL,
-	`kcal`	INT	NOT NULL,
-	`protein`	INT	NULL,
-	`fat`	INT	NULL,
-	`carbohydrates`	INT	NULL
-);
 
 DROP TABLE IF EXISTS `meal`;
 
 CREATE TABLE `meal` (
 	`meal_id`	INT	NOT NULL,
-	`meal_plan_id`	INT	NOT NULL,
+    `name`	VARCHAR(100) NOT NULL,
 	`date`	DATE	NOT NULL,
-	`type`	CHAR(10)	NOT NULL
+	`type`	CHAR(10)	NOT NULL,
+    `kcal`	INT	NOT NULL,
+	`protein`	INT	NULL,
+	`fat`	INT	NULL,
+	`carbs`	INT	NULL
 );
 
 DROP TABLE IF EXISTS `meal_plan`;
@@ -337,9 +323,7 @@ ALTER TABLE `reply` ADD CONSTRAINT `FK_reply_TO_reply_1` FOREIGN KEY (
 )
 REFERENCES `reply` (
 	`reply_id`
-)
-ON DELETE CASCADE 
-ON UPDATE CASCADE;
+);
 
 ALTER TABLE `meal_food` ADD CONSTRAINT `FK_meal_TO_meal_food_1` FOREIGN KEY (
 	`meal_id`
@@ -411,17 +395,15 @@ REFERENCES `chat_room` (
 	`chat_room_id`
 );
 
--- chat_room 외래 키 추가
 ALTER TABLE `chat_room`
     ADD CONSTRAINT `FK_chat_room_to_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE;
 
--- chat_room_user 외래 키 추가
 ALTER TABLE `chat_room_user`
     ADD CONSTRAINT `FK_chat_room_user_to_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE,
     ADD CONSTRAINT `FK_chat_room_user_to_chat_room` FOREIGN KEY (`chat_room_id`) REFERENCES `chat_room` (`chat_room_id`) ON DELETE CASCADE;
 
--- chat_history 외래 키 추가
 ALTER TABLE `chat_history`
     ADD CONSTRAINT `FK_chat_history_to_chat_room` FOREIGN KEY (`chat_room_id`) REFERENCES `chat_room` (`chat_room_id`) ON DELETE CASCADE,
     ADD CONSTRAINT `FK_chat_history_to_user` FOREIGN KEY (`send_user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE;
 
+ALTER TABLE meal ADD INDEX (user_id);

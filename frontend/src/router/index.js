@@ -11,7 +11,6 @@ import { useToast } from "vue-toastification";
 import MapView from "@/components/map/MapView.vue";
 import ChatRoom from "@/components/chat/ChatRoom.vue";
 
-
 const routes = [
   {
     path: "/",
@@ -62,12 +61,12 @@ const routes = [
     props: true,
   },
   {
-    path: "/mate", 
+    path: "/mate",
     name: "Mate",
     component: MapView,
   },
   {
-    path: "/chatRoom/:id", 
+    path: "/chatRoom/:id",
     name: "ChatRoom",
     component: ChatRoom,
     props: true,
@@ -87,7 +86,7 @@ router.beforeEach((to, from, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth) && !isLoggedIn) {
     // 로그인하지 않은 상태에서 접근하려면
     toast.info("로그인해야 이용할 수 있습니다."); // 로그인 필요 알림
-    next("/user/login"); // 로그인 페이지로 리다이렉트
+    // next("/user/login");
   } else if (to.name === "login" && isLoggedIn) {
     next("/"); // 이미 로그인 상태라면 메인 페이지로 이동
   } else {

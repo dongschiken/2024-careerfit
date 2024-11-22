@@ -12,6 +12,7 @@
 		<result property="content" column="content" />
 		<result property="likeCount" column="like_count" />
 		<result property="viewCount" column="view_count" />
+		<result property="replyCount" column="reply_count"/>
 		<result property="createdAt" column="created_at" />
 		<result property="updatedAt" column="updated_at" />
 		<result property="address" column="address" />
@@ -69,7 +70,7 @@
 	<select id="selectBoardAll" resultMap="BoardResultMap" parameterType="BoardSearch">
 	    <![CDATA[
 	        SELECT b.board_id, u.email, u.nickname, c.name, b.delete_whether, title, 
-						content, like_count, b.created_at, b.updated_at, address,
+						b.content, like_count, b.created_at, b.updated_at, address,
 						board_img_id, path, system_name, origin_name, main_whether, 
 				CASE
 				   WHEN TIMESTAMPDIFF(SECOND, b.created_at, NOW()) < 60 
@@ -79,10 +80,12 @@
 		           WHEN TIMESTAMPDIFF(HOUR, b.created_at, NOW()) < 24 
 		               THEN CONCAT(TIMESTAMPDIFF(HOUR, b.created_at, NOW()), '시간 전')
 		           ELSE CONCAT(TIMESTAMPDIFF(DAY, b.created_at, NOW()), '일 전')
-		       END AS time_ago
+		       END AS time_ago, 
+               count(r.board_id) AS reply_count
 			FROM board b LEFT JOIN board_img bi ON b.board_id = bi.board_id AND bi.main_whether = 'M'
 							 JOIN user u ON u.user_id = b.user_id
 							 JOIN board_category c ON c.board_category_id = b.category_id
+							 LEFT JOIN reply r ON b.board_id = r.board_id
 			WHERE b.delete_whether LIKE 'N'
 			 ]]>
 			<if test="searchWord != null and searchWord != ''" >
@@ -102,6 +105,11 @@
 		        AND c.board_category_id = #{boardCategoryId}
 		        ]]>
 			</if>
+			<![CDATA[
+			GROUP BY b.board_id, u.email, u.nickname, c.name, b.delete_whether, title, 
+						b.content, like_count, b.created_at, b.updated_at, address,
+						board_img_id, path, system_name, origin_name, main_whether
+			]]>
 			<choose>
 				<when test="sortOrder != null and sortOrder != ''">
 					<if test="sortOrder == '최신순'">
@@ -144,7 +152,7 @@
 		parameterType="int">
 		<![CDATA[
 		SELECT b.board_id, u.email, u.nickname, u.profile_url, c.board_category_id, c.name, b.delete_whether, title, 
-						content, like_count, b.created_at, b.updated_at, address,
+						b.content, like_count, b.created_at, b.updated_at, address,
 				CASE
 				   WHEN TIMESTAMPDIFF(SECOND, b.created_at, NOW()) < 60 
 					   THEN CONCAT(TIMESTAMPDIFF(SECOND, b.created_at, NOW()), '초 전')
@@ -153,11 +161,15 @@
 		           WHEN TIMESTAMPDIFF(HOUR, b.created_at, NOW()) < 24 
 		               THEN CONCAT(TIMESTAMPDIFF(HOUR, b.created_at, NOW()), '시간 전')
 		           ELSE CONCAT(TIMESTAMPDIFF(DAY, b.created_at, NOW()), '일 전')
-		       END AS time_ago
+		       END AS time_ago,
+               count(r.board_id) AS reply_count
 			FROM board b JOIN user u ON u.user_id = b.user_id
 							 JOIN board_category c ON c.board_category_id = b.category_id
+                             LEFT JOIN reply r ON r.board_id = b.board_id
 		WHERE
 		b.board_id = #{boardId} AND delete_whether LIKE 'N'
+        GROUP BY b.board_id, u.email, u.nickname, u.profile_url, c.board_category_id, c.name, b.delete_whether, title, 
+						content, like_count, b.created_at, b.updated_at, address;
 		]]>
 	</select>
 

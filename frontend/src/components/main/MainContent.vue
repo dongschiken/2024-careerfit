@@ -222,6 +222,7 @@ const sendMessage = async () => {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1001;
 }
 
 .modal-content {
@@ -231,8 +232,7 @@ const sendMessage = async () => {
   justify-content: space-between; /* 위아래 공간 분배 */
   padding: 20px;
   width: 700px;
-  min-height: 900px;
-  max-height: 900px;
+  max-height: 700px;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
