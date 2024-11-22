@@ -126,7 +126,7 @@ const resetData = () => {
   boardStore.pageResult = "";
 };
 
-const getFirstCategoryPage = () => {  
+const getFirstCategoryPage = () => {
   resetData();
   boardStore.getFirstCategoryPage();
 };
@@ -149,6 +149,7 @@ const getBoardCategoryPage = (boardCategoryId) => {
 
 <style lang="css" scoped>
 @import url(@/assets/css/board-content.css);
+
 .select-category-btn {
   background-color: #ff7f32 !important;
   color: #ffffff !important;
@@ -157,6 +158,7 @@ const getBoardCategoryPage = (boardCategoryId) => {
   width: 26px;
   height: 26px;
 }
+
 .board-content-header-text > button:hover,
 .search-group > button > img:hover {
   cursor: pointer;
@@ -166,5 +168,25 @@ const getBoardCategoryPage = (boardCategoryId) => {
   background-color: transparent;
   font-size: 25px;
   padding: 0px;
+}
+div.board-content-header-menu
+  > div.board-content-header-menu-category
+  > div
+  > button {
+  transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+div.board-content-header-menu
+  > div.board-content-header-menu-category
+  > div
+  > button:hover {
+  transform: scale(1.08);
+}
+
+#write-btn {
+  transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+#write-btn:hover {
+  transform: scale(1.08);
 }
 </style>

@@ -15,7 +15,7 @@ import com.peach.careerfit.board.model.dto.BoardImg;
 import com.peach.careerfit.board.model.dto.BoardSearch;
 import com.peach.careerfit.board.model.dto.PageResult;
 import com.peach.careerfit.board.model.dto.ResponseBoard;
-import com.peach.careerfit.file.component.FileStorageComponent;
+import com.peach.careerfit.component.FileStorageComponent;
 
 import lombok.RequiredArgsConstructor;
 
@@ -48,7 +48,6 @@ public class BoardServiceImpl implements BoardService {
 	public Map<String, Object> getBoardList(BoardSearch boardSearch) {
 		Map<String, Object> result = new HashMap<>();
 		if(boardSearch.getSortOrder() != null && boardSearch.getSortOrder().equals("조회순")) {
-			System.out.println("조회순 반영");
 			viewCountService.syncViewCountsToDatabase();
 		}
 		List<ResponseBoard> boards = boardDao.selectBoardAll(boardSearch);
@@ -67,6 +66,7 @@ public class BoardServiceImpl implements BoardService {
 	public ResponseBoard getBoardById(int boardId, int userId) {
 		viewCountService.incrementViewCount(boardId, userId);
 		ResponseBoard responsBoard = boardDao.selectBoardById(boardId);
+		System.out.println(responsBoard);
 		responsBoard.setViewCount(viewCountService.getViewCount(responsBoard.getBoardId()));
 		List<BoardImg> boardImgs = boardDao.selectBoardImgbyBoardId(boardId);
 		responsBoard.setBoardImgs(boardImgs);

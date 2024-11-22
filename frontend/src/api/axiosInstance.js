@@ -37,7 +37,7 @@ api.interceptors.response.use(
       // sessionStorage에서 refreshToken 가져오기
       const refreshToken = sessionStorage.getItem("refreshToken");
       if (!refreshToken) {
-        window.location.href = "/login";
+        window.location.href = "/user/login";
         return Promise.reject(error);
       }
 
@@ -62,7 +62,7 @@ api.interceptors.response.use(
         originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
-        window.location.href = "/login"; // 로그인 페이지로 리다이렉트
+        window.location.href = "/user/login"; // 로그인 페이지로 리다이렉트
         return Promise.reject(error);
       }
     }

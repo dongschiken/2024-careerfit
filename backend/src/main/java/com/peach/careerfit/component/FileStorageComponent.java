@@ -1,4 +1,4 @@
-package com.peach.careerfit.file.component;
+package com.peach.careerfit.component;
 
 import java.io.File;
 import java.io.IOException;

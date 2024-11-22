@@ -7,7 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.peach.careerfit.file.component.FileStorageComponent;
+import com.peach.careerfit.component.FileStorageComponent;
 import com.peach.careerfit.user.model.dao.UserMapper;
 import com.peach.careerfit.user.model.dto.User;
 

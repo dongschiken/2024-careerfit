@@ -5,9 +5,17 @@
       <!-- Calendar Section -->
       <div class="calendar">
         <div class="calendar-header">
-          <button @click="prevMonth" class="nav-button">&lt;</button>
+          <button @click="prevMonth" class="nav-button">
+            <img
+              src="@/assets/img/arrow_back_ios_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
+            />
+          </button>
           <h2>{{ currentYear }}.{{ currentMonth + 1 }}</h2>
-          <button @click="nextMonth" class="nav-button">&gt;</button>
+          <button @click="nextMonth" class="nav-button">
+            <img
+              src="@/assets/img/arrow_forward_ios_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
+            />
+          </button>
         </div>
         <div class="days">
           <div class="day" v-for="(day, index) in days" :key="index">
@@ -60,7 +68,7 @@
         :class="{ active: selectedTab === 'exercise' }"
         @click="selectedTab = 'exercise'"
       >
-        운동 신체 기록
+        신체 기록
       </button>
     </div>
 
@@ -241,12 +249,12 @@ export default {
   color: #333;
   cursor: pointer;
 }
-
 .days,
 .dates {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, 1fr); /* 7열 균등 배치 */
   gap: 0.5rem;
+  justify-items: center; /* 그리드 내부 아이템을 수평 가운데 정렬 */
 }
 
 .spacer {
@@ -257,6 +265,11 @@ export default {
 .day {
   font-weight: bold;
   color: #666;
+  font-size: 0.9rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 2.5rem; /* 날짜와 동일한 높이 */
 }
 
 .date {
@@ -278,7 +291,10 @@ export default {
 }
 
 .date.selected {
-  color: #000000;
+  color: #000000; /* 텍스트 색상을 변경 */
+  background-color: #dde1e5; /* 선택된 날짜의 배경색 설정 */
+  border-radius: 50%; /* 둥근 모서리 */
+  transition: background-color 0.3s, box-shadow 0.3s; /* 애니메이션 추가 */
 }
 
 .date.today {
@@ -291,14 +307,13 @@ export default {
   gap: 1rem;
   min-width: 430px;
   max-width: 430px;
-  min-height: 333px;
-  max-height: 333px;
+  min-height: 379px;
   margin-left: 40px;
 }
 div.container > div.meal-records > div {
   min-width: 430px;
   max-width: 430px;
-  min-height: 97px;
+  min-height: 118px;
   max-height: 100px;
 }
 .meal-card {
@@ -330,12 +345,16 @@ div.container > div.meal-records > div {
   background-color: #f0f0f0;
   cursor: pointer;
   font-weight: bold;
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color 0.3s, color 0.3s, transform 0.2s; /* transform 애니메이션 추가 */
 }
 
 .tabs button.active {
-  background-color: #0080ff;
+  background-color: #ff7d29;
   color: white;
+}
+
+.tabs button:hover {
+  transform: scale(1.05); /* 살짝 확대 */
 }
 
 .detailed-record {
@@ -415,5 +434,16 @@ div.container
   > div.meal-type
   > div.meal-type-square {
   background-color: #7b7351;
+}
+.nav-button img {
+  width: 20px;
+  height: 20px;
+  filter: grayscale(50%) contrast(120%);
+  transition: transform 0.3s, filter 0.3s;
+}
+
+.nav-button img:hover {
+  transform: scale(1.2);
+  filter: grayscale(0%) contrast(150%);
 }
 </style>

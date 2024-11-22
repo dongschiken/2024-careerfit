@@ -60,40 +60,44 @@
       <!-- 채팅 목록 모달 -->
       <div class="chat-list-modal">
         <h2 class="modal-title">📃 채팅 목록</h2>
-     
-          <ul v-show="chatRooms.length !== 0" class="chat-rooms ">
-            <li
-              v-for="room in chatRooms"
-              :key="room.chatRoomId"
-              class="chat-room-item"
-              @click="openEnterRoomModal(room.chatRoomId)"
-            >
-              <div class="chat-room-info">
-                <div class="chat-room-header">
-                  <p class="chat-room-title">{{ room.title }}</p>
-                </div>
-                <div class="chat-room-details">
-                  <img
-                    :src="room.creatorProfile || defaultProfile"
-                    alt="프로필 이미지"
-                    class="profile-img"
-                  />
-                  <p class="chat-room-creator">
-                    {{ room.creatorNickname ? room.creatorNickname : "익명" }}
-                  </p>
-                  <p class="chat-room-last">
-                    {{ formatDate(room.lastMessageAt) }}
-                  </p>
-                </div>
+
+        <ul v-show="chatRooms.length !== 0" class="chat-rooms">
+          <li
+            v-for="room in chatRooms"
+            :key="room.chatRoomId"
+            class="chat-room-item"
+            @click="openEnterRoomModal(room.chatRoomId)"
+          >
+            <div class="chat-room-info">
+              <div class="chat-room-header">
+                <p class="chat-room-title">{{ room.title }}</p>
               </div>
-            </li>
-          </ul>
-          <div class="chat-none">
-            <p v-if="chatRooms.length === 0" class="empty-message" style="margin-bottom: 120px;">
-              채팅방이 없습니다. 새로 생성해보세요! 
-            </p>
-          </div>
-       
+              <div class="chat-room-details">
+                <img
+                  :src="room.creatorProfile || defaultProfile"
+                  alt="프로필 이미지"
+                  class="profile-img"
+                />
+                <p class="chat-room-creator">
+                  {{ room.creatorNickname ? room.creatorNickname : "익명" }}
+                </p>
+                <p class="chat-room-last">
+                  {{ formatDate(room.lastMessageAt) }}
+                </p>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <div class="chat-none">
+          <p
+            v-if="chatRooms.length === 0"
+            class="empty-message"
+            style="margin-bottom: 120px"
+          >
+            채팅방이 없습니다. 새로 생성해보세요!
+          </p>
+        </div>
+
         <button class="create-room-button" @click="openCreateRoomModal">
           채팅방 만들기
         </button>
@@ -115,65 +119,74 @@
           @input="onInputChange"
         />
         <div class="create-room-buttons">
-        <button class="create-room-button" @click="createChatRoom">
-          생성하기
-        </button>
-        <button class="close-button" @click="closeCreateRoomModal">닫기</button>
+          <button class="create-room-button" @click="createChatRoom">
+            생성하기
+          </button>
+          <button class="close-button" @click="closeCreateRoomModal">
+            닫기
+          </button>
+        </div>
       </div>
     </div>
-    </div>
-<!-- 채팅방 입장 확인 모달 -->
-<div
-    v-if="showEnterRoomModal"
-    class="modal-overlay"
-    @click.self="closeEnterRoomModal"
->
-    <div class="modal">
+    <!-- 채팅방 입장 확인 모달 -->
+    <div
+      v-if="showEnterRoomModal"
+      class="modal-overlay"
+      @click.self="closeEnterRoomModal"
+    >
+      <div class="modal">
         <p>채팅방에 입장하시겠습니까?</p>
         <div class="modal-buttons">
-            <button @click="confirmEnterChatRoom">확인</button>
-            <button @click="closeEnterRoomModal">취소</button>
+          <button @click="confirmEnterChatRoom">확인</button>
+          <button @click="closeEnterRoomModal">취소</button>
         </div>
+      </div>
     </div>
-</div>
 
-<!-- 채팅 모달 -->
-<div
-    v-if="showChatRoomModal"
-    class="chat-room-modal-overlay"
-    @click.self="closeChatRoomModal"
->
-    <div class="chat-room-modal">
+    <!-- 채팅 모달 -->
+    <div
+      v-if="showChatRoomModal"
+      class="chat-room-modal-overlay"
+      @click.self="closeChatRoomModal"
+    >
+      <div class="chat-room-modal">
         <h2 class="modal-title">{{ selectedPlace.name }} 채팅방</h2>
         <h3 class="modal-title">{{ selectedChatRoom?.title }}</h3>
         <ul class="chat-messages">
-  <li
-    v-for="(message, index) in messages"
-    :key="index"
-    :class="['message', message.userId === sessionStorage.getItem('userId') ? 'self' : '']"
-  >
-    <img v-if="message.userProfile" :src="message.userProfile" class="message-profile" />
-    <div class="message-content">
-      <span class="nickname">{{ message.userNickname }}</span>
-      <p>{{ message.message }}</p>
-    </div>
-  </li>
-</ul>
+          <li
+            v-for="(message, index) in messages"
+            :key="index"
+            :class="[
+              'message',
+              message.userId === sessionStorage.getItem('userId') ? 'self' : '',
+            ]"
+          >
+            <img
+              v-if="message.userProfile"
+              :src="message.userProfile"
+              class="message-profile"
+            />
+            <div class="message-content">
+              <span class="nickname">{{ message.userNickname }}</span>
+              <p>{{ message.message }}</p>
+            </div>
+          </li>
+        </ul>
 
         <div class="chat-input">
-            <input
-                v-model="newChatMessage"
-                placeholder="메시지를 입력하세요"
-                @keydown.enter="sendMessage(selectedChatRoomId, newChatMessage)"
-            />
-            <button @click="sendMessage(selectedChatRoomId, newChatMessage)">전송</button>
+          <input
+            v-model="newChatMessage"
+            placeholder="메시지를 입력하세요"
+            @keydown.enter="sendMessage(selectedChatRoomId, newChatMessage)"
+          />
+          <button @click="sendMessage(selectedChatRoomId, newChatMessage)">
+            전송
+          </button>
         </div>
+      </div>
     </div>
-</div>
-<MainFooter />
-    </div>
-
-  
+    <MainFooter />
+  </div>
 </template>
 
 <script>
@@ -196,13 +209,13 @@ export default {
       chatRooms: [],
       showCreateRoomModal: false,
       newChatRoomTitle: "",
-      defaultProfile: '/img/default-profile.png', // 기본 프로필 이미지 경로
+      defaultProfile: "/img/default-profile.png", // 기본 프로필 이미지 경로
       showEnterRoomModal: false, // 입장 모달 표시 여부
       selectedChatRoomId: null, // 선택된 채팅방 ID
       showChatRoomModal: false, // 채팅방 모달 표시 여부
-        chatRoomMessages: [], // 해당 채팅방의 메시지 목록
-        newChatMessage: "", // 새로운 메시지 입력 필드 값
-        message: [],
+      chatRoomMessages: [], // 해당 채팅방의 메시지 목록
+      newChatMessage: "", // 새로운 메시지 입력 필드 값
+      message: [],
     };
   },
   mounted() {
@@ -228,11 +241,11 @@ export default {
     },
     // 채팅방 클릭 시 모달 열기
     openEnterRoomModal(chatRoomId) {
-    console.log("채팅방 클릭: ", chatRoomId);
-    this.selectedChatRoomId = chatRoomId; // 선택된 채팅방 ID 설정
-    this.showEnterRoomModal = true; // 입장 여부 모달 열기
-    this.showChatRoomModal = false; // 채팅 모달은 닫힌 상태 유지
-},
+      console.log("채팅방 클릭: ", chatRoomId);
+      this.selectedChatRoomId = chatRoomId; // 선택된 채팅방 ID 설정
+      this.showEnterRoomModal = true; // 입장 여부 모달 열기
+      this.showChatRoomModal = false; // 채팅 모달은 닫힌 상태 유지
+    },
 
     // 채팅방 입장 모달 닫기
     closeEnterRoomModal() {
@@ -241,81 +254,89 @@ export default {
     },
     // 채팅방 입장 확인
     async confirmEnterChatRoom() {
-  console.log("확인 버튼 클릭 - 선택된 채팅방 ID:", this.selectedChatRoomId);
+      console.log(
+        "확인 버튼 클릭 - 선택된 채팅방 ID:",
+        this.selectedChatRoomId
+      );
 
-  // 선택된 채팅방 ID가 없으면 오류 처리
-  if (!this.selectedChatRoomId) {
-    alert("선택된 채팅방 ID가 없습니다.");
-    return;
-  }
+      // 선택된 채팅방 ID가 없으면 오류 처리
+      if (!this.selectedChatRoomId) {
+        alert("선택된 채팅방 ID가 없습니다.");
+        return;
+      }
 
-  try {
-    this.showEnterRoomModal = false; // 입장 모달 닫기
+      try {
+        this.showEnterRoomModal = false; // 입장 모달 닫기
 
-    // 채팅방 정보 가져오기
-    this.selectedChatRoom = this.chatRooms.find(
-      (room) => room.chatRoomId === this.selectedChatRoomId
-    );
+        // 채팅방 정보 가져오기
+        this.selectedChatRoom = this.chatRooms.find(
+          (room) => room.chatRoomId === this.selectedChatRoomId
+        );
 
-    // 선택된 채팅방이 없을 경우 처리
-    if (!this.selectedChatRoom) {
-      alert("선택된 채팅방 정보를 찾을 수 없습니다.");
-      return;
-    }
+        // 선택된 채팅방이 없을 경우 처리
+        if (!this.selectedChatRoom) {
+          alert("선택된 채팅방 정보를 찾을 수 없습니다.");
+          return;
+        }
 
-    this.showChatRoomModal = true; // 채팅 모달 열기
-    await this.loadChatRoomMessages(this.selectedChatRoomId); // 메시지 로드
-  } catch (error) {
-    console.error("채팅방 입장 처리 중 오류:", error);
-    alert("채팅방 입장에 실패했습니다.");
-  }
-},
+        this.showChatRoomModal = true; // 채팅 모달 열기
+        await this.loadChatRoomMessages(this.selectedChatRoomId); // 메시지 로드
+      } catch (error) {
+        console.error("채팅방 입장 처리 중 오류:", error);
+        alert("채팅방 입장에 실패했습니다.");
+      }
+    },
     closeChatRoomModal() {
-        this.showChatRoomModal = false;
-        this.chatRoomMessages = [];
-        this.selectedChatRoom = null; 
+      this.showChatRoomModal = false;
+      this.chatRoomMessages = [];
+      this.selectedChatRoom = null;
     },
     async loadChatRoomMessages(chatRoomId) {
-    try {
-        const response = await ncapi.get(`/api/chat-room/${chatRoomId}/history`);
+      try {
+        const response = await ncapi.get(
+          `/api/chat-room/${chatRoomId}/history`
+        );
         this.chatRoomMessages = response.data || []; // 메시지 데이터가 없으면 빈 배열 설정
-    } catch (error) {
+      } catch (error) {
         console.error("채팅 메시지 로드 실패:", error);
         alert("채팅 메시지를 불러오는 중 오류가 발생했습니다.");
         this.chatRoomMessages = []; // 오류 발생 시 초기화
-    }
-},
-
-
+      }
+    },
 
     // 메시지 전송
     async sendMessage(chatRoomId, message) {
-  console.log("sendMessage 호출됨 - 채팅방 ID:", chatRoomId, "메시지:", message);
+      console.log(
+        "sendMessage 호출됨 - 채팅방 ID:",
+        chatRoomId,
+        "메시지:",
+        message
+      );
 
-  // 예외 처리: 채팅방 ID와 메시지 확인
-  if (!chatRoomId || !message) {
-    alert("채팅방 ID와 메시지를 확인하세요.");
-    return;
-  }
+      // 예외 처리: 채팅방 ID와 메시지 확인
+      if (!chatRoomId || !message) {
+        alert("채팅방 ID와 메시지를 확인하세요.");
+        return;
+      }
 
-  const chatMessage = {
-    chatRoomId: chatRoomId,
-    userId: sessionStorage.getItem("userId"), // 세션에서 유저 ID 가져오기
-    message: message,
-    userNickname: sessionStorage.getItem("userNickname"), // 세션에서 유저 닉네임 가져오기
-    userProfile: sessionStorage.getItem("userProfile"), // 세션에서 유저 프로필 가져오기
-  };
+      const chatMessage = {
+        chatRoomId: chatRoomId,
+        userId: sessionStorage.getItem("userId"), // 세션에서 유저 ID 가져오기
+        message: message,
+        userNickname: sessionStorage.getItem("userNickname"), // 세션에서 유저 닉네임 가져오기
+        userProfile: sessionStorage.getItem("userProfile"), // 세션에서 유저 프로필 가져오기
+      };
 
-  try {
-    // 서버로 메시지 전송
-    await api.post(`/api/chat-rooms/${chatRoomId}/history`, chatMessage);
-    console.log("메시지 전송 성공");
-    this.newChatMessage = ""; // 메시지 입력 초기화
-  } catch (error) {
-    console.error("메시지 전송 실패:", error);
-    alert("메시지 전송 중 오류가 발생했습니다.");
-  }
-},
+      try {
+        // 서버로 메시지 전송
+        await api.post(`/api/chat-rooms/${chatRoomId}/history`, chatMessage);
+        console.log("메시지 전송 성공");
+        this.newChatMessage = ""; // 메시지 입력 초기화
+      } catch (error) {
+        console.error("메시지 전송 실패:", error);
+        alert("메시지 전송 중 오류가 발생했습니다.");
+      }
+    },
 
     initMap() {
       const mapContainer = document.getElementById("map");
@@ -450,43 +471,42 @@ export default {
       this.newChatRoomTitle = "";
     },
     async createChatRoom() {
-  if (!this.newChatRoomTitle.trim()) {
-    alert("채팅방 제목을 입력하세요.");
-    return;
-  }
-  if (!this.selectedPlace || !this.selectedPlace.id) {
-    alert("채팅방을 연결할 장소를 선택하세요.");
-    return;
-  }
+      if (!this.newChatRoomTitle.trim()) {
+        alert("채팅방 제목을 입력하세요.");
+        return;
+      }
+      if (!this.selectedPlace || !this.selectedPlace.id) {
+        alert("채팅방을 연결할 장소를 선택하세요.");
+        return;
+      }
 
-  try {
-    // 채팅방 생성 API 호출
-    const response = await api.post("/api/chat-room", {
-      title: this.newChatRoomTitle,
-      placeId: this.selectedPlace.id,
-    });
+      try {
+        // 채팅방 생성 API 호출
+        const response = await api.post("/api/chat-room", {
+          title: this.newChatRoomTitle,
+          placeId: this.selectedPlace.id,
+        });
 
-    // 3번: 서버 응답 데이터를 로컬에 즉시 반영
-    const newRoom = {
-      ...response.data,
-      creatorProfile: response.data.userProfile || this.defaultProfile, // 프로필
-      creatorNickname: response.data.userNickname || "익명", // 닉네임
-    };
-    this.chatRooms.unshift(newRoom); // 즉시 목록에 추가
+        // 3번: 서버 응답 데이터를 로컬에 즉시 반영
+        const newRoom = {
+          ...response.data,
+          creatorProfile: response.data.userProfile || this.defaultProfile, // 프로필
+          creatorNickname: response.data.userNickname || "익명", // 닉네임
+        };
+        this.chatRooms.unshift(newRoom); // 즉시 목록에 추가
 
-    // 2번: 서버에서 전체 목록 재요청 (최신 상태 보장)
-    await this.loadChatRooms(this.selectedPlace.id);
+        // 2번: 서버에서 전체 목록 재요청 (최신 상태 보장)
+        await this.loadChatRooms(this.selectedPlace.id);
 
-    // 초기화 및 알림
-    this.newChatRoomTitle = ""; // 입력 필드 초기화
-    this.showCreateRoomModal = false; // 모달 닫기
-    alert("채팅방 생성 성공!");
-  } catch (error) {
-    console.error("채팅방 생성 실패:", error);
-    alert("채팅방 생성 중 문제가 발생했습니다.");
-  }
-},
-
+        // 초기화 및 알림
+        this.newChatRoomTitle = ""; // 입력 필드 초기화
+        this.showCreateRoomModal = false; // 모달 닫기
+        alert("채팅방 생성 성공!");
+      } catch (error) {
+        console.error("채팅방 생성 실패:", error);
+        alert("채팅방 생성 중 문제가 발생했습니다.");
+      }
+    },
 
     async enterChatRoom(chatRoomId) {
       const token = sessionStorage.getItem("accessToken");
@@ -518,9 +538,8 @@ export default {
 };
 </script>
 
-<style>
-
-.chat-none{
+<style scoped>
+.chat-none {
   display: flex;
   align-items: center;
   flex: 1;
@@ -707,16 +726,16 @@ export default {
 }
 
 .modal-overlay {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000; /* 채팅 모달보다 낮은 값 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000; /* 채팅 모달보다 낮은 값 */
 }
 
 /* 기본 모달 스타일 */
@@ -783,7 +802,6 @@ chat-room-inp .place-info-modal {
   margin: 0;
   padding: 0;
   margin-bottom: 15px;
-
 }
 
 .chat-room-item {
@@ -871,7 +889,6 @@ chat-room-inp .place-info-modal {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
 }
 
 .chat-room-creator {
@@ -898,11 +915,9 @@ chat-room-inp .place-info-modal {
 empty-message {
   text-align: start;
   color: #666;
-  margin: 20px ;
+  margin: 20px;
   flex: 1;
 }
-
-
 
 .close-button {
   margin-top: 10px;
@@ -959,49 +974,48 @@ empty-message {
 }
 
 .chat-room-modal-overlay {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    z-index: 1100; /* 입장 확인 모달보다 높은 값 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1100; /* 입장 확인 모달보다 높은 값 */
 }
 
 .chat-room-modal {
-    width: 70%;
-    height: 80%;
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  width: 70%;
+  height: 80%;
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .chat-messages {
-    display: flex;
-    flex-direction: column-reverse;
-    overflow-y: auto;
-    margin-bottom: 20px;
-    height: 100%;
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  height: 100%;
 }
 
 .chat-input {
-    display: flex;
-    gap: 10px;
+  display: flex;
+  gap: 10px;
 }
 
 .chat-input input {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
 }
-
 
 @keyframes fadeIn {
   from {
