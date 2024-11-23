@@ -9,6 +9,9 @@ import com.peach.careerfit.chat.model.dto.ChatMessageRequest;
 import com.peach.careerfit.chat.model.dto.ChatMessageResponse;
 
 public interface ChatHistoryService {
+	
+	void saveMessage(ChatMessageResponse message);
+	
 	// 메세지 전송
 	void sendMessage(int chatRoomId, int sendUserId, ChatMessageRequest request);
 	

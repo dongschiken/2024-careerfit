@@ -16,7 +16,7 @@
 	
 	    <association property="user" javaType="User">
 	        <id property="userId" column="user_id"/>
-	        <result property="name" column="user_name"/>
+	        <result property="name" column="name"/>
 	        <result property="nickname" column="nickname"/>
 	    </association>
 	</resultMap>
@@ -69,4 +69,5 @@
 		DELETE FROM reply
 		WHERE reply_id = #{replyId}
 	</delete>
+	
 </mapper>
