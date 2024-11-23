@@ -22,6 +22,9 @@ public class MealRecordServiceImpl implements MealRecordService {
 
 	@Override
 	public int registMealRecord(MealRecord mealRecord, MultipartFile file) {
+		if(mealRecordDao.countMealRecord(mealRecord) > 0) {
+			return 0;
+		}
 		String img = fileStorageComponent.saveFile(file, type);
 		mealRecord.setImg(img);
 		return mealRecordDao.insertMealRecord(mealRecord);
@@ -29,6 +32,7 @@ public class MealRecordServiceImpl implements MealRecordService {
 
 	@Override
 	public List<MealRecord> getMealRecordByUserId(MealRecord mealRecord) {
+		System.out.println("sasdasdasdasdasd"+mealRecord);
 		return mealRecordDao.selectMealRecordByUserId(mealRecord);
 	}
 

@@ -14,9 +14,11 @@ import lombok.NoArgsConstructor;
 public class BodyRecord {
 	private int bodyRecordId;
 	private int userId;
-	private LocalDate date;
+	private String date;
 	private double weight;
-	private int skeletalMuscle; // 골격근
+	private double skeletalMuscle; // 골격근
 	private int bodyFat;	   // 체지방
 	private String img;
+	private String bodyCondition;
+	private String content;
 }

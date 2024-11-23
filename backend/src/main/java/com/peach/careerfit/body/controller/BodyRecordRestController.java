@@ -16,7 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.peach.careerfit.body.model.dto.BodyRecord;
 import com.peach.careerfit.body.model.service.BodyRecordService;
+import com.peach.careerfit.jwt.JwtResponse;
 import com.peach.careerfit.jwt.JwtUtils;
+import com.peach.careerfit.user.model.dto.ResponseTokenUser;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -25,41 +27,46 @@ import jakarta.servlet.http.HttpServletRequest;
 public class BodyRecordRestController {
 	private BodyRecordService bodyRecordService;
 	private JwtUtils jwtUtils;
+	private JwtResponse jwtResponse;
 
-	public BodyRecordRestController(BodyRecordService bodyRecordService, JwtUtils jwtUtils) {
+	public BodyRecordRestController(BodyRecordService bodyRecordService, JwtUtils jwtUtils, JwtResponse jwtResponse) {
 		this.bodyRecordService = bodyRecordService;
 		this.jwtUtils = jwtUtils;	
+		this.jwtResponse = jwtResponse;
 	}
 
 	@GetMapping("/{date}")
-	public ResponseEntity<Object> getBodyRecord(@PathVariable("date") LocalDate date, HttpServletRequest httpRequest) {
+	public ResponseEntity<Object> getBodyRecord(@PathVariable("date") String date, HttpServletRequest httpRequest) {
 		try {
-			new BodyRecord();
 			BodyRecord bodyRecord = BodyRecord.builder().date(date).build();
 			bodyRecord.setUserId(jwtUtils.getUserIdFromToken(jwtUtils.getAccessToken(httpRequest)));
+			System.out.println(bodyRecord);
 			BodyRecord userBodyRecord = bodyRecordService.getBodyRecord(bodyRecord);
+			System.out.println(userBodyRecord);
 			if (userBodyRecord == null) {
 				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("회원의 식단기록이 없습니다.");
 			}
 			return ResponseEntity.status(HttpStatus.OK).body(userBodyRecord);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.OK).body("회원의 신체 기록을 가져오는 중 오류 발생");
 		}
 	}
 
 	@PostMapping
 	public ResponseEntity<Object> registBodyRecord(@RequestPart("bodyRecord") BodyRecord bodyRecord,
-			@RequestPart(name = "file", required = false) MultipartFile file) {
-		System.out.println(file);
-		System.out.println(bodyRecord);
+			@RequestPart(name = "file", required = false) MultipartFile file,
+			HttpServletRequest request) {
+		ResponseTokenUser user = jwtResponse.extractTokenUser(request);
+		bodyRecord.setUserId(user.getUserId());
 		try {
 			int status = bodyRecordService.registBodyRecord(bodyRecord, file);
-			System.out.println(status);
 			if (status == 0) {
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원의 신체 기록을 등록하는 중 오류 발생");
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("회원의 신체 기록을 등록하는 중 오류 발생");
 			}
 			return ResponseEntity.status(HttpStatus.CREATED).body("회원의 신체 기록 등록 완료");
 		} catch (Exception e) {
+			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원의 신체 기록을 등록하는 중 오류 발생");
 		}
 	}
