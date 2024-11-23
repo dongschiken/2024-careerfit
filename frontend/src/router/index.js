@@ -5,11 +5,9 @@ import JoinView from "@/components/user/JoinView.vue";
 import BoardWrite from "@/components/board/BoardWrite.vue";
 import MealPlan from "@/components/meal/MealPlan.vue";
 import BoardContentView from "@/views/BoardContentView.vue";
-import ChatView from "@/views/ChatView.vue";
 import BoardDetailView from "@/views/BoardDetailView.vue";
 import { useToast } from "vue-toastification";
 import MapView from "@/components/map/MapView.vue";
-import ChatRoom from "@/components/chat/ChatRoom.vue";
 import UserProfile from "@/components/user/UserProfile.vue";
 
 const routes = [
@@ -57,11 +55,6 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: "/chat",
-    component: ChatView,
-    meta: { requiresAuth: true },
-  },
-  {
     path: "/board/detail/:boardId",
     name: "boardDetail",
     component: BoardDetailView,
@@ -71,12 +64,6 @@ const routes = [
     path: "/mate",
     name: "Mate",
     component: MapView,
-  },
-  {
-    path: "/chatRoom/:id",
-    name: "ChatRoom",
-    component: ChatRoom,
-    props: true,
   },
 ];
 
