@@ -3,83 +3,90 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.peach.careerfit.user.model.dao.UserMapper">
-    <!-- memberId로 사용자 조회 -->
-    <select id="findByUserEmail" parameterType="String" resultType="com.peach.careerfit.user.model.dto.User">
-        SELECT * 
-        from user
-        WHERE email = #{email}
-    </select>
+	<!-- memberId로 사용자 조회 -->
+	<select id="findByUserEmail" parameterType="String"
+		resultType="com.peach.careerfit.user.model.dto.User">
+		SELECT *
+		from user
+		WHERE email = #{email}
+	</select>
 	<insert id="insertUser" parameterType="User">
 		INSERT INTO user (
-		    email,
-		    password,
-		    nickname,
-		    phone,
-		    post_code,
-		    parcel_address,
-		    street_address,
-		    latitude,
-		    longitude,
-		    created_at,
-		    updated_at,
-		    role,
-		    status
+		email,
+		password,
+		nickname,
+		phone,
+		post_code,
+		parcel_address,
+		street_address,
+		latitude,
+		longitude,
+		created_at,
+		updated_at,
+		role,
+		status
 		) VALUES (
-		    #{email}, #{password}, #{nickname}, #{phone}, #{postCode}, #{parcelAddress}
-		    ,#{streetAddress}, #{latitude}, #{longitude}, #{createdAt}, #{updatedAt}, #{role}, #{status}
+		#{email}, #{password}, #{nickname}, #{phone}, #{postCode}, #{parcelAddress}
+		,#{streetAddress}, #{latitude}, #{longitude}, #{createdAt},
+		#{updatedAt}, #{role}, #{status}
 		)
 	</insert>
-	
+
 	<!-- 마이페이지 조회 -->
 	<select id="findById" parameterType="int" resultType="User">
-		SELECT * FROM user WHERE user_id = #{user_id}
+		SELECT *
+		FROM user WHERE user_id = #{user_id}
 	</select>
-	
+
 	<!-- 회원 정보 변경 -->
 	<!-- 회원 정보 변경 -->
-<update id="updateUser" parameterType="map">
-UPDATE user SET
-  nickname = #{user.nickname},
-  phone = #{user.phone},
-  post_code = #{user.postCode},
-  parcel_address = #{user.parcelAddress},
-  street_address = #{user.streetAddress},
-  detail_address = #{user.detailAddress}
-WHERE user_id = #{user_id}
-</update>
-	
+	<update id="updateUser" parameterType="map">
+		UPDATE user SET
+		nickname = #{user.nickname},
+		phone = #{user.phone},
+		post_code = #{user.postCode},
+		parcel_address = #{user.parcelAddress},
+		street_address = #{user.streetAddress},
+		detail_address = #{user.detailAddress}
+		WHERE user_id = #{user_id}
+	</update>
+
 	<!-- 프로필 변경 -->
 	<update id="updateProfilePicture">
 		UPDATE user SET profile_url = #{profile_url}
-		WHERE user_id = #{userId}
+		WHERE
+		user_id = #{userId}
 	</update>
-	
+
 	<!-- 회원 탈퇴 (status : 0) -->
 	<update id="updateUserStatus">
 		UPDATE user
 		SET status = #{status}, updated_at = NOW()
 		WHERE user_id = #{userId}
 	</update>
-	
+
 	<!-- 비밀번호 변경 -->
 	<update id="updateUserPassword">
 		UPDATE user
-		SET password = #{password}, updated_at = NOW()
+		SET password = #{password}, updated_at =
+		NOW()
 		WHERE user_id = #{userId}
 	</update>
-	
+
 	<!-- 닉네임 중복 체크 -->
-	<select id="findByUserNickname" parameterType="String" resultType="User">
+	<select id="findByUserNickname" parameterType="String"
+		resultType="User">
 		SELECT *
 		FROM user
 		WHERE nickname = #{nickname}
 	</select>
-	
+
 	<!-- 이메일 중복 확인 -->
-	<select id="countByEmail" parameterType="String" resultType="int">
-	    SELECT COUNT(*)
-	    FROM user
-	    WHERE email = #{email}
+	<select id="countByEmail" parameterType="String"
+		resultType="int">
+		SELECT COUNT(*)
+		FROM user
+		WHERE email = #{email}
 	</select>
-	
+
 </mapper>

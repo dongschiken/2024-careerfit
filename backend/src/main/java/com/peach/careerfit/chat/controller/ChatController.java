@@ -5,11 +5,13 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+
 import com.peach.careerfit.chat.model.dto.ChatMessageRequest;
 import com.peach.careerfit.chat.model.dto.ChatMessageResponse;
 import com.peach.careerfit.chat.model.service.ChatHistoryService;
 import com.peach.careerfit.user.model.dto.User;
 import com.peach.careerfit.user.model.service.UserService;
+
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -22,9 +24,8 @@ public class ChatController {
     @MessageMapping("/sendMessage/{chatRoomId}")
     public void sendMessage(@DestinationVariable int chatRoomId, ChatMessageRequest request) {
         try {
-            System.out.println("요청받음: chatRoomId=" + chatRoomId + ", request=" + request);
-            User user = userService.getUserById(request.getUserId());
-           
+            System.out.println("메시지 수신 - chatRoomId: " + chatRoomId + ", request: " + request);
+
             ChatMessageResponse response = ChatMessageResponse.builder()
                     .chatRoomId(chatRoomId)
                     .userId(request.getUserId())
@@ -33,15 +34,16 @@ public class ChatController {
                     .userNickname(request.getUserNickname())
                     .userProfile(request.getUserProfile())
                     .build();
-            
-            // DB에 메시지 저장
+
+            // DB에 저장
             chatHistoryService.saveMessage(response);
-            
-            // WebSocket을 통해 구독자들에게 메시지 전송
-            messagingTemplate.convertAndSend("/topic/chat/" + chatRoomId, response);
+
+            // 클라이언트에게 메시지 전송
+            messagingTemplate.convertAndSend("/topic/chatRoom/" + chatRoomId, response);
+
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("메시지 전송 실패: " + e.getMessage());
+            System.err.println("메시지 처리 실패: " + e.getMessage());
         }
     }
 
@@ -59,7 +61,7 @@ public class ChatController {
         // DB에 입장 메시지 저장
         chatHistoryService.saveMessage(response);
         
-        // WebSocket을 통해 구독자들에게 메시지 전송
-        messagingTemplate.convertAndSend("/topic/chat/" + chatRoomId, response);
+        // 입장 메시지 발행
+        messagingTemplate.convertAndSend("/topic/chatRoom/" + chatRoomId, response);
     }
 }

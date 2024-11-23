@@ -1,6 +1,7 @@
 <template>
   <div>
     <MainHeader />
+
     <!-- 주소 검색 -->
     <div id="address-search" class="search-bar">
       <input
@@ -50,14 +51,12 @@
     <!-- 지도 -->
     <div id="map" class="map-container"></div>
 
-    <!-- 장소 정보 모달 -->
+    <!-- 장소 정보 및 채팅 목록 모달 -->
     <div v-if="selectedPlace" class="modal-overlay" @click.self="closeModal">
       <div class="place-info-modal">
         <h2 class="modal-title">{{ selectedPlace.name }}</h2>
         <p class="modal-address">{{ selectedPlace.address }}</p>
       </div>
-
-      <!-- 채팅 목록 모달 -->
       <div class="chat-list-modal">
         <h2 class="modal-title">📃 채팅 목록</h2>
         <ul
@@ -90,7 +89,6 @@
             </div>
           </li>
         </ul>
-
         <div class="chat-none">
           <p
             v-if="getChatRoomsForPlace(selectedPlace?.id).length === 0"
@@ -100,7 +98,6 @@
             채팅방이 없습니다. 새로 생성해보세요!
           </p>
         </div>
-
         <button class="create-room-button" @click="openCreateRoomModal">
           채팅방 만들기
         </button>
@@ -131,6 +128,7 @@
         </div>
       </div>
     </div>
+
     <!-- 채팅방 입장 확인 모달 -->
     <div
       v-if="showEnterRoomModal"
@@ -160,49 +158,64 @@
             v-for="(message, index) in chatRoomMessages"
             :key="index"
             :class="[
-              'message',
-              currentUser?.userId && message.userId === currentUser.userId
-                ? 'self'
-                : '',
+              'message-wrapper',
+              message.userId === currentUser.userId ? 'self' : 'other',
             ]"
           >
-            <img
-              :src="message.profileUrl || defaultUserImage"
-              class="message-profile"
-              alt="프로필 이미지"
-            />
-            <div class="message-content">
-              <span class="nickname">{{ message.nickname || "익명" }}</span>
-              <p>{{ message.message }}</p>
-              <small class="time">{{ message.timeAgo || "" }}</small>
+            <div class="message-group">
+              <div v-if="message.userId !== currentUser.userId" class="profile">
+                <img
+                  :src="message.userProfile || '/public/default-profile.png'"
+                  alt="프로필 이미지"
+                  class="profile-img"
+                />
+              </div>
+              <div class="message-content">
+                <span
+                  v-if="message.userId !== currentUser.userId"
+                  class="nickname"
+                >
+                  {{ message.userNickname || "익명" }}
+                </span>
+                <div
+                  class="message-bubble"
+                  :style="{ maxWidth: getMaxWidth(message.message) }"
+                >
+                  {{ message.message }}
+                </div>
+              </div>
             </div>
-          </li>
-        </ul>
+          </div>
+        </div>
 
         <div class="chat-input">
           <input
             v-model="newChatMessage"
             placeholder="메시지를 입력하세요"
-            @keydown.enter="sendMessage(selectedChatRoomId, newChatMessage)"
+            @keydown.enter="sendMessage"
+            :disabled="!isConnected"
           />
-          <button @click="sendMessage(selectedChatRoomId, newChatMessage)">
-            전송
-          </button>
+          <button @click="sendMessage" :disabled="!isConnected">전송</button>
         </div>
       </div>
     </div>
+
     <MainFooter />
   </div>
 </template>
 
 <script>
-import ncapi from "@/api/noTokenAxiosInstance";
 import MainHeader from "@/components/module/MainHeader.vue";
 import MainFooter from "@/components/module/MainFooter.vue";
-import api from "@/api/axiosInstance"; // 인증이 필요한 요청을 위해 추가
+import api from "@/api/axiosInstance";
+import ncapi from "@/api/noTokenAxiosInstance";
 import WebSocketService from "@/services/WebSocketService";
 import { reactive, toRaw } from "vue";
 export default {
+  components: {
+    MainHeader,
+    MainFooter,
+  },
   data() {
     return {
       defaultUserImage: new URL("@/assets/img/user_img.png", import.meta.url)
@@ -216,58 +229,44 @@ export default {
       currentKeyword: "전체",
       selectedPlace: null,
       placeQuery: "",
-      chatRooms: [],
+      chatRoomsByPlace: reactive({}),
       showCreateRoomModal: false,
       newChatRoomTitle: "",
-      defaultProfile: "/img/default-profile.png", // 기본 프로필 이미지 경로
-      showEnterRoomModal: false, // 입장 모달 표시 여부
-      selectedChatRoomId: null, // 선택된 채팅방 ID
-      selectedChatRoom: null, // 선택된 채팅방 정보
-      showChatRoomModal: false, // 채팅방 모달 표시 여부
-      chatRoomMessages: [], // 해당 채팅방의 메시지 목록
-      newChatMessage: "", // 새로운 메시지 입력 필드 값
+      defaultProfile: "/img/default-profile.png",
+      showEnterRoomModal: false,
+      selectedChatRoomId: null,
+      selectedChatRoom: null,
+      showChatRoomModal: false,
       messages: {},
-      chatRoomsByPlace: reactive({}), // 장소별 채팅방 데이터를 저장
-      selectedPlaceId: null, // 선택된 장소 ID
+      newChatMessage: "",
       isConnected: false,
     };
   },
   async mounted() {
     try {
-      await this.getCurrentUser(); // 사용자 정보 가져오기 완료 대기
-      this.getUserLocation(); // 위치 정보 가져오기
-      WebSocketService.connect(this.onConnected, this.onError); // WebSocket 연결
+      await this.getCurrentUser();
+      this.getUserLocation();
+      WebSocketService.connect(this.onConnected, this.onError);
     } catch (error) {
       console.error("초기화 중 오류 발생:", error);
     }
   },
-
+  beforeDestroy() {
+    if (this.currentSubscription) {
+      this.currentSubscription.unsubscribe();
+    }
+    WebSocketService.disconnect();
+  },
   methods: {
-    onConnected() {
-      if (this.selectedChatRoomId) {
-        console.log("WebSocket 연결 성공");
-        this.isConnected = true;
-        WebSocketService.subscribe(
-          `/topic/chatRoom/${this.selectedChatRoomId}`,
-          this.onMessageReceived
-        );
-      } else {
-        console.error("선택된 채팅방 ID가 없습니다.");
-      }
-    },
-    onError(error) {
-      console.error("WebSocket 연결 오류:", error);
-      this.isConnected = false;
-    },
     async getCurrentUser() {
       try {
-        const response = await api.get(`/api/user/current`); // 사용자 정보 API 호출
-        this.currentUser = response.data; // 사용자 정보 저장
+        const response = await api.get(`/api/user/current`);
+        this.currentUser = response.data;
         console.log("현재 사용자 정보:", this.currentUser);
       } catch (error) {
         console.error("사용자 정보를 가져오는 중 오류 발생:", error);
         alert("로그인 정보가 없습니다. 다시 로그인 해주세요.");
-        this.$router.push("/login"); // 로그인 페이지로 이동
+        this.$router.push("/login");
       }
     },
     getUserLocation() {
@@ -280,7 +279,7 @@ export default {
           },
           (error) => {
             console.error("Geolocation 실패:", error);
-            this.centerLat = 37.5665; // Default: 서울
+            this.centerLat = 37.5665;
             this.centerLng = 126.978;
             this.initMap();
           }
@@ -465,9 +464,6 @@ export default {
         this.map.setZoomable(false);
       }
     },
-    closeModal() {
-      this.selectedPlace = null;
-    },
     searchPlaces() {
       const ps = new kakao.maps.services.Places();
       const searchOption = {
@@ -540,51 +536,41 @@ export default {
           position: markerPosition,
           map: this.map,
         });
-
         kakao.maps.event.addListener(marker, "click", () => {
-          console.log("Marker 클릭 - placeId:", place.id); // 디버깅용 로그
           this.selectedPlace = {
             id: place.id,
             name: place.place_name,
             address:
               place.road_address_name || place.address_name || "주소 정보 없음",
           };
-          this.selectedPlaceId = place.id;
           this.loadChatRooms(place.id);
         });
-
         this.markers.push(marker);
       });
     },
-
     async loadChatRooms(placeId) {
       try {
         const response = await ncapi.get(`/api/chat-rooms`, {
           params: { placeId },
         });
-
         if (Array.isArray(response.data)) {
           this.chatRoomsByPlace = {
             ...this.chatRoomsByPlace,
             [placeId]: response.data.map((room) => ({
               ...room,
-              creatorProfile: room.userProfile || this.defaultProfile, // 기본 프로필
-              creatorNickname: room.userNickname || "익명", // 기본 닉네임
+              creatorProfile: room.userProfile || this.defaultProfile,
+              creatorNickname: room.userNickname || "익명",
             })),
           };
         } else {
           console.error("응답 데이터가 배열이 아닙니다:", response.data);
-          this.chatRoomsByPlace = {
-            ...this.chatRoomsByPlace,
-            [placeId]: [],
-          };
+          this.chatRoomsByPlace = { ...this.chatRoomsByPlace, [placeId]: [] };
         }
       } catch (error) {
         console.error("채팅방 목록 로드 실패:", error);
         alert("채팅방 목록을 불러오지 못했습니다.");
       }
     },
-
     openCreateRoomModal() {
       this.showCreateRoomModal = true;
     },
@@ -601,20 +587,14 @@ export default {
         alert("채팅방을 연결할 장소를 선택하세요.");
         return;
       }
-
       try {
-        const response = await api.post("/api/chat-room", {
+        await api.post("/api/chat-room", {
           title: this.newChatRoomTitle,
           placeId: this.selectedPlace.id,
         });
-
-        this.newChatRoomTitle = ""; // 입력 필드 초기화
-        this.showCreateRoomModal = false; // 모달 닫기
-
-        // 생성 직후 최신 데이터를 다시 로드
+        this.newChatRoomTitle = "";
+        this.showCreateRoomModal = false;
         await this.loadChatRooms(this.selectedPlace.id);
-
-        // alert("채팅방 생성 성공!");
       } catch (error) {
         console.error("채팅방 생성 실패:", error);
         alert("채팅방 생성 중 문제가 발생했습니다.");
@@ -626,16 +606,98 @@ export default {
       const token = sessionStorage.getItem("accessToken");
       if (!token) {
         alert("로그인이 필요합니다.");
-        this.$router.push("/login"); // 로그인 페이지로 이동
+        this.$router.push("/user/login"); // 로그인 페이지로 이동
         return;
       }
       try {
-        await api.post(`/api/chat-room/${chatRoomId}/users`, {});
-        this.$router.push(`/chat-room/${chatRoomId}`);
+        WebSocketService.subscribe(
+          `/topic/chatRoom/${this.selectedChatRoomId}`,
+          this.onMessageReceived
+        );
+        this.showEnterRoomModal = false;
+        this.showChatRoomModal = true;
+        await this.loadChatRoomMessages(this.selectedChatRoomId);
       } catch (error) {
-        console.error("채팅방 입장 실패:", error);
+        console.error("채팅방 입장 처리 중 오류:", error);
         alert("채팅방 입장에 실패했습니다.");
       }
+    },
+    async loadChatRoomMessages(chatRoomId) {
+      try {
+        const response = await api.get(`/api/chat-room/${chatRoomId}/history`);
+        this.messages = {
+          ...this.messages,
+          [chatRoomId]: response.data || [],
+        };
+      } catch (error) {
+        console.error("채팅 메시지 로드 실패:", error);
+        alert("채팅 메시지를 불러오는 중 오류가 발생했습니다.");
+      }
+    },
+    onConnected() {
+      console.log("WebSocket 연결 성공");
+      this.isConnected = true;
+      if (this.selectedChatRoomId) {
+        WebSocketService.subscribe(
+          `/topic/chatRoom/${this.selectedChatRoomId}`,
+          this.onMessageReceived
+        );
+      }
+    },
+    onError(error) {
+      console.error("WebSocket 연결 오류:", error);
+      this.isConnected = false;
+    },
+    onMessageReceived(payload) {
+      const message = JSON.parse(payload.body);
+      const chatRoomId = message.chatRoomId;
+      if (!this.messages[chatRoomId]) {
+        this.messages = {
+          ...this.messages,
+          [chatRoomId]: [],
+        };
+      }
+      this.messages[chatRoomId] = [message, ...this.messages[chatRoomId]];
+    },
+    sendMessage() {
+      if (!this.newChatMessage.trim() || !this.isConnected) return;
+      const message = {
+        chatRoomId: this.selectedChatRoomId,
+        userId: this.currentUser.userId,
+        message: this.newChatMessage.trim(),
+        userNickname:
+          this.currentUser.nickname || this.currentUser.userNickname || "익명",
+        userProfile:
+          this.currentUser.profileUrl ||
+          this.currentUser.userProfile ||
+          this.defaultProfile,
+      };
+      WebSocketService.send(
+        `/app/sendMessage/${this.selectedChatRoomId}`,
+        message
+      );
+      this.newChatMessage = "";
+    },
+    getMaxWidth(message) {
+      const length = message.length;
+      if (length <= 10) return "150px";
+      if (length <= 30) return "300px";
+      return "450px"; // 최대 길이 제한
+    },
+
+    closeChatRoomModal() {
+      this.showChatRoomModal = false;
+      this.selectedChatRoom = null;
+    },
+    closeModal() {
+      this.selectedPlace = null;
+      this.selectedPlaceId = null;
+    },
+    getChatRoomsForPlace(placeId) {
+      return this.chatRoomsByPlace[placeId] || [];
+    },
+    getMessagesForChatRoom(chatRoomId) {
+      return this.messages[chatRoomId] || [];
     },
     formatDate(date) {
       if (!date) return "시간 없음";
@@ -644,13 +706,6 @@ export default {
         d.getMonth() + 1
       }-${d.getDate()} ${d.getHours()}:${d.getMinutes()}`;
     },
-    getMessagesForChatRoom(chatRoomId) {
-      return this.messages[chatRoomId] || [];
-    },
-  },
-  components: {
-    MainHeader,
-    MainFooter,
   },
 };
 </script>
@@ -1118,8 +1173,8 @@ empty-message {
   display: flex;
   flex-direction: column-reverse;
   overflow-y: auto;
-  margin-bottom: 20px;
   height: 100%;
+  padding: 10px;
 }
 
 .chat-input {
@@ -1132,6 +1187,89 @@ empty-message {
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
+}
+
+.message {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.message.self .message-content {
+  flex-direction: row-reverse;
+}
+
+.message.other {
+  justify-content: flex-start;
+  background-color: #e0e0e0;
+}
+
+.message.self .message-bubble {
+  background-color: fee500;
+  color: black;
+}
+
+.message-wrapper {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.message-profile {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin: 0 10px;
+}
+
+.message-wrapper.self {
+  justify-content: flex-end;
+}
+
+.message-wrapper.other {
+  justify-content: flex-start;
+}
+
+.message-group {
+  display: flex;
+  align-items: flex-end;
+}
+
+.profile {
+  margin-right: 10px;
+}
+
+.profile-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
+}
+
+.message-content {
+  display: flex;
+  max-width: 70%;
+}
+
+.nickname {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.message-bubble {
+  display: inline-block;
+  padding: 10px 15px;
+  border-radius: 18px;
+  background-color: #f1f1f1;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 80%;
+}
+
+.message.self .message-bubble {
+  background-color: steelblue;
+  color: black;
 }
 
 @keyframes fadeIn {
