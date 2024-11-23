@@ -1,4 +1,5 @@
 <template>
+  <MainHeader />
   <div class="page-wrapper">
     <div class="page-container">
       <div v-if="!loading">
@@ -93,6 +94,7 @@
       </div>
     </div>
   </div>
+  <MainFooter />
 </template>
 
 <script setup>
@@ -102,7 +104,8 @@ import EditUserInfoModal from "./EditUserInfoModal.vue";
 import PasswordModal from "./PasswordModal.vue";
 import ProfileImageModal from "./ProfileImageModal.vue";
 import api from "@/api/axiosInstance";
-
+import MainHeader from "../module/MainHeader.vue";
+import MainFooter from "@/components/module/MainFooter.vue";
 const userStore = useUserStore();
 const showEditUserInfoModal = ref(false);
 const showPasswordModal = ref(false);

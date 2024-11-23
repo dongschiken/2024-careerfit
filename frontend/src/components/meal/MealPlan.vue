@@ -1,173 +1,206 @@
 <template>
   <div>
     <MainHeader />
-    <div class="action-buttons">
-      <div @click="openMealModal()" class="button meal-button">
-        <img src="@/assets/img/plus_icon.png" alt="plus" class="button-icon" />
-        <div class="record-text">식단 기록 등록</div>
-        <img src="@/assets/img/meal.png" class="monitor-weight-img" />
-      </div>
-      <div @click="openBodyModal()" class="button exercise-button">
-        <img src="@/assets/img/plus_icon.png" alt="plus" class="button-icon" />
-        <div class="record-text">신체 기록 등록</div>
-        <img src="@/assets/img/monitor_weight.png" class="monitor-weight-img" />
-      </div>
-      <!-- 식단 모달 -->
-      <div v-if="isMealModalOpen" class="modal">
-        <div class="modal-content">
-          <h2>식단 기록 모달</h2>
-          <div class="modal-section">
-            <label class="modal-label">분류</label>
-            <div class="button-group">
-              <button
-                class="type-button"
-                :class="{ selected: selectedMealType === '아침' }"
-                @click="selectMealType('아침')"
-              >
-                아침
-              </button>
-              <button
-                class="type-button"
-                :class="{ selected: selectedMealType === '점심' }"
-                @click="selectMealType('점심')"
-              >
-                점심
-              </button>
-              <button
-                class="type-button"
-                :class="{ selected: selectedMealType === '저녁' }"
-                @click="selectMealType('저녁')"
-              >
-                저녁
+    <div class="header-container">
+      <div class="action-buttons">
+        <div @click="openMealModal()" class="button meal-button">
+          <img
+            src="@/assets/img/plus_icon.png"
+            alt="plus"
+            class="button-icon"
+          />
+          <div class="record-text">식단 기록 등록</div>
+          <img src="@/assets/img/meal.png" class="monitor-weight-img" />
+        </div>
+        <div @click="openBodyModal()" class="button exercise-button">
+          <img
+            src="@/assets/img/plus_icon.png"
+            alt="plus"
+            class="button-icon"
+          />
+          <div class="record-text">신체 기록 등록</div>
+          <img
+            src="@/assets/img/monitor_weight.png"
+            class="monitor-weight-img"
+          />
+        </div>
+        <!-- 식단 모달 -->
+        <div v-if="isMealModalOpen" class="modal">
+          <div class="modal-content">
+            <h2>식단 기록 모달</h2>
+            <div class="modal-section">
+              <label class="modal-label">분류</label>
+              <div class="button-group">
+                <button
+                  class="type-button"
+                  :class="{ selected: selectedMealType === '아침' }"
+                  @click="selectMealType('아침')"
+                >
+                  아침
+                </button>
+                <button
+                  class="type-button"
+                  :class="{ selected: selectedMealType === '점심' }"
+                  @click="selectMealType('점심')"
+                >
+                  점심
+                </button>
+                <button
+                  class="type-button"
+                  :class="{ selected: selectedMealType === '저녁' }"
+                  @click="selectMealType('저녁')"
+                >
+                  저녁
+                </button>
+              </div>
+            </div>
+            <div class="modal-section">
+              <label class="modal-label">포만감</label>
+              <div class="button-group">
+                <button
+                  class="type-button"
+                  :class="{ selected: selectedSatiation === '배부름' }"
+                  @click="selectSatiation('배부름')"
+                >
+                  배부름
+                </button>
+                <button
+                  class="type-button"
+                  :class="{ selected: selectedSatiation === '적당함' }"
+                  @click="selectSatiation('적당함')"
+                >
+                  적당함
+                </button>
+                <button
+                  class="type-button"
+                  :class="{ selected: selectedSatiation === '배고픔' }"
+                  @click="selectSatiation('배고픔')"
+                >
+                  배고픔
+                </button>
+              </div>
+            </div>
+            <div class="modal-section">
+              <label class="modal-label">사진 추가</label>
+              <input
+                type="file"
+                class="modal-input"
+                @change="handleFileChange"
+              />
+            </div>
+            <div class="modal-section">
+              <label class="modal-label">식사 시간</label>
+              <input type="time" class="modal-input" v-model="mealTime" />
+            </div>
+            <div class="modal-section">
+              <label class="modal-label">추가 메모</label>
+              <textarea
+                class="modal-textarea"
+                v-model="additionalMemo"
+                placeholder="오늘은 매우 적게 먹었다."
+              ></textarea>
+            </div>
+            <div class="meal-modal-button-group">
+              <button @click="closeMealModal" class="close-button">닫기</button>
+              <button @click="mealRecordRegist" class="regist-button">
+                등록
               </button>
             </div>
           </div>
-          <div class="modal-section">
-            <label class="modal-label">포만감</label>
-            <div class="button-group">
-              <button
-                class="type-button"
-                :class="{ selected: selectedSatiation === '배부름' }"
-                @click="selectSatiation('배부름')"
-              >
-                배부름
-              </button>
-              <button
-                class="type-button"
-                :class="{ selected: selectedSatiation === '적당함' }"
-                @click="selectSatiation('적당함')"
-              >
-                적당함
-              </button>
-              <button
-                class="type-button"
-                :class="{ selected: selectedSatiation === '배고픔' }"
-                @click="selectSatiation('배고픔')"
-              >
-                배고픔
+        </div>
+
+        <div v-if="isBodyModalOpen" class="modal">
+          <div class="modal-content">
+            <h2>신체 기록 모달</h2>
+            <div class="modal-section">
+              <label class="modal-label">체중 입력</label>
+              <input
+                type="number"
+                class="modal-input"
+                placeholder="예: 55.3kg"
+                v-model="weight"
+              />
+            </div>
+            <div class="modal-section">
+              <label class="modal-label">골격근량</label>
+              <input
+                type="number"
+                class="modal-input"
+                placeholder="예: 25.3kg"
+                v-model="muscleMass"
+              />
+            </div>
+            <div class="modal-section">
+              <label class="modal-label">체지방률</label>
+              <input
+                type="number"
+                class="modal-input"
+                placeholder="예: 25%"
+                v-model="bodyFat"
+              />
+            </div>
+            <div class="modal-section">
+              <label class="modal-label">사진 추가</label>
+              <input
+                type="file"
+                class="modal-input"
+                @change="handleFileChange"
+              />
+            </div>
+            <div class="modal-section">
+              <label class="modal-label">컨디션</label>
+              <div class="button-group">
+                <button
+                  class="condition-button"
+                  :class="{ selected: selectedCondition === '좋음' }"
+                  @click="selectCondition('좋음')"
+                >
+                  좋음
+                </button>
+                <button
+                  class="condition-button"
+                  :class="{ selected: selectedCondition === '보통' }"
+                  @click="selectCondition('보통')"
+                >
+                  보통
+                </button>
+                <button
+                  class="condition-button"
+                  :class="{ selected: selectedCondition === '나쁨' }"
+                  @click="selectCondition('나쁨')"
+                >
+                  나쁨
+                </button>
+              </div>
+            </div>
+            <div class="modal-section">
+              <label class="modal-label">추가 메모</label>
+              <textarea
+                class="modal-textarea"
+                placeholder="오늘은 몸이 가볍습니다."
+                v-model="additionalcontent"
+              ></textarea>
+              {{ additionalcontent }}
+            </div>
+            <div class="body-modal-button-group">
+              <button @click="closeBodyModal" class="close-button">닫기</button>
+              <button @click="bodyRecordRegist()" class="regist-button">
+                등록
               </button>
             </div>
-          </div>
-          <div class="modal-section">
-            <label class="modal-label">사진 추가</label>
-            <input type="file" class="modal-input" @change="handleFileChange" />
-          </div>
-          <div class="modal-section">
-            <label class="modal-label">식사 시간</label>
-            <input type="time" class="modal-input" v-model="mealTime" />
-          </div>
-          <div class="modal-section">
-            <label class="modal-label">추가 메모</label>
-            <textarea
-              class="modal-textarea"
-              v-model="additionalMemo"
-              placeholder="오늘은 매우 적게 먹었다."
-            ></textarea>
-          </div>
-          <div class="meal-modal-button-group">
-            <button @click="closeMealModal" class="close-button">닫기</button>
-            <button @click="mealRecordRegist" class="regist-button">
-              등록
-            </button>
           </div>
         </div>
       </div>
-
-      <div v-if="isBodyModalOpen" class="modal">
-        <div class="modal-content">
-          <h2>신체 기록 모달</h2>
-          <div class="modal-section">
-            <label class="modal-label">체중 입력</label>
-            <input
-              type="number"
-              class="modal-input"
-              placeholder="예: 55.3kg"
-              v-model="weight"
-            />
-          </div>
-          <div class="modal-section">
-            <label class="modal-label">골격근량</label>
-            <input
-              type="number"
-              class="modal-input"
-              placeholder="예: 25.3kg"
-              v-model="muscleMass"
-            />
-          </div>
-          <div class="modal-section">
-            <label class="modal-label">체지방률</label>
-            <input
-              type="number"
-              class="modal-input"
-              placeholder="예: 25%"
-              v-model="bodyFat"
-            />
-          </div>
-          <div class="modal-section">
-            <label class="modal-label">사진 추가</label>
-            <input type="file" class="modal-input" @change="handleFileChange" />
-          </div>
-          <div class="modal-section">
-            <label class="modal-label">컨디션</label>
-            <div class="button-group">
-              <button
-                class="condition-button"
-                :class="{ selected: selectedCondition === '좋음' }"
-                @click="selectCondition('좋음')"
-              >
-                좋음
-              </button>
-              <button
-                class="condition-button"
-                :class="{ selected: selectedCondition === '보통' }"
-                @click="selectCondition('보통')"
-              >
-                보통
-              </button>
-              <button
-                class="condition-button"
-                :class="{ selected: selectedCondition === '나쁨' }"
-                @click="selectCondition('나쁨')"
-              >
-                나쁨
-              </button>
-            </div>
-          </div>
-          <div class="modal-section">
-            <label class="modal-label">추가 메모</label>
-            <textarea
-              class="modal-textarea"
-              placeholder="오늘은 몸이 가볍습니다."
-              v-model="additionalcontent"
-            ></textarea>
-            {{ additionalcontent }}
-          </div>
-          <div class="body-modal-button-group">
-            <button @click="closeBodyModal" class="close-button">닫기</button>
-            <button @click="bodyRecordRegist()" class="regist-button">
-              등록
-            </button>
-          </div>
+    </div>
+    <div class="my-days-container">
+      <div class="my-days-layout">
+        <div class="my-days">
+          <div
+            v-for="(day, index) in myDays"
+            :key="index"
+            class="my-day"
+            :data-count="day.count"
+          ></div>
         </div>
       </div>
     </div>
@@ -312,6 +345,7 @@ const weight = ref("");
 const muscleMass = ref("");
 const bodyFat = ref("");
 const additionalcontent = ref("");
+const myDays = ref([]);
 
 const days = ["일", "월", "화", "수", "목", "금", "토"];
 
@@ -614,9 +648,46 @@ onMounted(() => {
   const today = new Date(); // 오늘 날짜
   console.log(today);
   selectDate(today); // 오늘 날짜로 selectDate 호출
+  const currentYear = new Date().getFullYear();
+  const startDate = new Date(currentYear, 0, 1);
+  const endDate = new Date(currentYear, 11, 31);
+  for (
+    let date = startDate;
+    date <= endDate;
+    date.setDate(date.getDate() + 1)
+  ) {
+    const randomCount = Math.floor(Math.random() * 5) + 1;
+    let countCategory = "";
+    if (randomCount === 1) {
+      countCategory = "1";
+    } else if (randomCount <= 3) {
+      countCategory = "2-3";
+    } else if (randomCount <= 6) {
+      countCategory = "4-6";
+    } else if (randomCount <= 9) {
+      countCategory = "7-9";
+    } else {
+      countCategory = "10+";
+    }
+    myDays.value.push({ count: countCategory });
+  }
 });
 </script>
 <style scoped>
+.header-container {
+  display: flex;
+  min-width: 1000px;
+  justify-content: center;
+}
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: #f5f5f5;
+}
 .record-text {
   min-width: 105px;
   font-weight: bold;
@@ -628,6 +699,7 @@ onMounted(() => {
 }
 .action-buttons {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 1rem; /* 버튼 간 간격 */
@@ -1070,5 +1142,49 @@ div:nth-child(3) > div.meal-type > div.meal-type-square {
 }
 .meal-info {
   margin-left: 30px;
+}
+.my-days {
+  display: flex;
+  flex-wrap: wrap;
+  min-width: 860px;
+  max-width: 860px;
+}
+.my-day {
+  min-width: 1px;
+  max-width: 1px;
+  min-height: 1px;
+  max-height: 1px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding: 10px;
+  margin: 1px;
+}
+.my-day[data-count="1"] {
+  background-color: #d4e157;
+}
+.my-day[data-count="2-3"] {
+  background-color: #aed581;
+}
+.my-day[data-count="4-6"] {
+  background-color: #81c784;
+}
+.my-day[data-count="7-9"] {
+  background-color: #66bb6a;
+}
+.my-day[data-count="10+"] {
+  background-color: #388e3c;
+}
+.my-days-container {
+  display: flex;
+  justify-content: center;
+}
+.my-days-layout {
+  border: 1px solid rgb(242, 229, 229);
+  border-radius: 10px;
+  padding: 20px;
 }
 </style>
