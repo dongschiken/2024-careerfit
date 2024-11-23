@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.peach.careerfit.meal.model.dao.MealDao">
+	
+	<insert id="insertUserMeals" parameterType="list">
+		INSERT INTO meal (date, user_id, type, name, kcal, protein, fat, carbs)
+	    VALUES
+	    <foreach collection="meals" item="meal" separator=",">
+	        (#{meal.date}, #{meal.userId}, #{meal.type}, #{meal.name}, #{meal.kcal}, #{meal.protein}, #{meal.fat}, #{meal.carbs})
+	    </foreach>
+	</insert>
+	
+	<delete id="deleteUserMeals" parameterType="int">
+		DELETE FROM meal 
+		WHERE user_id = #{userId} AND date IN
+		<foreach collection="dates" item="date" open="(" separator="," close=")">
+			#{date}
+		</foreach>
+	</delete>
+	
+	<select id="selectUserMeals" resultType="Meal">
+		SELECT * FROM meal
+		WHERE user_id = #{userId} AND date = #{date};
+	</select>
+	
+</mapper>

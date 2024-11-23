@@ -5,6 +5,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.peach.careerfit.component.FileStorageComponent;
@@ -12,6 +13,7 @@ import com.peach.careerfit.user.model.dao.UserMapper;
 import com.peach.careerfit.user.model.dto.User;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
@@ -62,8 +64,28 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public int updateUser(int userId, User user) {
-		return userMapper.updateUser(userId, user);
+		 // 기존 사용자 정보 조회
+	    User currentUser = userMapper.findById(userId);
+	    if (currentUser == null) {
+	        throw new RuntimeException("사용자를 찾을 수 없습니다.");
+	    }
+
+	    // 닉네임이 변경된 경우에만 추가 처리
+	    if (!currentUser.getNickname().equals(user.getNickname())) {
+	        // 닉네임 중복 체크
+	        User existingUser = userMapper.findByUserNickname(user.getNickname());
+	        if (existingUser != null) {
+	            throw new RuntimeException("이미 사용중인 닉네임입니다.");
+	        }
+	        
+	        // 게시글, 댓글 등의 닉네임도 함께 업데이트
+//	        userMapper.updateUserNicknameInBoard(userId, user.getNickname());
+//	        userMapper.updateUserNicknameInReply(userId, user.getNickname());
+	    }
+
+	    return userMapper.updateUser(userId, user);
 	}
+	
 
 	// 프로필 이미지 변경
 	@Override

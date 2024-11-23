@@ -36,16 +36,17 @@
 	</select>
 	
 	<!-- 회원 정보 변경 -->
-	<update id="updateUser" parameterType="map">
-		UPDATE user SET name = #{user.name},
-						nickname = #{user.nickname},
-						phone = #{user.phone},
-						post_code = #{user.postCode},
-						parcel_address = #{user.parcelAddress},
-						street_address = #{user.streetAddress},
-						detail_address = #{user.detailAddress}
-		WHERE user_id = #{user_id}
-	</update>
+	<!-- 회원 정보 변경 -->
+<update id="updateUser" parameterType="map">
+UPDATE user SET
+  nickname = #{user.nickname},
+  phone = #{user.phone},
+  post_code = #{user.postCode},
+  parcel_address = #{user.parcelAddress},
+  street_address = #{user.streetAddress},
+  detail_address = #{user.detailAddress}
+WHERE user_id = #{user_id}
+</update>
 	
 	<!-- 프로필 변경 -->
 	<update id="updateProfilePicture">
