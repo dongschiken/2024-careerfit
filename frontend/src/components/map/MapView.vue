@@ -157,9 +157,7 @@
         <h3 class="modal-title">{{ selectedChatRoom?.title }}</h3>
         <ul class="chat-messages">
           <li
-            v-for="(message, index) in getMessagesForChatRoom(
-              selectedChatRoomId
-            )"
+            v-for="(message, index) in chatRoomMessages"
             :key="index"
             :class="[
               'message',
@@ -169,13 +167,14 @@
             ]"
           >
             <img
-              v-if="message.userProfile"
-              :src="message.userProfile"
+              :src="message.profileUrl || defaultUserImage"
               class="message-profile"
+              alt="프로필 이미지"
             />
             <div class="message-content">
-              <span class="nickname">{{ message.userNickname || "익명" }}</span>
+              <span class="nickname">{{ message.nickname || "익명" }}</span>
               <p>{{ message.message }}</p>
+              <small class="time">{{ message.timeAgo || "" }}</small>
             </div>
           </li>
         </ul>
@@ -202,11 +201,12 @@ import MainHeader from "@/components/module/MainHeader.vue";
 import MainFooter from "@/components/module/MainFooter.vue";
 import api from "@/api/axiosInstance"; // 인증이 필요한 요청을 위해 추가
 import WebSocketService from "@/services/WebSocketService";
-import { reactive } from "vue";
-
+import { reactive, toRaw } from "vue";
 export default {
   data() {
     return {
+      defaultUserImage: new URL("@/assets/img/user_img.png", import.meta.url)
+        .href,
       currentUser: null,
       map: null,
       markers: [],
@@ -312,6 +312,28 @@ export default {
         alert("사용자 정보가 없습니다. 다시 로그인 해주세요.");
         return;
       }
+      try {
+        // 서버에 요청
+        const response = await api.post(
+          `/api/chat-room/${this.selectedChatRoomId}/users`
+        );
+
+        // 201 응답 처리 (새로운 사용자)
+        if (response.status === 201) {
+          console.log("새로운 사용자로 채팅방에 입장합니다.");
+          this.chatRoomMessages = []; // 채팅 내역 초기화
+        }
+      } catch (error) {
+        // 409 응답 처리 (이미 참여한 사용자)
+        if (error.response && error.response.status === 409) {
+          console.log("이미 참여 중인 채팅방입니다.");
+          await this.loadChatRoomMessages(this.selectedChatRoomId); // 기존 메시지 로드
+        } else {
+          console.error("채팅방 참여 여부 확인 중 오류 발생:", error);
+          alert("채팅방 입장 중 문제가 발생했습니다.");
+          return;
+        }
+      }
 
       try {
         WebSocketService.subscribe(
@@ -321,6 +343,7 @@ export default {
 
         this.showEnterRoomModal = false; // 입장 모달 닫기
         this.showChatRoomModal = true; // 채팅 모달 열기
+        // isEnterUser("1");
       } catch (error) {
         console.error("채팅방 입장 처리 중 오류:", error);
         alert("채팅방 입장에 실패했습니다.");
@@ -354,7 +377,23 @@ export default {
     async loadChatRoomMessages(chatRoomId) {
       try {
         const response = await api.get(`/api/chat-room/${chatRoomId}/history`);
-        this.chatRoomMessages = response.data || []; // 메시지 데이터가 없으면 빈 배열 설정
+        console.log("리스폰스 데이터" + response.data);
+        // 데이터가 없을 경우 처리
+        if (!response.data || response.data.length === 0) {
+          console.log("채팅 메시지가 없습니다.");
+          this.chatRoomMessages = []; // 빈 배열로 설정
+          return; // 추가 처리를 중단
+        }
+        this.chatRoomMessages = response.data.map((message) => ({
+          id: message.chatHistoryId, // 고유 ID
+          chatRoomId: message.chatRoomId, // 채팅방 ID
+          userId: message.userId, // 사용자 ID
+          email: message.email, // 이메일
+          nickname: message.nickname, // 닉네임
+          profileUrl: message.profileUrl || this.defaultUserImage,
+          message: message.message, // 메시지 내용
+          timeAgo: message.timeAgo, // 전송 시간
+        }));
       } catch (error) {
         console.error("채팅 메시지 로드 실패:", error);
         alert("채팅 메시지를 불러오는 중 오류가 발생했습니다.");
@@ -363,7 +402,7 @@ export default {
     },
 
     // 메시지 전송
-    sendMessage(chatRoomId, message) {
+    async sendMessage(chatRoomId, message) {
       // currentUser가 정의되어 있는지 확인
       if (!this.currentUser || !this.currentUser.userId) {
         alert("사용자 정보가 없습니다. 다시 로그인 해주세요.");
@@ -375,25 +414,39 @@ export default {
         return;
       }
 
-      const chatMessage = {
-        chatRoomId,
-        userId: this.currentUser.userId,
-        message,
-        userNickname: this.currentUser.userNickname || "익명",
-        userProfile: this.currentUser.userProfile || this.defaultProfile,
-      };
+      try {
+        // 비동기 API 호출을 위해 await 사용
+        const response = await api.get("api/user/token-user");
 
-      WebSocketService.send(`/app/sendMessage/${chatRoomId}`, chatMessage);
+        // response.data가 존재하는지 확인
+        if (!response.data) {
+          alert("사용자 정보를 가져오는데 실패했습니다. 다시 시도해주세요.");
+          return;
+        }
 
-      if (!this.messages[chatRoomId]) {
-        this.messages = {
-          ...this.messages,
-          [chatRoomId]: [],
+        const chatMessage = {
+          chatRoomId,
+          userId: response.data.userId,
+          message,
+          nickname: response.data.nickname,
+          profileUrl: response.data.profileUrl || this.defaultUserImage,
+          timeAgo: "방금",
         };
-      }
 
-      this.messages[chatRoomId] = [chatMessage, ...this.messages[chatRoomId]];
-      this.newChatMessage = ""; // 입력창 초기화
+        // 새로운 메시지를 채팅 메시지 배열 앞에 추가
+        this.chatRoomMessages.unshift(chatMessage);
+
+        // 웹소켓으로 메시지 전송
+        WebSocketService.send(`/app/sendMessage/${chatRoomId}`, chatMessage);
+
+        // 입력창 초기화
+        this.newChatMessage = "";
+      } catch (error) {
+        console.error("사용자 정보를 가져오는 중 오류 발생:", error);
+        alert(
+          "사용자 정보를 가져오는데 문제가 발생했습니다. 다시 시도해주세요."
+        );
+      }
     },
 
     initMap() {

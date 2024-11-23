@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.peach.careerfit.auth.model.dto.TokenRequest;
 import com.peach.careerfit.auth.model.service.RefreshTokenService;
+import com.peach.careerfit.jwt.JwtResponse;
 import com.peach.careerfit.jwt.JwtUtils;
 import com.peach.careerfit.user.model.dto.PasswordChangeRequest;
 import com.peach.careerfit.user.model.dto.ResponseTokenUser;
@@ -38,10 +39,12 @@ public class UserRestController {
 	private final UserService userService;
 	private final RefreshTokenService refreshTokenService;
 	private final JwtUtils jwtUtils;
-	public UserRestController(UserService userService, RefreshTokenService refreshTokenService, JwtUtils jwtUtils) {
+	private final JwtResponse jwtResponse;
+	public UserRestController(UserService userService, RefreshTokenService refreshTokenService, JwtUtils jwtUtils, JwtResponse jwtResponse) {
 		this.userService = userService;
 		this.refreshTokenService = refreshTokenService;
 		this.jwtUtils = jwtUtils;
+		this.jwtResponse = jwtResponse;
 	}
 	
 	// 로그아웃
@@ -189,6 +192,11 @@ public class UserRestController {
 		return ResponseEntity.status(HttpStatus.OK).body(responseTokenUser);
 	}
 	
+	@GetMapping("/user/token-user")
+	public ResponseEntity<Object> getUser(HttpServletRequest request) {
+		ResponseTokenUser user = jwtResponse.extractTokenUser(request);
+		return ResponseEntity.status(HttpStatus.OK).body(userService.getUserById(user.getUserId()));
+	}
 	// UserRestController.java
 
 	@GetMapping("/user/{user_id}/profile")

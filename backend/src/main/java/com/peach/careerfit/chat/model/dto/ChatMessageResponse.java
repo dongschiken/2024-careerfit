@@ -11,10 +11,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatMessageResponse {
+	private int chatHistoryId;
 	private int chatRoomId;
 	private int userId;
+	private String email;
+	private String nickname;		// 닉네임 추가
 	private String message;
 	private Timestamp sendDate;
-	private String userNickname;			// 닉네임 추가
-	private String userProfile;		// 프로필 사진 URL 추가
+	private String profileUrl;		// 프로필 사진 URL 추가
+	private String timeAgo;
 }
