@@ -5,9 +5,15 @@
 <mapper namespace="com.peach.careerfit.body.model.dao.BodyRecordDao">
 
 	<insert id="insertBodyRecord" parameterType="BodyRecord">
-		INSERT INTO body_record (user_id, date, weight, skeletal_muscle, body_fat, img)
-		VALUES (#{userId}, #{date}, #{weight}, #{skeletalMuscle}, #{bodyFat}, #{img})
+		INSERT INTO body_record (user_id, date, weight, bodyCondition, skeletal_muscle, body_fat, img, content)
+		VALUES (#{userId}, #{date}, #{weight}, #{bodyCondition}, #{skeletalMuscle}, #{bodyFat}, #{img}, #{content})
 	</insert>
+	
+	<select id="countBodyRecord" parameterType="BodyRecord">
+		SELECT COUNT(*) 
+		FROM body_record
+		WHERE date = #{date} and user_id = #{userId}
+	</select>
 	
 	<update id="updateBodyRecord" parameterType="BodyRecord">
 		UPDATE body_record
@@ -24,9 +30,9 @@
 		WHERE body_record_id = #{bodyRecordId}
 	</delete>
 	
-	<select id="selectBodyRecord" parameterType="BodyRecord" resultType="BodyRecord">
-		SELECT body_record_id, user_id, date, weight, skeletal_muscle, body_fat, img
+	<select id="selectBodyRecordByDate" parameterType="BodyRecord" resultType="BodyRecord">
+		SELECT body_record_id, user_id, date, weight, skeletal_muscle, body_fat, img, bodyCondition, content
 		FROM body_record
-		WHERE date = #{date} AND body_record_id = #{bodyRecordId}
+		WHERE date = #{date} AND user_id = #{userId}
 	</select>
 </mapper>

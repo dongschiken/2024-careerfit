@@ -14,7 +14,6 @@ public class RegexComponent {
 
 	public static List<Meal> regexMeal(String mealText, int userId) {
 		List<Meal> meals = new ArrayList<>();
-		System.out.println("mealText"+mealText);
 		// 날짜 패턴
 		Pattern datePattern = Pattern.compile("### 날짜: (\\d{4}-\\d{2}-\\d{2})");
 
@@ -42,7 +41,6 @@ public class RegexComponent {
 				Pattern typePattern = Pattern.compile("(?:(\\*\\*" + type + ":)|" + type
 						+ ":)\\s*([\\s\\S]*?)(?=(\\*\\*아침:|\\*\\*점심:|\\*\\*저녁:|아침:|점심:|저녁:|\\Z))");
 				Matcher mealTypeMatcher = typePattern.matcher(dayText);
-				System.out.println(mealTypeMatcher);
 				if (mealTypeMatcher.find()) {
 					String mealSection = mealTypeMatcher.group(2);
 
@@ -54,10 +52,6 @@ public class RegexComponent {
 						double protein = Double.parseDouble(mealItemMatcher.group(3));
 						double fat = Double.parseDouble(mealItemMatcher.group(4));
 						double carbs = Double.parseDouble(mealItemMatcher.group(5));
-						System.out.println(name);
-						System.out.println(kcal);
-						System.out.println(protein);
-						System.out.println(carbs);
 						meals.add(new Meal()
 								.builder()
 								.date(date)
@@ -73,7 +67,6 @@ public class RegexComponent {
 				}
 			}
 		}
-		System.out.println("meals"+meals);
 		return meals;
 	}
 }

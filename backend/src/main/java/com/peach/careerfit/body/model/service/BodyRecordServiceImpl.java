@@ -19,7 +19,11 @@ public class BodyRecordServiceImpl implements BodyRecordService{
 	
 	@Override
 	public int registBodyRecord(BodyRecord bodyRecord, MultipartFile file) {
+		if(bodyRecordDao.countBodyRecord(bodyRecord) > 0) {
+			return 0;
+		}
 		String img = fileStorageComponent.saveFile(file, type);
+		System.out.println("여기까진 들어오나??");
 		bodyRecord.setImg(img);
 		return bodyRecordDao.insertBodyRecord(bodyRecord);
 	}

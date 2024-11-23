@@ -60,7 +60,6 @@
       <!-- 채팅 목록 모달 -->
       <div class="chat-list-modal">
         <h2 class="modal-title">📃 채팅 목록</h2>
-
         <ul
           v-show="getChatRoomsForPlace(selectedPlace.id).length !== 0"
           class="chat-rooms"
@@ -289,7 +288,7 @@ export default {
       }
     },
     // 채팅방 클릭 시 모달 열기
-    openEnterRoomModal(chatRoomId) {
+    async openEnterRoomModal(chatRoomId) {
       console.log("채팅방 클릭: ", chatRoomId);
       this.selectedChatRoomId = chatRoomId; // 선택된 채팅방 ID 설정
       this.showEnterRoomModal = true; // 입장 여부 모달 열기
@@ -322,7 +321,6 @@ export default {
 
         this.showEnterRoomModal = false; // 입장 모달 닫기
         this.showChatRoomModal = true; // 채팅 모달 열기
-        await this.loadChatRoomMessages(this.selectedChatRoomId);
       } catch (error) {
         console.error("채팅방 입장 처리 중 오류:", error);
         alert("채팅방 입장에 실패했습니다.");
@@ -571,6 +569,7 @@ export default {
     },
 
     async enterChatRoom(chatRoomId) {
+      alert("채팅방 입장" + chatRoomId);
       const token = sessionStorage.getItem("accessToken");
       if (!token) {
         alert("로그인이 필요합니다.");
@@ -603,7 +602,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .chat-none {
   display: flex;
   align-items: center;

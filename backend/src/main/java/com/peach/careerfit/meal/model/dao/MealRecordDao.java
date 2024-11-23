@@ -12,4 +12,5 @@ public interface MealRecordDao {
 	List<MealRecord> selectMealRecordByUserId(MealRecord mealRecord);
 	int deleteMealRecord(int mealRecordId);
 	int updateMealRecord(MealRecord mealRecord);
+	int countMealRecord(MealRecord mealRecord);
 }

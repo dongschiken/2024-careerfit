@@ -10,4 +10,5 @@ public interface BodyRecordDao {
 	int updateBodyRecord(BodyRecord bodyRecord);
 	int deleteBodyRecordById(int BodyRecordId);
 	BodyRecord selectBodyRecordByDate(BodyRecord bodyRecord);
+	int countBodyRecord(BodyRecord bodyRecord);
 }

@@ -4,12 +4,17 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.peach.careerfit.meal.model.dao.MealRecordDao">
 	<insert id="insertMealRecord" parameterType="MealRecord">
-		INSERT INTO meal_record (user_id, date, type, img, meal_time, content)
-		VALUES (#{userId}, #{date}, #{type}, #{img}, #{mealTime}, #{content})
+		INSERT INTO meal_record (user_id, date, type, img, meal_time, content, fullness)
+		VALUES (#{userId}, #{date}, #{type}, #{img}, #{mealTime}, #{content}, #{fullness})
 	</insert>
 	
+	<select id="countMealRecord" parameterType="MealRecord">
+		SELECT COUNT(*) FROM meal_record
+		WHERE date = #{date} and user_id = #{userId} and type = #{type}
+	</select>
+	
 	<select id="selectMealRecordByUserId" parameterType="MealRecord" resultType="MealRecord">
-		SELECT meal_record_id, user_id, date, type, img, meal_time, content FROM meal_record
+		SELECT meal_record_id, user_id, date, type, img, meal_time, content, fullness FROM meal_record
 		WHERE user_id = #{userId} AND date = #{date}
 		ORDER BY case
 					WHEN type = '아침' THEN 1
