@@ -40,22 +40,4 @@ public class RedisConfig {
         return template;
     }
  
-    @Bean
-    public RedisMessageListenerContainer redisContainer(RedisConnectionFactory connectionFactory,
-                                                        MessageListenerAdapter listenerAdapter) {
-        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory);
-        container.addMessageListener(listenerAdapter, topic());
-        return container;
-    }
-    
-    @Bean
-    public MessageListenerAdapter listenerAdapter(RedisSubscriber subscriber) {
-        return new MessageListenerAdapter(subscriber, "handleMessage");
-    }
-
-    @Bean
-    public ChannelTopic topic() {
-        return new ChannelTopic("chatroom");
-    }
 }

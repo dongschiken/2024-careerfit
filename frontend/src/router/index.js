@@ -10,6 +10,7 @@ import BoardDetailView from "@/views/BoardDetailView.vue";
 import { useToast } from "vue-toastification";
 import MapView from "@/components/map/MapView.vue";
 import ChatRoom from "@/components/chat/ChatRoom.vue";
+import UserProfile from "@/components/user/UserProfile.vue";
 
 const routes = [
   {
@@ -31,6 +32,12 @@ const routes = [
     path: "/user/join",
     name: "join",
     component: JoinView,
+  },
+  {
+    path: "/user/mypage", // 마이페이지 라우트 추가
+    name: "mypage",
+    component: UserProfile,
+    meta: { requiresAuth: true }, // 인증 필요 표시
   },
   {
     path: "/write",
