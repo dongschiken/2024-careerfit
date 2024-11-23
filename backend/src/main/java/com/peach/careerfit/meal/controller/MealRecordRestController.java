@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.peach.careerfit.jwt.JwtResponse;
 import com.peach.careerfit.jwt.JwtUtils;
 import com.peach.careerfit.meal.model.dto.MealRecord;
 import com.peach.careerfit.meal.model.service.MealRecordService;
+import com.peach.careerfit.user.model.dto.ResponseTokenUser;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -25,22 +27,23 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 public class MealRecordRestController {
 	
-	private MealRecordService mealRecordService;
-	private JwtUtils jwtUtils;
-	public MealRecordRestController(MealRecordService mealRecordService, JwtUtils jwtUtils) {
+	private final MealRecordService mealRecordService;
+	private final JwtResponse jwtResponse;
+	public MealRecordRestController(MealRecordService mealRecordService, JwtResponse jwtResponse) {
 		this.mealRecordService = mealRecordService;
-		this.jwtUtils = jwtUtils;
+		this.jwtResponse = jwtResponse;
 	}
 	
 	@GetMapping("/{date}")
-	public ResponseEntity<Object> getMealRecord(@PathVariable LocalDate date, HttpServletRequest request) {
+	public ResponseEntity<Object> getMealRecord(@PathVariable("date") String date, HttpServletRequest request) {
+		ResponseTokenUser user = jwtResponse.extractTokenUser(request);
 		MealRecord mealRecord = new MealRecord();
+		mealRecord.setUserId(user.getUserId());
 		mealRecord.setDate(date);
-		String token = jwtUtils.getAccessToken(request);
-		mealRecord.setUserId(jwtUtils.getUserIdFromToken(token));
+		System.out.println("mealRecord" + mealRecord);
 		try {
 			List<MealRecord> mealRecords = mealRecordService.getMealRecordByUserId(mealRecord);
-			System.out.println(mealRecord);
+			System.out.println(mealRecords);
 			if(mealRecords.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("해당 날짜의 회원의 식단기록이 없습니다.");
 			}
@@ -52,13 +55,18 @@ public class MealRecordRestController {
 	
 	@PostMapping
 	public ResponseEntity<Object> registMealRecord(@RequestPart(name="mealRecord") MealRecord mealRecord, // JSON 데이터를 Java 객체로 받음
-												   @RequestPart(name="file", required = false) MultipartFile file) {
+												   @RequestPart(name="file", required = false) MultipartFile file,
+												   HttpServletRequest request) {
+		ResponseTokenUser user = jwtResponse.extractTokenUser(request);
+		mealRecord.setUserId(user.getUserId());
+		
 		try {
 			int status = mealRecordService.registMealRecord(mealRecord, file);
 			if(status == 0) {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원 식단기록 등록 처리중 문제가 발생했습니다.");				
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원 식단기록 등록 처리중 문제가 발생했습니다.");
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body("회원 식단기록이 등록되었습니다.");

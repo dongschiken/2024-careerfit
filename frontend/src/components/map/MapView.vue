@@ -153,11 +153,9 @@
       <div class="chat-room-modal">
         <h2 class="modal-title">{{ selectedPlace.name }} 채팅방</h2>
         <h3 class="modal-title">{{ selectedChatRoom?.title }}</h3>
-        <div class="chat-messages" ref="messageContainer">
-          <div
-            v-for="(message, index) in getMessagesForChatRoom(
-              selectedChatRoomId
-            )"
+        <ul class="chat-messages">
+          <li
+            v-for="(message, index) in chatRoomMessages"
             :key="index"
             :class="[
               'message-wrapper',
@@ -212,8 +210,7 @@ import MainFooter from "@/components/module/MainFooter.vue";
 import api from "@/api/axiosInstance";
 import ncapi from "@/api/noTokenAxiosInstance";
 import WebSocketService from "@/services/WebSocketService";
-import { reactive } from "vue";
-
+import { reactive, toRaw } from "vue";
 export default {
   components: {
     MainHeader,
@@ -221,6 +218,8 @@ export default {
   },
   data() {
     return {
+      defaultUserImage: new URL("@/assets/img/user_img.png", import.meta.url)
+        .href,
       currentUser: null,
       map: null,
       markers: [],
@@ -287,6 +286,168 @@ export default {
         );
       }
     },
+    // 채팅방 클릭 시 모달 열기
+    async openEnterRoomModal(chatRoomId) {
+      console.log("채팅방 클릭: ", chatRoomId);
+      this.selectedChatRoomId = chatRoomId; // 선택된 채팅방 ID 설정
+      this.showEnterRoomModal = true; // 입장 여부 모달 열기
+      this.showChatRoomModal = false; // 채팅 모달은 닫힌 상태 유지
+    },
+
+    // 채팅방 입장 모달 닫기
+    closeEnterRoomModal() {
+      this.showEnterRoomModal = false;
+      this.selectedChatRoomId = null;
+    },
+    // 채팅방 입장 확인
+    // 채팅방 입장 확인
+    async confirmEnterChatRoom() {
+      if (!this.selectedChatRoomId) {
+        alert("선택된 채팅방 ID가 없습니다.");
+        return;
+      }
+
+      if (!this.currentUser || !this.currentUser.userId) {
+        alert("사용자 정보가 없습니다. 다시 로그인 해주세요.");
+        return;
+      }
+      try {
+        // 서버에 요청
+        const response = await api.post(
+          `/api/chat-room/${this.selectedChatRoomId}/users`
+        );
+
+        // 201 응답 처리 (새로운 사용자)
+        if (response.status === 201) {
+          console.log("새로운 사용자로 채팅방에 입장합니다.");
+          this.chatRoomMessages = []; // 채팅 내역 초기화
+        }
+      } catch (error) {
+        // 409 응답 처리 (이미 참여한 사용자)
+        if (error.response && error.response.status === 409) {
+          console.log("이미 참여 중인 채팅방입니다.");
+          await this.loadChatRoomMessages(this.selectedChatRoomId); // 기존 메시지 로드
+        } else {
+          console.error("채팅방 참여 여부 확인 중 오류 발생:", error);
+          alert("채팅방 입장 중 문제가 발생했습니다.");
+          return;
+        }
+      }
+
+      try {
+        WebSocketService.subscribe(
+          `/topic/chatRoom/${this.selectedChatRoomId}`,
+          this.onMessageReceived
+        );
+
+        this.showEnterRoomModal = false; // 입장 모달 닫기
+        this.showChatRoomModal = true; // 채팅 모달 열기
+        // isEnterUser("1");
+      } catch (error) {
+        console.error("채팅방 입장 처리 중 오류:", error);
+        alert("채팅방 입장에 실패했습니다.");
+      }
+    },
+
+    onMessageReceived(payload) {
+      const message = JSON.parse(payload.body);
+      console.log("수신한 메시지:", message);
+
+      // chatRoomId 기반 메시지 저장
+      const chatRoomId = message.chatRoomId;
+      if (!this.messages[chatRoomId]) {
+        this.messages = {
+          ...this.messages,
+          [chatRoomId]: [],
+        };
+      }
+      this.messages[chatRoomId] = [message, ...this.messages[chatRoomId]];
+    },
+
+    closeChatRoomModal() {
+      this.showChatRoomModal = false;
+      this.chatRoomMessages = [];
+      this.selectedChatRoom = null;
+    },
+    getChatRoomsForPlace(placeId) {
+      // 해당 장소의 채팅방 목록 반환
+      return this.chatRoomsByPlace[placeId] || [];
+    },
+    async loadChatRoomMessages(chatRoomId) {
+      try {
+        const response = await api.get(`/api/chat-room/${chatRoomId}/history`);
+        console.log("리스폰스 데이터" + response.data);
+        // 데이터가 없을 경우 처리
+        if (!response.data || response.data.length === 0) {
+          console.log("채팅 메시지가 없습니다.");
+          this.chatRoomMessages = []; // 빈 배열로 설정
+          return; // 추가 처리를 중단
+        }
+        this.chatRoomMessages = response.data.map((message) => ({
+          id: message.chatHistoryId, // 고유 ID
+          chatRoomId: message.chatRoomId, // 채팅방 ID
+          userId: message.userId, // 사용자 ID
+          email: message.email, // 이메일
+          nickname: message.nickname, // 닉네임
+          profileUrl: message.profileUrl || this.defaultUserImage,
+          message: message.message, // 메시지 내용
+          timeAgo: message.timeAgo, // 전송 시간
+        }));
+      } catch (error) {
+        console.error("채팅 메시지 로드 실패:", error);
+        alert("채팅 메시지를 불러오는 중 오류가 발생했습니다.");
+        this.chatRoomMessages = []; // 오류 발생 시 초기화
+      }
+    },
+
+    // 메시지 전송
+    async sendMessage(chatRoomId, message) {
+      // currentUser가 정의되어 있는지 확인
+      if (!this.currentUser || !this.currentUser.userId) {
+        alert("사용자 정보가 없습니다. 다시 로그인 해주세요.");
+        return;
+      }
+
+      if (!message.trim()) {
+        alert("메시지를 입력하세요.");
+        return;
+      }
+
+      try {
+        // 비동기 API 호출을 위해 await 사용
+        const response = await api.get("api/user/token-user");
+
+        // response.data가 존재하는지 확인
+        if (!response.data) {
+          alert("사용자 정보를 가져오는데 실패했습니다. 다시 시도해주세요.");
+          return;
+        }
+
+        const chatMessage = {
+          chatRoomId,
+          userId: response.data.userId,
+          message,
+          nickname: response.data.nickname,
+          profileUrl: response.data.profileUrl || this.defaultUserImage,
+          timeAgo: "방금",
+        };
+
+        // 새로운 메시지를 채팅 메시지 배열 앞에 추가
+        this.chatRoomMessages.unshift(chatMessage);
+
+        // 웹소켓으로 메시지 전송
+        WebSocketService.send(`/app/sendMessage/${chatRoomId}`, chatMessage);
+
+        // 입력창 초기화
+        this.newChatMessage = "";
+      } catch (error) {
+        console.error("사용자 정보를 가져오는 중 오류 발생:", error);
+        alert(
+          "사용자 정보를 가져오는데 문제가 발생했습니다. 다시 시도해주세요."
+        );
+      }
+    },
+
     initMap() {
       const mapContainer = document.getElementById("map");
       const mapOption = {
@@ -439,21 +600,13 @@ export default {
         alert("채팅방 생성 중 문제가 발생했습니다.");
       }
     },
-    openEnterRoomModal(chatRoomId) {
-      this.selectedChatRoomId = chatRoomId;
-      this.showEnterRoomModal = true;
-    },
-    closeEnterRoomModal() {
-      this.showEnterRoomModal = false;
-      this.selectedChatRoomId = null;
-    },
-    async confirmEnterChatRoom() {
-      if (
-        !this.selectedChatRoomId ||
-        !this.currentUser ||
-        !this.currentUser.userId
-      ) {
-        alert("채팅방 입장에 실패했습니다.");
+
+    async enterChatRoom(chatRoomId) {
+      alert("채팅방 입장" + chatRoomId);
+      const token = sessionStorage.getItem("accessToken");
+      if (!token) {
+        alert("로그인이 필요합니다.");
+        this.$router.push("/user/login"); // 로그인 페이지로 이동
         return;
       }
       try {
@@ -557,7 +710,7 @@ export default {
 };
 </script>
 
-<style scop>
+<style scoped>
 .chat-none {
   display: flex;
   align-items: center;

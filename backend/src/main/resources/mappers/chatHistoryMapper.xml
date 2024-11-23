@@ -23,24 +23,21 @@
 	<!-- 채팅방의 메세지 목록 조회 -->
 	<select id="getMessagesByChatRoomId"
 		resultType="ChatMessageResponse">
-		SELECT
-		ch.chat_room_id,
-		ch.send_user_id,
-		ch.message,
-		ch.send_date,
-		u.nickname AS senderNickname,
-		u.profile_url AS
-		senderProfileUrl
-		FROM
-		chat_history AS ch
-		JOIN
-		user AS u ON ch.send_user_id
-		= u.user_id
-		WHERE
-		ch.chat_room_id = #{chatRoomId}
-		ORDER BY
-		ch.send_date
-		ASC;
+		<![CDATA[
+		SELECT chat_history_id, chat_room_id, u.user_id, email, nickname, ch.send_date, message, profile_url,
+				CASE
+				   WHEN TIMESTAMPDIFF(SECOND, ch.send_date, NOW()) < 60 
+					   THEN CONCAT(TIMESTAMPDIFF(SECOND, ch.send_date, NOW()), '초 전')
+		           WHEN TIMESTAMPDIFF(MINUTE, ch.send_date, NOW()) < 60 
+		               THEN CONCAT(TIMESTAMPDIFF(MINUTE, ch.send_date, NOW()), '분 전')
+		           WHEN TIMESTAMPDIFF(HOUR, ch.send_date, NOW()) < 24 
+		               THEN CONCAT(TIMESTAMPDIFF(HOUR, ch.send_date, NOW()), '시간 전')
+		           ELSE CONCAT(TIMESTAMPDIFF(DAY, ch.send_date, NOW()), '일 전')
+		       END AS time_ago
+		FROM chat_history ch JOIN user u ON u.user_id = ch.send_user_id
+		WHERE chat_room_id = #{chatRoomId}
+		ORDER BY send_date ASC
+		]]>
 	</select>
 
 	<!-- 마지막 메시지 시간 업데이트 -->

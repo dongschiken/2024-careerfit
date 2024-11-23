@@ -83,8 +83,8 @@ public class ChatRoomController {
 	@PostMapping("/chat-room/{chat_room_id}/users")
 	public ResponseEntity<String> joinChatRoom(
 	    @PathVariable("chat_room_id") int chatRoomId,
-	    @RequestBody ChatRoomUserRequest chatRoomUserRequest,
 	    HttpServletRequest request) {
+		System.out.println(chatRoomId+"에 들어옴");
 		ResponseTokenUser user = jwtResponse.extractTokenUser(request);
 	    if (user == null) {
 	    	System.out.println("유저가 없음");
@@ -144,13 +144,12 @@ public class ChatRoomController {
 	public ResponseEntity<ChatRoom> getChatRoomInfo(@PathVariable("chat_room_id") int chatRoomId) {
 		try {
 			// ChatRoomService에서 데이터를 조회
+			System.out.println(chatRoomId);
 			ChatRoom chatRoom = chatRoomService.getChatRoomById(chatRoomId);
-
 			// 채팅방이 존재하지 않는 경우 처리
 			if (chatRoom == null) {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 			}
-
 			// 성공적으로 채팅방 정보를 반환
 			return ResponseEntity.ok(chatRoom);
 		} catch (Exception e) {

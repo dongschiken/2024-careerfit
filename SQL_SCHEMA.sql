@@ -75,17 +75,6 @@ CREATE TABLE `meal` (
 	`carbs`	INT	NULL
 );
 
-DROP TABLE IF EXISTS `meal_plan`;
-
-CREATE TABLE `meal_plan` (
-	`meal_plan_id`	INT	NOT NULL,
-	`user_id`	INT	NOT NULL,
-	`name`	VARCHAR(50)	NOT NULL,
-	`start_date`	TIMESTAMP	NOT NULL,
-	`end_date`	TIMESTAMP	NOT NULL,
-	`goal`	VARCHAR(50)	NOT NULL
-);
-
 DROP TABLE IF EXISTS `user`;
 
 CREATE TABLE `user` (
@@ -114,10 +103,12 @@ CREATE TABLE `body_record` (
 	`body_record_id`	INT	NOT NULL,
 	`user_id`	INT	NOT NULL,
 	`date`	DATE	NOT NULL,
-	`weight`	DECIMAL(5,2)	NULL,
-	`skeletal_muscle`	INT	NULL,
+    `bodyCondition` VARCHAR(50) NOT NULL,
+	`weight`	DECIMAL(5,2) NOT NULL,
+	`skeletal_muscle`	DECIMAL(5,2)	NULL,
+    `content` VARCHAR(500) NOT NULL,
 	`body_fat`	INT	NULL,
-	`img`	VARCHAR(330)	NULL
+	`img`	VARCHAR(330) NULL
 );
 
 DROP TABLE IF EXISTS `meal_record`;
@@ -129,7 +120,8 @@ CREATE TABLE `meal_record` (
 	`type`	CHAR(6)	NOT NULL,
 	`img`	VARCHAR(330)	NULL,
 	`meal_time`	VARCHAR(20)	NULL,
-	`content`	VARCHAR(500)	NOT NULL
+	`content`	VARCHAR(500)	NOT NULL,
+    `fullness` VARCHAR(30) NOT NULL
 );
 
 DROP TABLE IF EXISTS `chat_room`;
@@ -299,13 +291,6 @@ ALTER TABLE `reply` ADD CONSTRAINT `FK_reply_TO_reply_1` FOREIGN KEY (
 )
 REFERENCES `reply` (
 	`reply_id`
-);
-
-ALTER TABLE `meal_plan` ADD CONSTRAINT `FK_user_TO_meal_plan_1` FOREIGN KEY (
-	`user_id`
-)
-REFERENCES `user` (
-	`user_id`
 );
 
 ALTER TABLE `body_record` ADD CONSTRAINT `FK_user_TO_body_record_1` FOREIGN KEY (

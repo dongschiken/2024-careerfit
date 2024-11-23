@@ -14,8 +14,9 @@ import lombok.NoArgsConstructor;
 public class MealRecord {
 	private int mealRecordId;
 	private int userId;
-	private LocalDate date;
+	private String date;
 	private String type; // 아침, 점심, 저녁
+	private String fullness; // 포만감
 	private String img;
 	private String mealTime;
 	private String content;
