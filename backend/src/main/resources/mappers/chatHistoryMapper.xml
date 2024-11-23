@@ -24,7 +24,7 @@
 	<select id="getMessagesByChatRoomId"
 		resultType="ChatMessageResponse">
 		<![CDATA[
-		SELECT chat_history_id, chat_room_id, u.user_id, email, nickname, message, profile_url,
+		SELECT chat_history_id, chat_room_id, u.user_id, email, nickname, ch.send_date, message, profile_url,
 				CASE
 				   WHEN TIMESTAMPDIFF(SECOND, ch.send_date, NOW()) < 60 
 					   THEN CONCAT(TIMESTAMPDIFF(SECOND, ch.send_date, NOW()), '초 전')
@@ -35,6 +35,8 @@
 		           ELSE CONCAT(TIMESTAMPDIFF(DAY, ch.send_date, NOW()), '일 전')
 		       END AS time_ago
 		FROM chat_history ch JOIN user u ON u.user_id = ch.send_user_id
+		WHERE chat_room_id = #{chatRoomId}
+		ORDER BY send_date ASC
 		]]>
 	</select>
 

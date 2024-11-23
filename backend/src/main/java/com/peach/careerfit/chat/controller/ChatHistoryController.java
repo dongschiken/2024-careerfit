@@ -50,7 +50,7 @@ public class ChatHistoryController {
 	@GetMapping("/chat-room/{chat_room_id}/history")
 	public ResponseEntity<List<ChatMessageResponse>> getMessages(@PathVariable("chat_room_id") int chatRoomId) {
 		List<ChatMessageResponse> messages = chatHistoryService.getMessage(chatRoomId);
-
+		System.out.println(messages);
 		return ResponseEntity.ok(messages);
 	}
 }

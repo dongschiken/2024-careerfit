@@ -84,6 +84,7 @@ public class ChatRoomController {
 	public ResponseEntity<String> joinChatRoom(
 	    @PathVariable("chat_room_id") int chatRoomId,
 	    HttpServletRequest request) {
+		System.out.println(chatRoomId+"에 들어옴");
 		ResponseTokenUser user = jwtResponse.extractTokenUser(request);
 	    if (user == null) {
 	    	System.out.println("유저가 없음");
