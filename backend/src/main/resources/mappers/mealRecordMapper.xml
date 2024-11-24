@@ -38,4 +38,41 @@
 		WHERE meal_record_id = #{mealRecordId}
 	</delete>
 	
+	<select id="selectDateMealBodyRecord" parameterType="int" resultType="MealBodyRecordResponse">
+		SELECT 
+		    mr.date, 
+		    DAYOFYEAR(mr.date) - 1 AS day, 
+		    COUNT(mr.type) AS countType, 
+		    br.weight, 
+		    br.skeletal_muscle, 
+		    br.body_fat
+		FROM 
+		    meal_record mr
+		LEFT JOIN 
+		    body_record br 
+		ON 
+		    mr.date = br.date
+		WHERE mr.user_id = #{userId}
+		GROUP BY 
+		    mr.date, br.weight, br.skeletal_muscle, br.body_fat
+		UNION
+		SELECT 
+		    br.date, 
+		    DAYOFYEAR(br.date) - 1 AS day, 
+		    NULL AS countType, 
+		    br.weight, 
+		    br.skeletal_muscle, 
+		    br.body_fat
+		FROM 
+		    body_record br
+		LEFT JOIN 
+		    meal_record mr 
+		ON 
+		    br.date = mr.date
+		WHERE 
+		    mr.date IS NULL AND br.user_id = #{userId}
+		GROUP BY 
+		    br.date, br.weight, br.skeletal_muscle, br.body_fat	
+	</select>
+	
 </mapper>

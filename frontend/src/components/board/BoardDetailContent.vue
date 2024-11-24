@@ -48,7 +48,7 @@
     >
       <img
         class="board-image"
-        :src="`http://192.168.210.52:8080/uploads/${image.path}${image.systemName}`"
+        :src="`http://localhost:8080/uploads/${image.path}${image.systemName}`"
       />
     </div>
   </div>
@@ -87,7 +87,6 @@ const getBoard = async (boardId) => {
     const response = await api.get(`/api/board/${boardId}`);
     board.value = response.data.board;
     loginUser.value = response.data.user;
-    console.log("게시글 데이터:", board.value);
   } catch (error) {
     console.log(error);
     alert("게시글 데이터를 가져오는 중 문제가 발생했습니다.");
@@ -210,7 +209,7 @@ onMounted(() => {
   min-height: 300px;
   max-height: 300px;
   height: auto;
-  border-radius: 4px;
+  border-radius: 8px;
 }
 
 .board-content {

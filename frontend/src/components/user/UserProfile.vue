@@ -188,6 +188,7 @@
     </div>
     <MainFooterVue />
   </div>
+  <MainFooter />
 </template>
 
 <script setup>

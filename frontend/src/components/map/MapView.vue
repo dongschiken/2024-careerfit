@@ -718,7 +718,7 @@ export default {
   },
 };
 </script>
-<style scop>
+<style scoped>
 .chat-none {
   display: flex;
   align-items: center;

@@ -5,19 +5,24 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.peach.careerfit.body.model.dao.BodyRecordDao;
+import com.peach.careerfit.body.model.dto.BodyRecord;
 import com.peach.careerfit.component.FileStorageComponent;
 import com.peach.careerfit.meal.model.dao.MealRecordDao;
+import com.peach.careerfit.meal.model.dto.MealBodyRecordResponse;
 import com.peach.careerfit.meal.model.dto.MealRecord;
 
 @Service
 public class MealRecordServiceImpl implements MealRecordService {
 
 	private MealRecordDao mealRecordDao;
+	private BodyRecordDao bodyRecordDao;
 	private FileStorageComponent fileStorageComponent;
 	private static final String type = "Meal";
-	public MealRecordServiceImpl(MealRecordDao mealRecordDao, FileStorageComponent fileStorageComponent) {
+	public MealRecordServiceImpl(MealRecordDao mealRecordDao, FileStorageComponent fileStorageComponent, BodyRecordDao bodyRecordDao) {
 		this.mealRecordDao = mealRecordDao;
 		this.fileStorageComponent = fileStorageComponent;
+		this.bodyRecordDao =bodyRecordDao;
 	}
 
 	@Override
@@ -46,6 +51,11 @@ public class MealRecordServiceImpl implements MealRecordService {
 	@Override
 	public int removeMealRecord(int mealRecordId) {
 		return mealRecordDao.deleteMealRecord(mealRecordId);
+	}
+
+	@Override
+	public List<MealBodyRecordResponse> getMealBodyRecordByUser(int userId) {
+		return mealRecordDao.selectDateMealBodyRecord(userId);
 	}
 
 }
