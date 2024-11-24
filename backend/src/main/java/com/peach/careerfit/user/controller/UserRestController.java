@@ -153,24 +153,33 @@ public class UserRestController {
 			// 새 비밀번호 복합성 검사
 			if (!userService.isPasswordComplexEnough(request.getNewPassword())) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-						.body("비밀번호는 최소 8자 이상, 대문자, 소문자, 숫자 및 특수 문자를 포함해야 합니다.");
+						.body("비밀번호는 최소 8자 이상 영문, 숫자 및 특수 문자를 포함해야 합니다.");
 			}
 
 			// 비밀번호 변경 처리
-			boolean isPasswordChanged = userService.changePassword(userId, request.getNewPassword());
-			if (isPasswordChanged) {
-				// 비밀번호 변경 알림 이메일 전송
-				userService.sendPasswordChangeEmail(userId);
-				return ResponseEntity.status(HttpStatus.OK).body("비밀번호가 성공적으로 변경되었습니다.");
-			} else {
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("비밀번호 변경 중 오류가 발생했습니다.");
-			}
+		    boolean isPasswordChanged = userService.changePassword(userId, request.getNewPassword());
+		    if (isPasswordChanged) {
+		        // 비밀번호 변경 알림 이메일 전송 
+		        userService.sendPasswordChangeEmail(userId);
+		        return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다."); // status code 200으로 응답
+		    } else {
+		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("비밀번호 변경 중 오류가 발생했습니다.");
+		    }
 		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
+		    e.printStackTrace();
+		    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
 		}
 	}
-
+	
+	// 현재 비밀번호 확인 로직
+	@PostMapping("/user/{user_id}/check-current-password")
+	public ResponseEntity<Boolean> checkCurrentPassword(
+	    @PathVariable("user_id") int userId,
+	    @RequestBody Map<String, String> password) {
+	    boolean isValid = userService.checkCurrentPassword(userId, password.get("currentPassword"));
+	    return ResponseEntity.ok(isValid);
+	}
+	
 	@GetMapping("/check-nickname")
 	public ResponseEntity<Map<String, Boolean>> checkNicknameDuplicate(@RequestParam("nickname") String nickname) {
 		User user = userService.findUserByNickname(nickname);

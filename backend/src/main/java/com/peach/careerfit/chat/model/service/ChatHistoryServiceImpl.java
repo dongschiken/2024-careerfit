@@ -20,8 +20,8 @@ public class ChatHistoryServiceImpl implements ChatHistoryService {
             message.getChatRoomId(),
             message.getUserId(),
             message.getMessage(),
-            message.getUserNickname(),
-            message.getUserProfile()
+            message.getNickname(),
+            message.getProfileUrl()
         );
         chatHistoryMapper.updateLastMessageTime(message.getChatRoomId());
     }
@@ -39,8 +39,8 @@ public class ChatHistoryServiceImpl implements ChatHistoryService {
             .userId(userId)
             .message(request.getMessage())
             .sendDate(new java.sql.Timestamp(System.currentTimeMillis()))
-            .userNickname(user.getNickname())
-            .userProfile(user.getProfileUrl())
+            .nickname(user.getNickname())
+            .profileUrl(user.getProfileUrl())
             .build();
 
         // DB에만 저장하고, WebSocket 메시지 발행은 Controller에서 처리

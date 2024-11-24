@@ -4,22 +4,18 @@ import SockJS from "sockjs-client";
 class WebSocketService {
   constructor() {
     this.stompClient = null;
-    this.subscriptions = new Set(); // Map 대신 Set 사용
+    this.subscriptions = new Map(); // Set을 Map으로 변경
   }
 
   connect(onConnected, onError) {
     try {
       if (this.stompClient && this.stompClient.connected) {
-        console.log("Already connected to WebSocket");
         onConnected();
         return;
       }
 
-      console.log("Attempting to connect to WebSocket...");
       const socket = new SockJS("http://localhost:8080/chat");
       this.stompClient = Stomp.over(socket);
-
-      // 디버그 메시지 비활성화
       this.stompClient.debug = null;
 
       const headers = {
@@ -28,77 +24,75 @@ class WebSocketService {
 
       this.stompClient.connect(
         headers,
-        (frame) => {
+        () => {
           console.log("WebSocket Connected!");
-          onConnected();
+          if (typeof onConnected === "function") {
+            onConnected();
+          }
         },
         (error) => {
-          console.error("WebSocket Connection Error:", error);
-          onError(error);
+          console.error("WebSocket Error:", error);
+          if (typeof onError === "function") {
+            onError(error);
+          }
         }
       );
     } catch (e) {
-      console.error("WebSocket Connection Exception:", e);
-      onError(e);
+      console.error("WebSocket Exception:", e);
+      if (typeof onError === "function") {
+        onError(e);
+      }
     }
   }
 
   subscribe(destination, callback) {
-    if (!this.stompClient?.connected) {
-      console.error("Cannot subscribe: WebSocket is not connected");
-      return null;
+    if (!this.stompClient?.connected)
+      throw new Error("WebSocket not connected");
+
+    if (!this.subscriptions.has(destination)) {
+      const subscription = this.stompClient.subscribe(
+        destination,
+        (message) => {
+          try {
+            callback(message);
+          } catch (error) {
+            console.error("Message processing error:", error);
+          }
+        }
+      );
+      this.subscriptions.set(destination, subscription); // Map에 저장
+      return subscription;
     }
-
-    // 이미 구독 중인 경우 새 구독 생성하지 않음
-    if (this.subscriptions.has(destination)) {
-      console.log(`Already subscribed to ${destination}`);
-      return;
-    }
-
-    console.log(`Subscribing to ${destination}`);
-    const subscription = this.stompClient.subscribe(destination, (message) => {
-      console.log(`Message received from ${destination}`);
-      try {
-        callback(message);
-      } catch (error) {
-        console.error("Error processing message:", error);
-      }
-    });
-
-    this.subscriptions.add(destination);
-    return subscription;
   }
 
   unsubscribe(destination) {
-    if (this.subscriptions.has(destination)) {
-      console.log(`Unsubscribing from ${destination}`);
+    const subscription = this.subscriptions.get(destination);
+    if (subscription) {
+      subscription.unsubscribe();
       this.subscriptions.delete(destination);
     }
   }
 
   send(destination, body) {
-    if (!this.stompClient?.connected) {
-      console.error("Cannot send message: WebSocket is not connected");
-      return;
-    }
-
-    console.log(`Sending message to ${destination}`);
-    this.stompClient.send(destination, {}, JSON.stringify(body));
+    if (!this.stompClient?.connected)
+      throw new Error("WebSocket not connected");
+    this.stompClient.send(
+      destination,
+      {},
+      typeof body === "string" ? body : JSON.stringify(body)
+    );
   }
 
   disconnect() {
-    if (this.stompClient) {
-      // 모든 구독 해제
+    if (this.stompClient?.connected) {
+      this.subscriptions.forEach((subscription) => subscription.unsubscribe());
       this.subscriptions.clear();
-
-      this.stompClient.disconnect(() => {
-        console.log("WebSocket Disconnected");
-      });
+      this.stompClient.disconnect();
     }
   }
 
   isConnected() {
-    return this.stompClient && this.stompClient.connected;
+    return Boolean(this.stompClient?.connected);
   }
 }
 

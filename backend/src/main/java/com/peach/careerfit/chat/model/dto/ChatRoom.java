@@ -19,4 +19,6 @@ public class ChatRoom {
     private Timestamp lastAt;      // 마지막 메시지 시간
     private String userNickname;   // 유저 닉네임
     private String userProfile;    // 유저 프로필
+    private String lastMessage;
+    private int unreadCount;
 }

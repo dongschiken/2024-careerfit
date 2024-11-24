@@ -31,5 +31,7 @@ public interface ChatRoomService {
     
     List<ChatRoom> getChatRoomsByPlaceId(int placeId);
     
+    List<ChatRoom> getMyChatRooms(int userId);
     
+    void updateLastReadAt(int chatRoomId, int userId);
 }
