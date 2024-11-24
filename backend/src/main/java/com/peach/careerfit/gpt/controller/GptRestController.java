@@ -1,5 +1,8 @@
 package com.peach.careerfit.gpt.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,7 +54,13 @@ public class GptRestController {
 	@PostMapping
 	public ResponseEntity<Object> registMessage(HttpServletRequest request, @RequestBody String prompt) {
 		ResponseTokenUser user = jwtResponse.extractTokenUser(request);
-		GptResponse response = gptService.registAndRequestGpt(user.getUserId(), prompt);
+		Map<String, Object> map = gptService.registAndRequestGpt(user.getUserId(), prompt);
+		GptResponse response = (GptResponse) map.get("response");
+		int status = (int) map.get("status");
+		System.out.println(status);
+		if(status > 0) {
+			return ResponseEntity.status(HttpStatus.CREATED).body(response);
+		}
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 

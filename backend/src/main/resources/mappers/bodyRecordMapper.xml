@@ -35,4 +35,13 @@
 		FROM body_record
 		WHERE date = #{date} AND user_id = #{userId}
 	</select>
+	
+	
+	<select id="selectDateBodyRecord" parameterType="int">
+		SELECT date, DAYOFYEAR(date) -1 AS day, weight, skeletal_muscle, body_fat
+		FROM body_record
+		WHERE user_id = #{userId}
+		ORDER BY date
+	</select>
+	
 </mapper>

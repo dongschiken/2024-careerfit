@@ -153,6 +153,17 @@ CREATE TABLE `chat_room_user` (
 	`joined_at`	TIMESTAMP	NOT NULL
 );
 
+CREATE TABLE `meal_ streak` (
+	`meal_streak_id`	INT	NOT NULL,
+	`user_id`	INT	NOT NULL,
+	`streak`	INT	NOT NULL,
+	`morning`	TINYINT(1)	NULL,
+	`lunch`	TINYINT(1)	NULL,
+	`dinner`	TINYINT(1)	NULL,
+	`date`	TIMESTAMP	NOT NULL
+);
+
+
 ALTER TABLE `like` ADD CONSTRAINT `PK_LIKE` PRIMARY KEY (
 	`like_id`
 );
@@ -358,3 +369,14 @@ ALTER TABLE meal ADD INDEX (user_id);
 
 ALTER TABLE reply
 MODIFY parent_reply_id INT NULL;
+
+ALTER TABLE `meal_ streak` ADD CONSTRAINT `PK_MEAL_ STREAK` PRIMARY KEY (
+	`meal_streak_id`
+);
+
+ALTER TABLE `meal_ streak` ADD CONSTRAINT `FK_user_TO_meal_ streak_1` FOREIGN KEY (
+	`user_id`
+)
+REFERENCES `user` (
+	`user_id`
+);

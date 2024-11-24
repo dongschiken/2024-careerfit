@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.peach.careerfit.meal.model.dto.MealBodyRecordResponse;
 import com.peach.careerfit.meal.model.dto.MealRecord;
 
 public interface MealRecordService {
@@ -11,4 +12,5 @@ public interface MealRecordService {
 	int setMealRecoard(MealRecord mealRecord, MultipartFile file);
 	int removeMealRecord(int mealRecordId);
 	List<MealRecord> getMealRecordByUserId(MealRecord mealRecord);
+	List<MealBodyRecordResponse> getMealBodyRecordByUser(int userId);
 }

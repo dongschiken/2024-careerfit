@@ -5,8 +5,8 @@
       <div><h2>함께라서 더 가치 있는 시간</h2></div>
       <div>
         <p>
-          <b>user님</b>, careerfit에서 다양한 사람들과 소통하며 새로운 경험을
-          얻어가세요!
+          <b v-if="user">{{ user.nickname }}님</b>, 다양한 사람들과 소통하며
+          새로운 경험을 얻어가세요!
         </p>
       </div>
       <div class="form-container">
@@ -104,6 +104,7 @@ const imageFiles = ref([]);
 const imagePreviews = ref([]);
 const imageInput = ref(null);
 const isLoading = ref(true);
+const user = ref({});
 const token = ref(sessionStorage.getItem("accessToken"));
 const board = ref({
   boardImgs: [],
@@ -134,7 +135,6 @@ const validateBoardInputs = () => {
 
 const boardId = ref(Number(route.params.boardId)); // 명시적 변환
 const addImage = (event) => {
-  console.log(event);
   const files = Array.from(event.target.files);
   files.forEach((file) => {
     const reader = new FileReader();
@@ -269,7 +269,17 @@ const processBoardImages = () => {
   }
 };
 
+const getUser = async () => {
+  try {
+    const response = await api.get("api/user/token-user");
+    user.value = response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 onMounted(() => {
+  getUser();
   if (!boardId.value) return;
   getBoard(boardId.value);
 });

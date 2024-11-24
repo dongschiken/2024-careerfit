@@ -57,6 +57,7 @@ public class BodyRecordRestController {
 	public ResponseEntity<Object> registBodyRecord(@RequestPart("bodyRecord") BodyRecord bodyRecord,
 			@RequestPart(name = "file", required = false) MultipartFile file,
 			HttpServletRequest request) {
+		System.out.println("바디 레코드");
 		ResponseTokenUser user = jwtResponse.extractTokenUser(request);
 		bodyRecord.setUserId(user.getUserId());
 		try {

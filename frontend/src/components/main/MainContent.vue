@@ -1,12 +1,32 @@
 <template>
-  <div class="main-container">
+  <div class="main-container" @mousemove="trackMouse">
     <div class="main-layout-container">
       <div class="main-intro-group">
-        <div class="main-intro">
-          <div><h2>성공과 건강을 위한 스마트한 선택</h2></div>
-          <div class="main-intro-small">
-            직장인들을 위한 헬스케어<br />
-            오직 <span class="highlight-orange">CAREER FIT</span> 에서
+        <div class="main-intro-container">
+          <div class="main-intro">
+            <div><h2>성공과 건강을 위한 스마트한 선택</h2></div>
+            <div class="main-intro-small">
+              직장인들을 위한 헬스케어<br />
+              오직 <span class="highlight-orange">CAREER FIT</span> 에서
+            </div>
+          </div>
+          <div class="mascot-container">
+            <div class="mascot">
+              <div class="eye left-eye">
+                <div class="pupil" ref="leftPupil"></div>
+              </div>
+              <img src="@/assets/img/마이구민.png" />
+              <div class="eye right-eye">
+                <div class="pupil" ref="rightPupil"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ranking-container">
+          <div class="ranking-layout">
+            <div class="ranking-box">순위 1</div>
+            <div class="ranking-box">순위 2</div>
+            <div class="ranking-box">순위 3</div>
           </div>
         </div>
         <!-- AI 버튼을 클릭하면 모달을 여는 이벤트 연결 -->
@@ -148,21 +168,18 @@
 import { ref } from "vue";
 import api from "@/api/axiosInstance";
 import { marked } from "marked";
-
+import router from "@/router";
 const showModal = ref(false);
 const userMessage = ref("");
 const messages = ref([]);
 const isFirst = ref("true");
-
 // 모달 창 열기
 const openChatbot = async () => {
   showModal.value = true;
   if (isFirst.value) {
     try {
-      console.log(isFirst.value);
       const response = await api.post("/api/gpt/first");
       const botMessage = response.data.choices[0].message.content;
-      console.log(botMessage);
       messages.value.push({ role: "assistance", content: botMessage });
     } catch (error) {
       console.error("Error sending message:", error);
@@ -172,6 +189,48 @@ const openChatbot = async () => {
   }
 };
 
+const trackMouse = (event) => {
+  // 눈의 좌표 계산
+  const leftEye = document.querySelector(".left-eye").getBoundingClientRect();
+  const rightEye = document.querySelector(".right-eye").getBoundingClientRect();
+
+  // 눈동자 움직임 계산 함수
+  const movePupil = (eye, pupil, mouseX, mouseY) => {
+    const eyeCenterX = eye.left + eye.width / 2;
+    const eyeCenterY = eye.top + eye.height / 2;
+
+    const deltaX = mouseX - eyeCenterX;
+    const deltaY = mouseY - eyeCenterY;
+
+    const distance = Math.min(Math.sqrt(deltaX ** 2 + deltaY ** 2), 10); // 최대 이동 거리 제한 (10px)
+    const angle = Math.atan2(deltaY, deltaX);
+
+    // 눈동자의 이동 거리 계산
+    const offsetX = Math.cos(angle) * distance;
+    const offsetY = Math.sin(angle) * distance;
+
+    // 눈동자 이동 스타일 적용
+    pupil.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+  };
+
+  // 마우스 위치
+  const mouseX = event.clientX;
+  const mouseY = event.clientY;
+
+  // 왼쪽, 오른쪽 눈동자 이동
+  movePupil(
+    leftEye,
+    document.querySelector(".left-eye .pupil"),
+    mouseX,
+    mouseY
+  );
+  movePupil(
+    rightEye,
+    document.querySelector(".right-eye .pupil"),
+    mouseX,
+    mouseY
+  );
+};
 // 모달 창 닫기
 const closeChatbot = () => {
   showModal.value = false;
@@ -194,11 +253,20 @@ const sendMessage = async () => {
     // GPT 응답 처리
     const botMessageContent = response.data.choices[0].message.content; // content 가져오기
     const formattedBotMessageContent = marked(botMessageContent);
-
     messages.value.push({
       role: "assistant",
       content: formattedBotMessageContent,
     });
+    if (response.status === 201) {
+      setTimeout(() => {
+        const check = confirm("마이구민이 등록한 식단을 보러갈까요?");
+        alert(check);
+        if (check) {
+          alert(" durlsms");
+          router.push("/meal"); // Vue Router 경로 사용 시
+        }
+      }, 10000); // 15초 딜레이
+    }
   } catch (error) {
     console.error("Error sending message:", error);
   }
@@ -359,5 +427,158 @@ const sendMessage = async () => {
   background-color: #f1f0f0;
   align-self: flex-start;
   color: #000000;
+}
+.mascot-follow {
+  position: absolute;
+  width: 100px; /* 마스코트 크기 */
+  height: 100px;
+  pointer-events: none; /* 마우스 이벤트가 마스코트에 걸리지 않도록 설정 */
+  transition: transform 0.1s ease-out; /* 부드러운 움직임 효과 */
+}
+
+.mascot-img {
+  width: 100%; /* 이미지 크기 조정 */
+  height: auto;
+  border-radius: 50%; /* 둥근 모양 (선택사항) */
+}
+.mascot-container {
+  position: relative;
+  width: 150px;
+  height: 150px;
+}
+
+.mascot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.eye {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border: 2px solid black;
+}
+
+.pupil {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background: black;
+  border-radius: 50%;
+  transition: transform 0.05s linear; /* 부드럽게 이동 */
+}
+.main-intro-group {
+  display: flex;
+}
+.mascot > img {
+  min-width: 300px;
+}
+.mascot {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.mascot-container {
+  width: 500px;
+  display: flex;
+  align-items: end;
+  height: 500px;
+}
+.mascot img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+/* 왼쪽 눈 */
+.left-eye {
+  position: absolute;
+  margin-top: 23px;
+  margin-left: 9px;
+  top: 45%; /* 이미지에서 눈의 세로 위치 */
+  left: 32%; /* 이미지에서 눈의 가로 위치 */
+  width: 42px;
+  height: 42px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border: 2px solid black;
+  z-index: 100;
+}
+/* 오른쪽 눈 */
+.right-eye {
+  position: absolute;
+  margin-top: 23px;
+  margin-right: 10px;
+  top: 45%; /* 이미지에서 눈의 세로 위치 */
+  left: 57%; /* 이미지에서 눈의 가로 위치 */
+  width: 42px;
+  height: 42px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border: 2px solid black;
+}
+/* 눈동자 */
+.pupil {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: black;
+  border-radius: 50%;
+  transition: transform 0.05s linear;
+}
+
+.main-intro-group {
+  display: flex;
+  flex-direction: column; /* 세로로 배치 */
+  align-items: center; /* 중앙 정렬 */
+}
+.main-intro-container {
+  display: flex;
+  gap: 80px;
+}
+.main-intro {
+  margin-left: 3rem;
+}
+.ranking-layout {
+  display: flex;
+  flex-direction: column; /* 세로로 배치 */
+  gap: 10px; /* 박스 간 간격 */
+  align-items: center; /* 중앙 정렬 */
+  min-width: 500px;
+}
+
+.ranking-box {
+  width: 90%; /* 적절한 너비 조정 */
+  height: 100px; /* 각 박스 높이 */
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
+  display: flex; /* 내부 텍스트 중앙 정렬 */
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+  font-size: 16px; /* 텍스트 크기 */
+  color: #333; /* 텍스트 색상 */
+}
+.main-board-group {
+  margin-top: 200px;
 }
 </style>

@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService {
 	// 현재 비밀번호 확인
 	@Override
 	public boolean checkCurrentPassword(int userId, String currentPassword) {
-		User user = userMapper.findById(userId);
+		User user = userMapper.findById(userId);	
 		if(user == null || !bCryptPasswordEncoder.matches(currentPassword, user.getPassword())) {
 			return false;			
 		}
