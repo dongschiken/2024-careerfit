@@ -17,4 +17,5 @@ public interface ChatHistoryService {
 	
 	// 특정 채팅방 메세지 목록 조회
 	List<ChatMessageResponse> getMessage (int chatRoomId);
+
 }

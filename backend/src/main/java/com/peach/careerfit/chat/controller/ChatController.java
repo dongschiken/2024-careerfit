@@ -31,8 +31,8 @@ public class ChatController {
                     .userId(request.getUserId())
                     .message(request.getMessage())
                     .sendDate(new Timestamp(System.currentTimeMillis()))
-                    .userNickname(request.getUserNickname())
-                    .userProfile(request.getUserProfile())
+                    .nickname(request.getUserNickname())
+                    .profileUrl(request.getUserProfile())
                     .build();
 
             // DB에 저장
@@ -54,8 +54,8 @@ public class ChatController {
                 .userId(request.getUserId())
                 .message(request.getUserNickname() + "님이 채팅방에 입장했습니다.")
                 .sendDate(new Timestamp(System.currentTimeMillis()))
-                .userNickname(request.getUserNickname())
-                .userProfile(request.getUserProfile())
+                .nickname(request.getUserNickname())
+                .profileUrl(request.getUserProfile())
                 .build();
         
         // DB에 입장 메시지 저장

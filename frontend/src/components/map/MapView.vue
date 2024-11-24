@@ -51,6 +51,10 @@
       <div class="place-info-modal">
         <h2 class="modal-title">{{ selectedPlace.name }}</h2>
         <p class="modal-address">{{ selectedPlace.address }}</p>
+
+        <button class="ai-mission-button" @click="openAiMissionModal">
+          가상 메이트 미션 받기
+        </button>
       </div>
       <div class="chat-list-modal">
         <h2 class="modal-title">📃 채팅 목록</h2>
@@ -136,6 +140,44 @@
         </div>
       </div>
     </div>
+
+    <!-- 가상 메이트 미션 모달 -->
+    <div
+      v-if="showAiMissionModal"
+      class="ai-modal-overlay"
+      @click.self="closeAiMissionModal"
+    >
+      <div class="ai-modal">
+        <!-- 캐릭터 이미지와 정보 -->
+        <img
+          :src="selectedCharacter?.image"
+          alt="캐릭터 이미지"
+          class="character-image"
+        />
+        <h3>{{ selectedCharacter?.name }}</h3>
+        <p class="character-style">{{ selectedCharacter?.style }} 스타일</p>
+        <p class="character-message">
+          {{
+            selectedCharacter?.messages[
+              Math.floor(Math.random() * selectedCharacter.messages.length)
+            ]
+          }}
+        </p>
+
+        <!-- 추천 미션 -->
+        <h4>추천 미션</h4>
+        <p class="ai-mission">{{ aiMission }}</p>
+
+        <!-- 모달 버튼 -->
+        <button @click="completeMission" class="mission-complete-button">
+          미션 완료!
+        </button>
+        <button @click="closeAiMissionModal" class="ai-close-button">
+          닫기
+        </button>
+      </div>
+    </div>
+
     <!-- 채팅 모달 -->
     <div
       v-if="showChatRoomModal"
@@ -232,6 +274,71 @@ export default {
       messages: {},
       newChatMessage: "",
       isConnected: false,
+      characters: {
+        헬스장: {
+          name: "근육맨 메이트",
+          image: "/images/gym-mate.png",
+          style: "파워풀하고 열정적인",
+          messages: [
+            "근육이 기다리고 있어요! 오늘은 최고 기록을 도전해봐요!",
+            "벤치프레스 50kg? 당신이라면 충분히 가능합니다!",
+            "운동 후에는 단백질 쉐이크 잊지 마세요!",
+          ],
+        },
+        클라이밍: {
+          name: "모험가 메이트",
+          image: "/images/climbing-mate.png",
+          style: "도전적이고 창의적인",
+          messages: [
+            "오늘은 꼭 정상에 도달할 거예요!",
+            "난이도 B 루트? 당신에게는 충분히 쉬운 도전이죠!",
+            "그립을 잘 잡고, 천천히 올라가 보세요!",
+          ],
+        },
+        공원: {
+          name: "건강 지킴이 메이트",
+          image: "/images/park-mate.png",
+          style: "친절하고 응원하는",
+          messages: [
+            "산뜻한 공기를 마시며 건강을 지켜봐요!",
+            "5km 런닝 도전! 당신이라면 할 수 있어요!",
+            "오늘 하루도 산뜻하게, 몸도 마음도 가볍게!",
+          ],
+        },
+      },
+      // 선택된 캐릭터 정보
+      selectedCharacter: null,
+
+      // 장소별 미션 데이터
+      missions: {
+        헬스장: [
+          "벤치프레스 50kg 10회",
+          "스쿼트 3세트, 15회씩",
+          "런닝머신 20분 (속도 8km/h)",
+          "플랭크 1분 30초",
+          "푸쉬업 30회",
+          "풀업 10회",
+          "레그프레스 3세트, 12회씩",
+          "랫풀다운 50kg, 15회",
+        ],
+        클라이밍: [
+          "3 루트 완주 도전",
+          "난이도 B 루트 성공",
+          "암벽 타기 15분 연속",
+          "클라이밍 스트레칭 5분",
+          "중급 루트 2개 완주",
+        ],
+        공원: [
+          "5km 런닝 (목표 30분 이내)",
+          "스트레칭 15분 (전신)",
+          "1km 인터벌 런닝",
+          "조깅 3km (페이스 유지)",
+          "20분 동안 빠르게 걷기",
+        ],
+      },
+      // 추천된 미션과 모달 상태
+      aiMission: "",
+      showAiMissionModal: false,
     };
   },
   async mounted() {
@@ -516,12 +623,77 @@ export default {
       );
       this.newChatMessage = "";
     },
+    openAiMissionModal() {
+      if (!this.selectedPlace) {
+        alert("장소를 먼저 선택하세요.");
+        return;
+      }
+
+      // 선택된 장소의 유형 확인
+      const category = this.getPlaceCategory(this.selectedPlace.name);
+
+      if (category) {
+        // 미션 추천
+        const missions = this.missions[category];
+        this.aiMission = missions[Math.floor(Math.random() * missions.length)];
+
+        // 캐릭터 정보 설정
+        this.selectedCharacter = this.characters[category];
+
+        // 모달 표시
+        this.showAiMissionModal = true;
+      } else {
+        alert("해당 장소의 카테고리를 알 수 없습니다.");
+      }
+    },
+
+    // 장소 이름에서 카테고리 판별
+    getPlaceCategory(placeName) {
+      // 헬스장 관련 키워드
+      if (
+        placeName.includes("헬스") ||
+        placeName.includes("피트니스") ||
+        placeName.includes("휘트니스") ||
+        placeName.includes("짐") ||
+        placeName.includes("핏") ||
+        placeName.includes("팀") ||
+        placeName.includes("GYM") ||
+        placeName.includes("스포") ||
+        placeName.includes("PT")
+      ) {
+        return "헬스장";
+      }
+
+      // 클라이밍 관련 키워드
+      if (placeName.includes("클라이밍")) return "클라이밍";
+
+      // 공원 관련 키워드
+      if (placeName.includes("공원")) return "공원";
+
+      // 해당 카테고리 없음
+      return null;
+    },
+
     getMaxWidth(message) {
       const length = message.length;
       if (length <= 10) return "150px";
       if (length <= 30) return "300px";
       return "450px"; // 최대 길이 제한
     },
+
+    completeMission() {
+      alert(
+        `${this.selectedCharacter?.name}: "훌륭합니다! 오늘도 목표를 달성했어요!"`
+      );
+      this.closeAiMissionModal();
+    },
+
+    closeAiMissionModal() {
+      this.showAiMissionModal = false;
+      this.aiMission = "";
+      this.selectedCharacter = null;
+    },
+
     closeChatRoomModal() {
       this.showChatRoomModal = false;
       this.selectedChatRoom = null;
@@ -1034,6 +1206,95 @@ empty-message {
   background-color: steelblue;
   color: black;
 }
+
+.ai-mission-button {
+  display: block;
+  margin: 20px auto 0 auto;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background: #ff9c4a;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.ai-mission-button:hover {
+  background-color: #0056b3;
+}
+
+.ai-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.ai-modal {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 300px;
+  animation: fadeIn 0.5s ease;
+}
+
+.character-image {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 10px;
+  border-radius: 50%;
+}
+
+.character-style {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.character-message {
+  font-size: 1rem;
+  font-style: italic;
+  margin-bottom: 15px;
+}
+
+.ai-mission {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.mission-complete-button {
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.mission-complete-button:hover {
+  background-color: #218838;
+}
+
+.close-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  margin-left: 10px;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;

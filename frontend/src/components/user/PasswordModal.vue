@@ -23,8 +23,8 @@
                   @input="validateCurrentPassword"
                 />
               </div>
-              <p v-if="currentPasswordStatus === false" class="error-text">
-                현재 비밀번호가 일치하지 않습니다.
+              <p v-if="errors.currentPassword" class="error-text">
+                {{ errors.currentPassword }}
               </p>
             </div>
 
@@ -93,6 +93,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useUserStore } from "@/stores/userStore";
+import api from "@/api/axiosInstance";
 
 const userStore = useUserStore();
 const emit = defineEmits(["close"]);
@@ -111,35 +112,47 @@ const errors = ref({
 const currentPasswordStatus = ref(null);
 const passwordsMatch = ref(false);
 
-// 현재 비밀번호 확인
+// PasswordModal.vue의 validateCurrentPassword 함수 수정
+// PasswordModal.vue의 validateCurrentPassword 함수
 const validateCurrentPassword = async () => {
   if (!form.value.currentPassword) {
     currentPasswordStatus.value = null;
     return;
   }
-
   try {
-    const isCurrentPasswordValid = await userStore.checkCurrentPassword(
-      form.value.currentPassword
+    const response = await api.post(
+      `/api/user/${userStore.userId}/check-current-password`,
+      { currentPassword: form.value.currentPassword }
     );
-    currentPasswordStatus.value = isCurrentPasswordValid;
+    currentPasswordStatus.value = response.data;
+    errors.value.currentPassword = currentPasswordStatus.value
+      ? ""
+      : "현재 비밀번호가 일치하지 않습니다.";
   } catch (error) {
     console.error("현재 비밀번호 확인 실패:", error);
     currentPasswordStatus.value = false;
+    errors.value.currentPassword = "비밀번호 확인 중 오류가 발생했습니다.";
   }
 };
 
 // 새 비밀번호 유효성 검사 (회원가입과 동일한 로직)
 const validatePassword = () => {
   const passwordRegex =
-    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+    /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+
+  if (!form.value.newPassword) {
+    errors.value.password = "새 비밀번호를 입력해주세요.";
+    return false;
+  }
+
   if (!passwordRegex.test(form.value.newPassword)) {
     errors.value.password =
       "비밀번호는 8자 이상이며, 영문, 숫자, 특수문자를 각각 하나 이상 포함해야 합니다.";
-  } else {
-    errors.value.password = "";
+    return false;
   }
-  validatePasswordMatch();
+
+  errors.value.password = "";
+  return true;
 };
 
 // 비밀번호 일치 검사
@@ -167,15 +180,31 @@ const isValid = async () => {
 };
 
 const handleSubmit = async () => {
-  if (!(await isValid())) return;
-
   try {
-    await userStore.changePassword(form.value);
-    alert("비밀번호가 성공적으로 변경되었습니다.");
-    emit("close");
+    if (!(await isValid())) {
+      return;
+    }
+
+    const passwordChangeData = {
+      currentPassword: form.value.currentPassword,
+      newPassword: form.value.newPassword,
+      confirmPassword: form.value.confirmPassword,
+    };
+
+    const response = await userStore.changePassword(passwordChangeData);
+
+    if (response) {
+      alert("비밀번호가 성공적으로 변경되었습니다.");
+      emit("close");
+    }
   } catch (error) {
-    console.error("비밀번호 변경 실패:", error);
-    alert("비밀번호 변경 중 오류가 발생했습니다.");
+    if (error.response?.status === 400) {
+      alert(
+        "현재 비밀번호가 일치하지 않거나, 새 비밀번호가 요구사항을 충족하지 않습니다."
+      );
+    } else {
+      alert("비밀번호 변경 중 오류가 발생했습니다.");
+    }
   }
 };
 </script>

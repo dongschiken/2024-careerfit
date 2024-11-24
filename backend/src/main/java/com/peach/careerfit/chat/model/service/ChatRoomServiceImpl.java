@@ -25,6 +25,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 		// 마지막으로 생성된 채팅방 ID 조회
 		int chatRoomId = chatRoomMapper.getLastInsertedId();
 
+		chatRoomMapper.insertChatRoomUser(chatRoomId, request.getUserId());
+		
 		// 생성된 채팅방 정보 반환
 		return chatRoomMapper.getChatRoomById(chatRoomId);
 	}
@@ -70,5 +72,15 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
 		    return chatRooms;
 		}
+
+	@Override
+	public List<ChatRoom> getMyChatRooms(int userId) {
+	    return chatRoomMapper.getMyChatRooms(userId);
+	}
+
+	@Override
+	public void updateLastReadAt(int chatRoomId, int userId) {
+		 chatRoomMapper.updateLastReadAt(chatRoomId, userId);
+	}
 
 }

@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
-import axios from "axios";
 import { ref } from "vue";
+import api from "@/api/axiosInstance";
+import axios from "axios";
 
 export const useUserStore = defineStore({
   id: "user",
@@ -42,15 +43,12 @@ export const useUserStore = defineStore({
       sessionStorage.removeItem("accessToken");
       this.accessToken = "";
       try {
-        const response = await axios.delete(
-          "http://localhost:8080/api/logout",
-          {
-            data: { refreshToken },
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await api.delete("http://localhost:8080/api/logout", {
+          data: { refreshToken },
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
         if (response.status === 200) {
           this.accessToken = "";
           this.refreshToken = "";
@@ -167,18 +165,19 @@ export const useUserStore = defineStore({
 
     async changePassword(passwordData) {
       try {
-        const response = await axios.put(
-          `${this.REST_API}/user/${this.userId}/password`,
+        const response = await api.put(
+          `/api/user/${this.userId}/password`,
           passwordData,
           {
             headers: {
+              "Content-Type": "application/json",
               Authorization: `Bearer ${this.accessToken}`,
             },
           }
         );
         return response.data;
       } catch (error) {
-        console.error("비밀번호 변경 실패:", error);
+        console.error("Password change failed:", error);
         throw error;
       }
     },

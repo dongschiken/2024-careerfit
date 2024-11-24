@@ -45,5 +45,9 @@ public interface ChatRoomMapper {
     // 해당 장소의 채팅방 리스트 반환
     List<ChatRoom> getChatRoomsByPlaceId(@Param("placeId") int placeId);
     
+    // 채팅방 리스트 가져오기
+    List<ChatRoom> getMyChatRooms(@Param("userId") int userId);
+
+    void updateLastReadAt(@Param("chatRoomId") int chatRoomId, @Param("userId") int userId);
 }
 
