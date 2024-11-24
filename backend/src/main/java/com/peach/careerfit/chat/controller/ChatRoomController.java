@@ -177,8 +177,22 @@ public class ChatRoomController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 	    }
 	}
-
-
+	
+	// ChatRoomController.java
+	@GetMapping("/chat-room/my")
+	public ResponseEntity<List<ChatRoom>> getMyChatRooms(HttpServletRequest request) {
+	    try {
+	        ResponseTokenUser user = jwtResponse.extractTokenUser(request);
+	        if (user == null) {
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+	        }
+	        List<ChatRoom> myChatRooms = chatRoomService.getMyChatRooms(user.getUserId());
+	        return ResponseEntity.ok(myChatRooms);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+	    }
+	}
 
 
 }

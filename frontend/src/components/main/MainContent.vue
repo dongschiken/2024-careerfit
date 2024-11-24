@@ -54,11 +54,12 @@
             <h3>careerfit 식단관리사 마이구민입니다!</h3>
             <button @click="closeChatbot" class="close-btn">X</button>
           </div>
-          <div class="chat-body">
+          <div class="chat-body" ref="chatBody">
             <div
               v-for="(message, index) in messages"
               :key="index"
               :class="['chat-message', message.role]"
+              :ref="setMessageRef(index)"
             >
               <p v-html="message.content" class="message"></p>
             </div>
@@ -165,13 +166,15 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, nextTick } from "vue";
 import api from "@/api/axiosInstance";
 import { marked } from "marked";
 import router from "@/router";
 const showModal = ref(false);
 const userMessage = ref("");
 const messages = ref([]);
+const messageRefs = ref([]);
+const chatBody = ref(null);
 const isFirst = ref("true");
 // 모달 창 열기
 const openChatbot = async () => {
@@ -186,6 +189,24 @@ const openChatbot = async () => {
       ``;
     }
     isFirst.value = false;
+  }
+};
+
+// 현재 메시지의 상단으로 이동
+const scrollToMessageTop = (index) => {
+  if (messageRefs.value[index]) {
+    const targetMessage = messageRefs.value[index];
+    const chatBodyElement = chatBody.value;
+
+    if (chatBodyElement) {
+      chatBodyElement.scrollTop = targetMessage.offsetTop; // 현재 메시지 상단으로 이동
+    }
+  }
+};
+
+const setMessageRef = (index) => (el) => {
+  if (el) {
+    messageRefs.value[index] = el;
   }
 };
 
@@ -250,6 +271,9 @@ const sendMessage = async () => {
       role: "assistance",
       content: response.data.choices[0].message.content,
     };
+    // 메시지 추가 후 스크롤 이동
+    await nextTick();
+    scrollToMessage(messages.value.length - 1); // 마지막 메시지
     // GPT 응답 처리
     const botMessageContent = response.data.choices[0].message.content; // content 가져오기
     const formattedBotMessageContent = marked(botMessageContent);
@@ -257,18 +281,27 @@ const sendMessage = async () => {
       role: "assistant",
       content: formattedBotMessageContent,
     });
+    // 메시지 추가 후 스크롤 이동
+    await nextTick();
+    scrollToMessage(messages.value.length - 1); // 마지막 메시지
     if (response.status === 201) {
       setTimeout(() => {
         const check = confirm("마이구민이 등록한 식단을 보러갈까요?");
-        alert(check);
         if (check) {
-          alert(" durlsms");
           router.push("/meal"); // Vue Router 경로 사용 시
         }
-      }, 10000); // 15초 딜레이
+      }, 1000); // 15초 딜레이
     }
   } catch (error) {
     console.error("Error sending message:", error);
+  }
+};
+
+const scrollToMessage = (index) => {
+  const chatBodyElement = chatBody.value; // 채팅 컨테이너
+  if (messageRefs.value[index] && chatBodyElement) {
+    const targetMessage = messageRefs.value[index];
+    chatBodyElement.scrollTop = targetMessage.offsetTop; // 메시지의 상단으로 스크롤 이동
   }
 };
 </script>
@@ -580,5 +613,8 @@ const sendMessage = async () => {
 }
 .main-board-group {
   margin-top: 200px;
+}
+p.message {
+  margin-left: 15px;
 }
 </style>

@@ -153,7 +153,7 @@ CREATE TABLE `chat_room_user` (
 	`joined_at`	TIMESTAMP	NOT NULL
 );
 
-CREATE TABLE `meal_ streak` (
+CREATE TABLE `meal_streak` (
 	`meal_streak_id`	INT	NOT NULL,
 	`user_id`	INT	NOT NULL,
 	`streak`	INT	NOT NULL,
@@ -370,11 +370,11 @@ ALTER TABLE meal ADD INDEX (user_id);
 ALTER TABLE reply
 MODIFY parent_reply_id INT NULL;
 
-ALTER TABLE `meal_ streak` ADD CONSTRAINT `PK_MEAL_ STREAK` PRIMARY KEY (
+ALTER TABLE `meal_streak` ADD CONSTRAINT `PK_MEAL_STREAK` PRIMARY KEY (
 	`meal_streak_id`
 );
 
-ALTER TABLE `meal_ streak` ADD CONSTRAINT `FK_user_TO_meal_ streak_1` FOREIGN KEY (
+ALTER TABLE `meal_streak` ADD CONSTRAINT `FK_user_TO_meal_streak_1` FOREIGN KEY (
 	`user_id`
 )
 REFERENCES `user` (

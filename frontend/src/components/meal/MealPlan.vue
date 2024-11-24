@@ -507,9 +507,6 @@ const bodyRecordRegist = async () => {
     bodyCondition: selectedCondition.value,
     content: additionalcontent.value,
   };
-  alert("여기까지는 옴");
-  myRecord();
-  alert("마이데이 호출안됨");
   // FormData 객체 생성
   const formData = new FormData();
   formData.append(
@@ -528,6 +525,8 @@ const bodyRecordRegist = async () => {
 
     if (response.status === 201) {
       alert("신체 기록 등록완료!");
+      await myRecord();
+      await selectBodyRecord();
       closeBodyModal(); // 모달 닫기
     } else {
       alert("신체 기록 등록에 실패했습니다.");
@@ -590,7 +589,8 @@ const mealRecordRegist = async () => {
 
     if (response.status === 201) {
       alert("식단 기록 등록완료!");
-      window.location.reload();
+      await myRecord();
+      await getMealRecord();
       closeMealModal();
     } else {
       alert("식단 기록 등록에 실패했습니다.");
@@ -737,6 +737,7 @@ const selectBodyRecord = async () => {
   try {
     const response = await api.get(`/api/body/record/${formattedDate}`);
     bodyRecords.value = response.data;
+    console(bodyRecords);
   } catch (error) {}
 };
 
@@ -858,7 +859,6 @@ const getUser = async () => {
   try {
     const response = await api.get("api/user/token-user");
     myUser.value = response.data;
-    console.log(response.data);
   } catch (error) {
     console.log(error);
   }
@@ -958,6 +958,8 @@ body {
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   min-width: 400px;
   max-width: 400px;
+  min-height: 363px;
+  max-height: 363px;
 }
 
 .calendar-header {
@@ -1487,7 +1489,7 @@ div:nth-child(3) > div.meal-type > div.meal-type-square {
   justify-content: center; /* 가로 정렬: 가운데 */
   align-items: center; /* 세로 정렬: 가운데 */
   gap: 0.5rem; /* 요소 간 간격 */
-  text-align: center;
+  text-align: start;
 }
 .meal-type-text {
   font-size: 17px;
@@ -1557,7 +1559,7 @@ div.record-layout
   > div:nth-child(1)
   > div:nth-child(1) {
   display: flex;
-  justify-content: center;
+  justify-content: start;
   align-items: start;
 }
 div.record-layout
@@ -1593,6 +1595,7 @@ div > div > div:nth-child(2) > p > b {
   display: flex;
   flex-direction: column;
   margin-left: 30px;
+  margin-top: 20px;
   min-height: 400px;
 }
 .body-record-layout > div > div > img {

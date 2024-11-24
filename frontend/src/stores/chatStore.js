@@ -1,20 +1,37 @@
-import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { defineStore } from "pinia";
 
-export const useChatStore = defineStore('chat', {
+export const useChatStore = defineStore("chat", {
   state: () => ({
-    messages: ref([]),  // 메시지 배열을 ref로 래핑
+    selectedChatRoom: null, // 선택된 채팅방
+    messages: {}, // 채팅방별 메시지 (key: chatRoomId, value: message array)
   }),
 
   actions: {
-    addMessage(message) {
-      this.messages.push(message);
+    // 선택된 채팅방 설정
+    setSelectedChatRoom(chatRoom) {
+      this.selectedChatRoom = chatRoom;
     },
 
-    clearMessages() {
-      this.messages = [];
+    // 채팅방 메시지 추가
+    addMessageToChatRoom(chatRoomId, message) {
+      if (!this.messages[chatRoomId]) {
+        this.messages[chatRoomId] = [];
+      }
+      this.messages[chatRoomId].push(message);
+    },
+
+    // 채팅방 메시지 초기화
+    clearMessagesForChatRoom(chatRoomId) {
+      if (this.messages[chatRoomId]) {
+        this.messages[chatRoomId] = [];
+      }
+    },
+
+    // 모든 메시지 초기화
+    clearAllMessages() {
+      this.messages = {};
     },
   },
 
-  persist: true,  // 상태를 로컬스토리지에 저장하도록 설정
+  persist: true, // 상태를 로컬스토리지에 저장
 });
