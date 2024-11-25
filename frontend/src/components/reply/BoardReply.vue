@@ -147,7 +147,6 @@ const deleteReply = async (replyId) => {
       r.replyResponses.some((r2) => r2.replyId === replyId)
     );
   }
-  console.log(reply);
   const isDelete = confirm("정말 삭제하시겠습니까?");
   if (!isDelete) return;
   try {
@@ -195,7 +194,6 @@ const toggleUserReController = (replyId) => {
 
 const submitReply = async (replyId) => {
   const reply = replies.value.find((reply) => reply.replyId === replyId);
-  console.log(reply);
   if (!reply || !reply.replyContent) {
     alert("답글 내용이 없습니다.");
     return;
@@ -219,7 +217,6 @@ const submitReply = async (replyId) => {
       .then((response) => {
         replies.value = response.data;
         toggleRereply(reply.replyId);
-        console.log(response.data);
       })
       .catch((error) => {
         console.error("Error fetching replies:", error);
@@ -239,7 +236,6 @@ const toggleReplyForm = (reply) => {
 };
 
 const toggleRereply = (replyId) => {
-  console.log("대댓글 리스트:", replies.value);
   const reply = replies.value.find((r) => r.replyId === replyId);
   if (reply) {
     reply.showReplies = !reply.showReplies; // 대댓글 리스트 보이기/숨기기
@@ -276,7 +272,6 @@ const registReply = async () => {
       .get(`/api/reply/${props.boardId}`)
       .then((response) => {
         replies.value = response.data;
-        console.log(response.data);
       })
       .catch((error) => {
         console.error("Error fetching replies:", error);
@@ -298,7 +293,6 @@ watch(
         .get(`/api/reply/${newBoardId}`)
         .then((response) => {
           replies.value = response.data;
-          console.log(response.data);
         })
         .catch((error) => {
           console.error(error);
@@ -314,7 +308,6 @@ onMounted(() => {
       .get("api/token-user")
       .then((response) => {
         replyData.value.userId = response.data.userId;
-        console.log(response.data.userId);
       })
       .catch((error) => {
         console.error(error);
@@ -328,7 +321,6 @@ onMounted(() => {
       .get(`/api/reply/${props.boardId}`)
       .then((response) => {
         replies.value = response.data;
-        console.log(response.data);
       })
       .catch((error) => {
         console.error(error);

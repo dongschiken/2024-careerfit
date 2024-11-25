@@ -1,12 +1,47 @@
 <template>
-  <div class="main-container">
+  <div class="main-container" @mousemove="trackMouse">
     <div class="main-layout-container">
       <div class="main-intro-group">
-        <div class="main-intro">
-          <div><h2>성공과 건강을 위한 스마트한 선택</h2></div>
-          <div class="main-intro-small">
-            직장인들을 위한 헬스케어<br />
-            오직 <span class="highlight-orange">CAREER FIT</span> 에서
+        <div class="main-intro-container">
+          <div class="main-intro">
+            <div><h2>성공과 건강을 위한 스마트한 선택</h2></div>
+            <div class="main-intro-small">
+              직장인들을 위한 헬스케어<br />
+              오직 <span class="highlight-orange">CAREER FIT</span> 에서
+            </div>
+          </div>
+          <div class="mascot-container">
+            <div class="mascot">
+              <div class="eye left-eye">
+                <div class="pupil" ref="leftPupil"></div>
+              </div>
+              <img src="@/assets/img/마이구민.png" />
+              <div class="eye right-eye">
+                <div class="pupil" ref="rightPupil"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ranking-container">
+          <div
+            class="ranking-layout"
+            v-for="mealStreak in mealStrakRank"
+            :key="mealStreak.rank"
+          >
+            <div class="ranking-box">
+              <img v-if="mealStreak.rank === 1" src="@/assets/img/gold.png" />
+              <img
+                v-else-if="mealStreak.rank === 2"
+                src="@/assets/img/silver.png"
+              />
+              <img v-else src="@/assets/img/bronze.png" />
+              <div>
+                <div class="user-nickname">{{ mealStreak.nickname }}님</div>
+                <div class="user-meal-streak">
+                  총 {{ mealStreak.recordCount }} 일 식단 기록 진행중 🔥
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <!-- AI 버튼을 클릭하면 모달을 여는 이벤트 연결 -->
@@ -34,11 +69,12 @@
             <h3>careerfit 식단관리사 마이구민입니다!</h3>
             <button @click="closeChatbot" class="close-btn">X</button>
           </div>
-          <div class="chat-body">
+          <div class="chat-body" ref="chatBody">
             <div
               v-for="(message, index) in messages"
               :key="index"
               :class="['chat-message', message.role]"
+              :ref="setMessageRef(index)"
             >
               <p v-html="message.content" class="message"></p>
             </div>
@@ -55,89 +91,8 @@
         </div>
       </div>
       <div class="main-board-group">
-        <div class="comunity-group">
-          <div class="comunity-header">
-            <div class="comunity-header-text">
-              <router-link to="/board">커뮤니티</router-link>
-            </div>
-          </div>
-          <div v-for="n in 5" :key="n" class="main-board-content-group">
-            <div class="main-board-content-layout">
-              <div class="main-board-content-left">
-                <div class="profile-img">
-                  <img src="@/assets/img/snoopy.png" alt="" />
-                </div>
-                <div class="nickname">초대리</div>
-                <div class="material-icon">
-                  <img
-                    src="@/assets/img/edit_square_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
-                    alt=""
-                  />
-                </div>
-                <div class="date-time">6분 전</div>
-              </div>
-              <div class="main-board-content-right">
-                <div class="material-icon">
-                  <img
-                    src="@/assets/img/thumb_up_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
-                    alt=""
-                  />
-                  <div>24</div>
-                </div>
-                <div class="material-icon">
-                  <img
-                    src="@/assets/img/chat_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
-                    alt=""
-                  />
-                  <div>24</div>
-                </div>
-              </div>
-            </div>
-            <div class="contents">데이터 솔루션에 대해 들어보신분??</div>
-          </div>
-        </div>
-
-        <div class="comunity-group">
-          <div class="comunity-header">
-            <div class="comunity-header-text">
-              <router-link to="/board">커뮤니티</router-link>
-            </div>
-          </div>
-          <div v-for="n in 5" :key="n" class="main-board-content-group">
-            <div class="main-board-content-layout">
-              <div class="main-board-content-left">
-                <div class="profile-img">
-                  <img src="@/assets/img/snoopy.png" alt="" />
-                </div>
-                <div class="nickname">초대리</div>
-                <div class="material-icon">
-                  <img
-                    src="@/assets/img/edit_square_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
-                    alt=""
-                  />
-                </div>
-                <div class="date-time">6분 전</div>
-              </div>
-              <div class="main-board-content-right">
-                <div class="material-icon">
-                  <img
-                    src="@/assets/img/thumb_up_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
-                    alt=""
-                  />
-                  <div>24</div>
-                </div>
-                <div class="material-icon">
-                  <img
-                    src="@/assets/img/chat_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
-                    alt=""
-                  />
-                  <div>24</div>
-                </div>
-              </div>
-            </div>
-            <div class="contents">데이터 솔루션에 대해 들어보신분??</div>
-          </div>
-        </div>
+        <MainBoardLeft />
+        <MainBoardRight />
       </div>
       <!-- <div class="main-health-ranking-group">헬스장 랭킹</div> -->
     </div>
@@ -145,24 +100,28 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, nextTick, onMounted } from "vue";
 import api from "@/api/axiosInstance";
 import { marked } from "marked";
-
+import router from "@/router";
 const showModal = ref(false);
 const userMessage = ref("");
 const messages = ref([]);
+const messageRefs = ref([]);
+const chatBody = ref(null);
 const isFirst = ref("true");
+import MainBoardLeft from "./MainBoardLeft.vue";
+import MainBoardRight from "./MainBoardRight.vue";
+import ncapi from "@/api/noTokenAxiosInstance";
 
-// 모달 창 열기
+const mealStrakRank = ref([]);
+
 const openChatbot = async () => {
   showModal.value = true;
   if (isFirst.value) {
     try {
-      console.log(isFirst.value);
       const response = await api.post("/api/gpt/first");
       const botMessage = response.data.choices[0].message.content;
-      console.log(botMessage);
       messages.value.push({ role: "assistance", content: botMessage });
     } catch (error) {
       console.error("Error sending message:", error);
@@ -172,6 +131,66 @@ const openChatbot = async () => {
   }
 };
 
+// 현재 메시지의 상단으로 이동
+const scrollToMessageTop = (index) => {
+  if (messageRefs.value[index]) {
+    const targetMessage = messageRefs.value[index];
+    const chatBodyElement = chatBody.value;
+
+    if (chatBodyElement) {
+      chatBodyElement.scrollTop = targetMessage.offsetTop; // 현재 메시지 상단으로 이동
+    }
+  }
+};
+
+const setMessageRef = (index) => (el) => {
+  if (el) {
+    messageRefs.value[index] = el;
+  }
+};
+
+const trackMouse = (event) => {
+  // 눈의 좌표 계산
+  const leftEye = document.querySelector(".left-eye").getBoundingClientRect();
+  const rightEye = document.querySelector(".right-eye").getBoundingClientRect();
+
+  // 눈동자 움직임 계산 함수
+  const movePupil = (eye, pupil, mouseX, mouseY) => {
+    const eyeCenterX = eye.left + eye.width / 2;
+    const eyeCenterY = eye.top + eye.height / 2;
+
+    const deltaX = mouseX - eyeCenterX;
+    const deltaY = mouseY - eyeCenterY;
+
+    const distance = Math.min(Math.sqrt(deltaX ** 2 + deltaY ** 2), 10); // 최대 이동 거리 제한 (10px)
+    const angle = Math.atan2(deltaY, deltaX);
+
+    // 눈동자의 이동 거리 계산
+    const offsetX = Math.cos(angle) * distance;
+    const offsetY = Math.sin(angle) * distance;
+
+    // 눈동자 이동 스타일 적용
+    pupil.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+  };
+
+  // 마우스 위치
+  const mouseX = event.clientX;
+  const mouseY = event.clientY;
+
+  // 왼쪽, 오른쪽 눈동자 이동
+  movePupil(
+    leftEye,
+    document.querySelector(".left-eye .pupil"),
+    mouseX,
+    mouseY
+  );
+  movePupil(
+    rightEye,
+    document.querySelector(".right-eye .pupil"),
+    mouseX,
+    mouseY
+  );
+};
 // 모달 창 닫기
 const closeChatbot = () => {
   showModal.value = false;
@@ -191,173 +210,142 @@ const sendMessage = async () => {
       role: "assistance",
       content: response.data.choices[0].message.content,
     };
+    // 메시지 추가 후 스크롤 이동
+    await nextTick();
+    scrollToMessage(messages.value.length - 1); // 마지막 메시지
     // GPT 응답 처리
     const botMessageContent = response.data.choices[0].message.content; // content 가져오기
     const formattedBotMessageContent = marked(botMessageContent);
-
     messages.value.push({
       role: "assistant",
       content: formattedBotMessageContent,
     });
+    // 메시지 추가 후 스크롤 이동
+    await nextTick();
+    scrollToMessage(messages.value.length - 1); // 마지막 메시지
+    if (response.status === 201) {
+      setTimeout(() => {
+        const check = confirm("마이구민이 등록한 식단을 보러갈까요?");
+        if (check) {
+          router.push("/meal"); // Vue Router 경로 사용 시
+        }
+      }, 1000); // 15초 딜레이
+    }
   } catch (error) {
     console.error("Error sending message:", error);
   }
 };
+
+const scrollToMessage = (index) => {
+  const chatBodyElement = chatBody.value; // 채팅 컨테이너
+  if (messageRefs.value[index] && chatBodyElement) {
+    const targetMessage = messageRefs.value[index];
+    chatBodyElement.scrollTop = targetMessage.offsetTop; // 메시지의 상단으로 스크롤 이동
+  }
+};
+
+const getMealStreakRank = async () => {
+  try {
+    const response = await ncapi.get("/api/meal/record/streak/rank");
+    mealStrakRank.value = response.data;
+    console.log(mealStrakRank.value);
+  } catch (error) {
+    console.log(error);
+  }
+};
+onMounted(() => {
+  getMealStreakRank();
+});
 </script>
 
 <style lang="css" scoped>
 @import url(@/assets/css/main-content.css);
-.comunity-header-text > a {
-  text-decoration: none;
-  color: black;
+.ranking-container {
+  margin-top: 130px;
 }
-/* 모달 스타일 */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+.ranking-box > img {
+  min-width: 70px;
+  max-width: 70px;
+  min-height: 70px;
+  max-height: 70px;
+}
+.ranking-box {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+.user-meal-streak {
   display: flex;
   justify-content: center;
-  align-items: center;
-  z-index: 1001;
+  min-width: 300px;
+  max-width: 300px;
 }
-
-.modal-content {
+.user-nickname {
   display: flex;
-  background: white;
-  flex-direction: column; /* 세로 방향 정렬 */
-  justify-content: space-between; /* 위아래 공간 분배 */
-  padding: 20px;
-  width: 700px;
-  max-height: 700px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  justify-content: center;
+  min-width: 300px;
+  max-width: 300px;
 }
 
-.chat-header {
+.ranking-container {
+  margin-top: 50px; /* 전체 상단 여백 */
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: 10px;
+  gap: 20px; /* 랭킹 박스 간 간격 */
 }
 
-.close-btn {
-  background: #e0e0e0; /* 밝은 회색 배경 */
-  border: 1px solid #bdbdbd; /* 테두리를 약간 더 진한 회색으로 */
-  border-radius: 50%; /* 원형 모양 */
-  font-size: 16px;
+.ranking-box {
+  display: flex;
+  flex-direction: row; /* 수평 레이아웃 */
+  align-items: center;
+  border-radius: 15px; /* 둥근 모서리 */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
+  padding: 20px 30px;
+  width: 90%; /* 화면 폭에 맞춤 */
+  max-width: 600px; /* 최대 크기 제한 */
+  transition: transform 0.3s, box-shadow 0.3s; /* 호버 효과 */
+}
+
+.ranking-box:hover {
+  transform: translateY(-5px); /* 호버 시 박스 위로 살짝 이동 */
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2); /* 호버 시 그림자 강조 */
+}
+
+.ranking-box img {
+  width: 80px;
+  height: 80px;
+  margin-right: 20px; /* 이미지와 텍스트 간격 */
+  border-radius: 50%; /* 이미지 둥글게 */
+  border: 3px solid #fff; /* 이미지 외곽 테두리 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 이미지 그림자 */
+}
+
+.ranking-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1; /* 텍스트 영역 확장 */
+}
+
+.ranking-info .user-nickname {
+  font-size: 20px; /* 닉네임 폰트 크기 */
   font-weight: bold;
-  width: 36px; /* 버튼 크기 */
-  height: 36px;
-  display: flex;
-  justify-content: center; /* 텍스트 중앙 정렬 */
-  align-items: center;
-  cursor: pointer;
-  color: #757575; /* 텍스트 색상을 진한 회색으로 */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 은은한 그림자 */
-  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* 부드러운 효과 */
-}
-
-.close-btn:hover {
-  background: #bdbdbd; /* 호버 시 더 진한 회색 */
-  color: #ffffff; /* 텍스트를 흰색으로 */
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* 그림자 강조 */
-  transform: scale(1.05); /* 살짝 확대 */
-}
-
-.close-btn:active {
-  background: #9e9e9e; /* 클릭 시 어두운 회색 */
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.15); /* 그림자 줄임 */
-  transform: scale(0.95); /* 클릭감 */
-}
-.chat-body {
-  flex-grow: 1; /* 중간 영역 확장 */
-  max-height: 800px;
-  overflow-y: auto;
-  margin-bottom: 20px;
-}
-
-.chat-message {
-  padding: 8px;
+  color: #333; /* 진한 텍스트 색상 */
   margin-bottom: 5px;
 }
 
-.chat-message .message {
-  font-size: 14px;
+.ranking-info .user-meal-streak {
+  font-size: 16px; /* 기록 텍스트 크기 */
+  color: #555; /* 중간 밝기의 색상 */
 }
 
-.chat-input {
-  display: flex;
-  justify-content: space-between; /* 입력창과 버튼 간격 유지 */
-  align-items: center; /* 수직 정렬 */
-  margin-top: auto; /* 위쪽 여백 자동 */
-  padding-top: 10px;
-  border-top: 1px solid #ccc; /* 상단 경계선 */
-}
-
-.chat-input input {
-  width: 80%;
-  padding: 10px;
-  font-size: 14px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-}
-
-.chat-input button {
-  padding: 10px 15px;
-  font-size: 14px;
-  cursor: pointer;
-  border: none;
-  background-color: #ff7f32;
-  color: white;
-  border-radius: 4px;
-}
-
-.chat-message {
-  margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 8px;
-  max-width: 70%;
-  font-size: 14px;
-}
-
-.chat-message.user {
-  background-color: #d1f7c4; /* 사용자 메시지의 배경색 */
-  align-self: flex-end; /* 오른쪽 정렬 */
-  text-align: right;
-}
-
-.chat-message.assistance {
-  background-color: #f1f0f0; /* 봇 메시지의 배경색 */
-  align-self: flex-start; /* 왼쪽 정렬 */
-  text-align: left;
-}
-.chat-body {
-  display: flex;
-  flex-direction: column;
-  gap: 10px; /* 메시지 간 간격 */
-}
-
-.chat-message {
-  white-space: pre-wrap; /* 줄바꿈을 유지 */
-  margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 8px;
-  font-size: 14px;
-  background-color: #f1f0f0; /* 봇 메시지 배경색 */
-}
-
-.chat-message.user {
-  background-color: #d1f7c4; /* 사용자 메시지 배경색 */
-  text-align: right;
-}
-
-.chat-message.assistance {
-  background-color: #f1f0f0;
-  align-self: flex-start;
-  color: #000000;
+.ranking-rank {
+  font-size: 36px; /* 랭킹 숫자 크기 */
+  font-weight: bold;
+  color: #ff9800; /* 강조 색상 */
+  text-align: center;
+  align-self: flex-end; /* 숫자를 박스 끝으로 정렬 */
+  min-width: 60px; /* 최소 공간 확보 */
 }
 </style>

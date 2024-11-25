@@ -8,7 +8,7 @@
 		VALUES (#{userId}, #{date}, #{type}, #{img}, #{mealTime}, #{content}, #{fullness})
 	</insert>
 	
-	<select id="countMealRecord" parameterType="MealRecord">
+	<select id="countMealRecord" parameterType="MealRecord" resultType="int">
 		SELECT COUNT(*) FROM meal_record
 		WHERE date = #{date} and user_id = #{userId} and type = #{type}
 	</select>
@@ -37,5 +37,139 @@
 		DELETE FROM meal_record
 		WHERE meal_record_id = #{mealRecordId}
 	</delete>
+	
+	<select id="selectDateMealBodyRecord" parameterType="int" resultType="MealBodyRecordResponse">
+		SELECT 
+		    mr.date, 
+		    DAYOFYEAR(mr.date) - 1 AS day, 
+		    COUNT(mr.type) AS countType, 
+		    br.weight, 
+		    br.skeletal_muscle, 
+		    br.body_fat
+		FROM 
+		    meal_record mr
+		LEFT JOIN 
+		    body_record br 
+		ON 
+		    mr.date = br.date
+		WHERE mr.user_id = #{userId}
+		GROUP BY 
+		    mr.date, br.weight, br.skeletal_muscle, br.body_fat
+		UNION
+		SELECT 
+		    br.date, 
+		    DAYOFYEAR(br.date) - 1 AS day, 
+		    NULL AS countType, 
+		    br.weight, 
+		    br.skeletal_muscle, 
+		    br.body_fat
+		FROM 
+		    body_record br
+		LEFT JOIN 
+		    meal_record mr 
+		ON 
+		    br.date = mr.date
+		WHERE 
+		    mr.date IS NULL AND br.user_id = #{userId}
+		GROUP BY 
+		    br.date, br.weight, br.skeletal_muscle, br.body_fat	
+	</select>
+	
+	<select id="countMealStreak" parameterType="MealRecord" resultType="int">
+		SELECT COUNT(*) 
+		FROM meal_streak
+		WHERE DATE = #{date} AND user_id = #{userId}
+	</select>
+	
+	<insert id="insertMealStreak" parameterType="map">
+    	INSERT INTO meal_streak (user_id, streak, morning, lunch, dinner, date)
+	    VALUES ( #{mealRecord.userId}, #{streak},
+	        <choose>
+	            <when test="mealRecord.type == '아침'">
+	                1
+	            </when>
+	            <otherwise>
+	                0
+	            </otherwise>
+	        </choose>,
+	        <choose>
+	            <when test="mealRecord.type == '점심'">
+	                1
+	            </when>
+	            <otherwise>
+	                0
+	            </otherwise>
+	        </choose>,
+	        <choose>
+	            <when test="mealRecord.type == '저녁'">
+	                1
+	            </when>
+	            <otherwise>
+	                0
+	            </otherwise>
+	        </choose>,
+	        #{mealRecord.date} )
+	</insert>
+
+	
+	<update id="updateMealStreak" parameterType="MealRecord">
+    	UPDATE meal_streak
+	    <set>
+	        <choose>
+	            <when test="type == '아침'">
+	                morning = 1
+	            </when>
+	            <when test="type == '점심'">
+	                lunch = 1
+	            </when>
+	            <when test="type == '저녁'">
+	                dinner = 1
+	            </when>
+	        </choose>
+	    </set>
+	    WHERE user_id = #{userId} AND date = #{date}
+	</update>
+	
+	
+	<select id="selectBeforeMealStreak" parameterType="MealRecord" resultType="Integer">
+	    SELECT streak
+	    FROM meal_streak
+	    WHERE user_id = #{userId}
+	      AND date = 
+	      <if test="date != null">
+	          DATE_SUB(#{date}, INTERVAL 1 DAY)
+	      </if>
+	</select>
+	
+		
+	<select id="selectMealStreakByUserId" parameterType="MealRecord" resultType="Integer">
+	    SELECT streak
+	    FROM meal_streak
+	    WHERE user_id = #{userId}
+	      AND date = #{date}
+	</select>
+	
+	<select id="selectTotalStreakByUserId" parameterType="int" resultType="int">
+		SELECT COUNT(*)
+		FROM meal_streak
+		WHERE user_id = #{userId}
+	</select>
+	
+	<select id="selectTotalStreakRank" resultType="ResponseMealStreakRank">
+		<![CDATA[
+		SELECT user_id, nickname, email, record_count, ranked.rank
+		FROM (
+		    SELECT 
+		        u.user_id, 
+		        u.nickname, 
+		        u.email, 
+		        COUNT(*) AS record_count,
+		        ROW_NUMBER() OVER (ORDER BY COUNT(*) DESC) AS `rank`
+		    FROM meal_streak ms JOIN user u ON u.user_id = ms.user_id
+		    GROUP BY u.user_id, u.nickname, u.email
+		) ranked
+		WHERE 'rank' <= 3;
+		]]>
+	</select>
 	
 </mapper>

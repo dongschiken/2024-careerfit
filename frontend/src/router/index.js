@@ -9,6 +9,7 @@ import BoardDetailView from "@/views/BoardDetailView.vue";
 import { useToast } from "vue-toastification";
 import MapView from "@/components/map/MapView.vue";
 import UserProfile from "@/components/user/UserProfile.vue";
+import KakaoCallback from "@/views/KakaoCallback.vue";
 
 const routes = [
   {
@@ -52,7 +53,7 @@ const routes = [
     path: "/meal",
     name: "meal",
     component: MealPlan,
-    meta: { requiresAuth: true },
+    // meta: { requiresAuth: true },
   },
   {
     path: "/board/detail/:boardId",
@@ -64,6 +65,11 @@ const routes = [
     path: "/mate",
     name: "Mate",
     component: MapView,
+  },
+  {
+    path: "/oauth/callback/kakao",
+    name: "KakaoCallback",
+    component: KakaoCallback ,
   },
 ];
 

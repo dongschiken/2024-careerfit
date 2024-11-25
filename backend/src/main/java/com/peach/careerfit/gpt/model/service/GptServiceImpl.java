@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -61,13 +62,14 @@ public class GptServiceImpl implements GptService {
 		}
 		GptRequest gptRequest = new GptRequest(MODEL, stringBuffer.toString(), "system");
 		gptChatHistoryService.saveMessage(redisKey, "system :" + createSystemMessage(
-				stringBuffer.toString() + "현재 날짜는" + LocalDateTime.now().plusDays(1).toString() + "야"));
+				stringBuffer.toString() + "현재 날짜는" + LocalDateTime.now().toString() + "야"));
 		GptResponse response = restTemplate.postForObject(API_URL, gptRequest, GptResponse.class);
 		return response;
 	}
 
 	@Override
-	public GptResponse registAndRequestGpt(int userId, String message) {
+	public Map<String, Object> registAndRequestGpt(int userId, String message) {
+		Map<String, Object> map = new HashMap<>();
 		String redisKey = "gpt_chat_history" + userId;
 		gptChatHistoryService.saveMessage(redisKey, message);
 		GptResponse gptResponse = null;
@@ -96,15 +98,18 @@ public class GptServiceImpl implements GptService {
 				String content = responses.getMessage().getContent();
 				gptChatHistoryService.saveMessage(redisKey, "assistant :" + content);
 			}
-			checkMealData(gptResponse, userId);
-			return gptResponse;
+			int status = checkMealData(gptResponse, userId);
+			map.put("response", gptResponse);
+			map.put("status", status);
+			return map;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return gptResponse;
+		return map;
 	}
 
-	private boolean checkMealData(GptResponse gptResponse, int userId) {
+	private int checkMealData(GptResponse gptResponse, int userId) {
+		int status = 0;
 		try {
 			for (Choice choice : gptResponse.getChoices()) {
 				String message = choice.getMessage().getContent();
@@ -116,13 +121,13 @@ public class GptServiceImpl implements GptService {
 						mealDates.add(meal.getDate());
 					}
 					mealDao.deleteUserMeals(userId, mealDates);
-					int status = mealDao.insertUserMeals(meals);
+					status = mealDao.insertUserMeals(meals);
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return true;
+		return status;
 	}
 
 	public String createSystemMessage(String messageContent) {

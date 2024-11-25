@@ -31,15 +31,10 @@
             /></span>
             회원가입
           </button>
-          <button
-            class="form-element btn-kakao-login"
-            @click="handleKakaoLogin"
-          >
-            <span class="btn-icon"
-              ><img src="@/assets/kakao-icon.png" alt=""
-            /></span>
-            카카오 로그인
-          </button>
+          <button id="kakaoLoginBtn" class="form-element btn-kakao-login" @click="handleKakaoLogin">
+  <span class="btn-icon"><img src="@/assets/kakao-icon.png" alt="카카오 로그인 아이콘"/></span>
+  카카오 로그인
+</button>
         </div>
       </div>
       <div class="reserve">ⓒ (주)peach Corp. All rights reserved.</div>
@@ -50,9 +45,15 @@
 <script>
 import ncapi from "@/api/noTokenAxiosInstance";
 import { useUserStore } from "@/stores/userStore";
-import axios from "axios";
+
 export default {
   name: "LoginComponent",
+  setup() {
+    const userStore = useUserStore();
+    return {
+      userStore
+    };
+  },
   data() {
     return {
       formData: {
@@ -66,25 +67,17 @@ export default {
       console.log("로그인 시도:", this.formData);
 
       try {
-        // 로그인 요청을 보냅니다.
         const response = await ncapi.post("/login", this.formData);
-
-        // 응답 확인
         console.log("로그인 응답:", response);
 
-        // 응답 데이터에서 accessToken과 refreshToken을 가져옵니다.
-        const accessToken = response.data.accessToken;
-        const refreshToken = response.data.refreshToken;
-        // Access Token이 있는지 확인하고 세션 스토리지에 저장합니다.
+        const { accessToken, refreshToken } = response.data;
         if (accessToken) {
           this.storeTokens(accessToken, refreshToken);
+          alert("로그인에 성공했습니다.");
+          this.$router.push("/");
         } else {
           throw new Error("Token을 찾을 수 없습니다.");
         }
-        alert("로그인에 성공했습니다.");
-
-        // 로그인 성공 후 라우터를 사용해 메인 페이지로 이동
-        this.$router.push("/");
       } catch (error) {
         console.error("로그인 실패", error);
         alert("로그인에 실패했습니다. 이메일 또는 비밀번호를 확인하세요.");
@@ -94,17 +87,44 @@ export default {
     handleSignup() {
       this.$router.push("/user/join");
     },
+
+
     handleKakaoLogin() {
-      console.log("카카오 로그인 클릭");
-    },
-    main() {
-      this.$router.push("/");
-    },
-    storeTokens(accessToken, refreshToken) {
-      const userStore = useUserStore();
-      userStore.setTokens(accessToken, refreshToken);
-    },
+    const KAKAO_CLIENT_ID = "41c1a6b4b4c21c5909d57e7a96073a47";
+    const REDIRECT_URI = encodeURIComponent("http://localhost:3000/oauth/callback/kakao");
+    // scope 파라미터는 앱에서 설정된 동의항목만 포함해야 합니다
+    const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${KAKAO_CLIENT_ID}&redirect_uri=${REDIRECT_URI}`;
+    window.location.href = KAKAO_AUTH_URL;
+},
+  
+ 
+async getKakaoUserInfo(accessToken) {
+    try {
+      const response = await window.Kakao.API.request({
+        url: '/v2/user/me',
+        success: (response) => {
+          console.log(response);
+          // 사용자 정보를 저장하거나 처리하는 로직 추가
+          alert(`안녕하세요, ${response.kakao_account.profile.nickname}님!`);
+        },
+        fail: (error) => {
+          console.error(error);
+          alert('사용자 정보를 가져오는데 실패했습니다.');
+        },
+      });
+    } catch (error) {
+      console.error('API 요청 중 오류 발생:', error);
+    }
   },
+
+  main() {
+    this.$router.push("/");
+  },
+
+  storeTokens(accessToken, refreshToken) {
+    this.userStore.setTokens(accessToken, refreshToken);
+  },
+  }
 };
 </script>
 
@@ -142,13 +162,12 @@ export default {
   margin-bottom: 2rem;
 }
 
-/* 모든 폼 요소들의 공통 스타일 */
 .form-element {
   width: 100%;
-  height: 48px; /* 모든 요소 높이 통일 */
+  height: 48px;
   border-radius: 10px;
   font-size: 1rem;
-  box-sizing: border-box; /* padding이 전체 크기에 포함되도록 설정 */
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -236,6 +255,7 @@ export default {
   color: #666;
   font-size: 0.9rem;
 }
+
 @media (max-width: 480px) {
   .login-container {
     padding: 2rem;
@@ -247,7 +267,7 @@ export default {
   }
 
   .form-element {
-    height: 44px; /* 모바일에서는 조금 더 작게 */
+    height: 44px;
   }
 }
 </style>

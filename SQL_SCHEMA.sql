@@ -153,6 +153,17 @@ CREATE TABLE `chat_room_user` (
 	`joined_at`	TIMESTAMP	NOT NULL
 );
 
+CREATE TABLE `meal_streak` (
+	`meal_streak_id`	INT	NOT NULL,
+	`user_id`	INT	NOT NULL,
+	`streak`	INT	NOT NULL,
+	`morning`	TINYINT(1)	NULL,
+	`lunch`	TINYINT(1)	NULL,
+	`dinner`	TINYINT(1)	NULL,
+	`date`	TIMESTAMP	NOT NULL
+);
+
+
 ALTER TABLE `like` ADD CONSTRAINT `PK_LIKE` PRIMARY KEY (
 	`like_id`
 );
@@ -358,3 +369,18 @@ ALTER TABLE meal ADD INDEX (user_id);
 
 ALTER TABLE reply
 MODIFY parent_reply_id INT NULL;
+
+ALTER TABLE meal_streak
+MODIFY meal_streak_id INT AUTO_INCREMENT PRIMARY KEY;
+
+ALTER TABLE `meal_streak` ADD CONSTRAINT `FK_user_TO_meal_streak_1` FOREIGN KEY (
+	`user_id`
+)
+REFERENCES `user` (
+	`user_id`
+);
+
+ALTER TABLE chat_room_user
+ADD COLUMN last_read_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+SELECT CONVERT_TZ(last_at, '+00:00', '+09:00') AS last_at_kst FROM chat_room;
