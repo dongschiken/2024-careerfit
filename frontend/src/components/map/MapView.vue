@@ -71,6 +71,9 @@
             <div class="chat-room-info">
               <div class="chat-room-header">
                 <p class="chat-room-title">{{ room.title }}</p>
+                <div v-if="room.unreadCount > 0" class="unread-count">
+                  {{ room.unreadCount }}
+                </div>
               </div>
               <div class="chat-room-details">
                 <img
@@ -1293,6 +1296,16 @@ empty-message {
   border: none;
   border-radius: 5px;
   margin-left: 10px;
+}
+
+.unread-count {
+  display: inline-block;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  margin-left: 5px;
 }
 
 @keyframes fadeIn {

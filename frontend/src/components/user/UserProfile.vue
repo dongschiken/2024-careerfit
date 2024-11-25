@@ -108,6 +108,9 @@
                 >
                   <div>
                     <p>{{ room.title }}</p>
+                    <div v-if="room.unreadCount > 0" class="unread-count">
+                      {{ room.unreadCount }}
+                    </div>
                     <p>{{ room.lastMessage || "최근 메시지가 없습니다." }}</p>
                     <p>
                       {{
@@ -819,6 +822,16 @@ onUnmounted(() => {
   align-items: center;
   height: 400px;
   color: #666;
+}
+
+.unread-count {
+  display: inline-block;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  margin-left: 5px;
 }
 
 @keyframes fadeIn {
