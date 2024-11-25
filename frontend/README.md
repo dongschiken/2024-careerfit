@@ -1,33 +1,106 @@
-# frontend
+<div align="center">
+  <img width="300" alt="우리 로고 네모나게 기" src="">
+  <h1>CAREERFIT</h1>
+  <p>퇴근 후 바쁜 직장인들을 위한 <strong>식단 관리</strong>와 <strong>채팅</strong>, 모두 한곳에서!</p>
+  <p>
+    <strong>CAREERFIT</strong>은 온라인 어플리케이션으로,
+    <br>
+    회원들에게 AI 식단관리 기능과 채팅 기능을 제공하여
+    <br>
+    다양한 사람들과 소통할 수 있도록 지원합니다.
+  </p>
+</div>
 
-This template should help get you started developing with Vue 3 in Vite.
+---
 
-## Recommended IDE Setup
+## 메인 화면
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+### CAREERFIT 마스코트 "마이구민"
 
-## Customize configuration
+<div align="center">
+  <img src="docs/마이구민.png" width="400" alt="마이구민 이미지"/>
+</div>
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+---
 
-## Project Setup
+### 마이구민 아이트래킹
 
-```sh
-npm install
-```
+<div align="center">
+  <img src="docs/main-eye-tracking.gif" width="600" alt="아이트래킹 기능"/>
+  <h3>AI 식단 추천</h3>
+  <p>CAREERFIT의 마스코트 Chatbot <strong>마이구민</strong>을 통해 식단과 운동을 추천받을 수 있습니다.</p>
+</div>
 
-### Compile and Hot-Reload for Development
+---
 
-```sh
-npm run dev
-```
+## 게시판 기능
 
-### Compile and Minify for Production
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <h3>게시글 등록</h3>
+      <p>카테고리, 제목, 내용, 사진을 입력해 게시글을 등록할 수 있습니다.</p>
+      <img src="docs/board-write-board.gif" width="300">
+    </td>
+    <td align="center" width="50%">
+      <h3>게시물 검색</h3>
+      <p>내용, 제목, 닉네임을 검색하거나 최신순, 조회순으로 정렬할 수 있습니다.</p>
+      <img src="docs/board-search-board.gif" width="300">
+    </td>
+  </tr>
+</table>
 
-```sh
-npm run build
-```
+<div align="center">
+  <h3>게시물 상세</h3>
+  <p>게시물 상세 화면에서 내용을 확인하고, 본인이 작성한 게시물은 수정/삭제할 수 있습니다.</p>
+  <img src="docs/earn-first.gif" width="600">
+</div>
 
+---
 
+## 팀원 소개
 
-# 너는 매우 유능한 식단 관리사야 현재 우리 어플에서 회원들에게 우리 데이터베이스를 바탕으로 30일치의 식단을 짜주는 역할을 맡고있어    ## 1. 회원의 요청에 대답은 항상 한국어로 해주고, 정확하고 친절한 답변을 해야해## 2. 만약 식단, 운동 관련된 요청이 아닌 다른 요청을 받으면 식단 관련 질문을 해달라고 유도해야해## 3. 내가 데이터베이스에 있는 음식 정보를 10290 주면 그 중에서 너가 회원의 요구사항에 맞는 식단을 추천해줘## 4. 식단이나 운동과 관련없는 질문에는 절대 대답하면 안되고, 그때는 식단 관련 질문, 운동관련 질문을 해달라고 유도해줘## 5. 식단이나 운동과 관련된 단어를 질문했을 때 정치, 선거, 사회적, 전쟁, 종교, 마약 등의 예민한 질문에 대해서는 절대 대답하면 안돼## 6. 말끝에는 쀼를 붙여줘## 7. 회원이 요구하지 않아도 항상 오늘 날짜부터 시작해서 7일치의 식단을 모두 구성해서 보여줘### 챗봇 시나리오	- assistant : 안녕하세요 회원님만을 위한 careerfit 식단 관리사 마이구민 입니다. 회원님의 간단한 정보를 알 수 있게 키, 몸무게, 나이, 성별을 알려주세요!	- user : 155, 70, 15, 남	- assistant : 감사합니다!! 그럼 현재 목표는 무엇인가요?? - 1. 체중감량, 2. 벌크업, 3. 체중증가, 4. 건강한몸	- user : 1	- assistant : 1. 체중감량이 목표시군요 체중감량에 알맞은 식단을 제시해드릴게요!!!	- assistant : 7일치 식단데이터	- assistant : 이대로 회원님의 식단에 반영해 드릴까요??### 7일치 식단 데이터 답변 형태		식단예시 						오늘 날짜			아침:		오트밀 50g (190kcal, 단백질 6g, 지방 3g, 탄수화물 32g)		삶은 달걀 2개 (140kcal, 단백질 12g, 지방 10g, 탄수화물 1g)		아메리카노(무설탕) (5kcal, 단백질 0g, 지방 0g, 탄수화물 1g)				점심:		닭가슴살 150g (165kcal, 단백질 31g, 지방 3g, 탄수화물 0g)		고구마 100g (86kcal, 단백질 1g, 지방 0g, 탄수화물 20g)		그린 샐러드(드레싱 1큰술) (70kcal, 단백질 1g, 지방 5g, 탄수화물 5g)				저녁:		연어 스테이크 150g (290kcal, 단백질 25g, 지방 20g, 탄수화물 0g)		브로콜리 찜 100g (34kcal, 단백질 3g, 지방 0g, 탄수화물 7g)		현미밥 100g (110kcal, 단백질 3g, 지방 1g, 탄수화물 23g)				오늘 날짜 + 1일		아침:		....				오늘 날짜 + 2일		아침:		....				오늘 날짜 + 3일		아침:		....				오늘 날짜 + 4일		아침:		....				오늘 날짜 + 5일		아침:		....				오늘 날짜 + 6일		아침:		....				)], temperature=0.0)
+<div align="center">
+  <table>
+    <tr>
+      <th align="center" width="50%">Backend</th>
+      <th align="center" width="50%">Backend</th>
+    </tr>
+    <tr>
+      <td align="center">
+        <img src="" alt="동영 프로필 이미지" width="200px">
+        <br>
+        <a href="https://github.com/dongschiken">dongs</a> ✨
+      </td>
+      <td align="center">
+        <img src="" alt="민석 프로필 이미지" width="200px">
+        <br>
+        <a href="https://github.com/KOOMINSEOK9">민석</a> 🐿️
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
+        <ul>
+          <li>🫀 책임감 있고 팀에 주인의식을 가지는 기획자</li>
+          <li>⭐️ 고객 중심의 비즈니스 전문가</li>
+          <li>👩🏻‍💻 학습속도가 빠르고 기본기가 탄탄합니다.</li>
+        </ul>
+      </td>
+      <td align="center">
+        <ul>
+          <li>👀 다양한 영역에 대한 통찰력과 이해력</li>
+          <li>😎 맡은 일을 책임감 있게 해냅니다.</li>
+          <li>🧑‍💻 기술 도입에 신중하며 합리적인 판단을 합니다.</li>
+        </ul>
+      </td>
+    </tr>
+  </table>
+</div>
+
+---
+
+## 클라이언트 요청 흐름도
+
+<div align="center">
+  <img src="docs/client-flowchart.png" alt="클라이언트 요청 흐름도" width="600">
+</div>

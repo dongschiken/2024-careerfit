@@ -6,12 +6,33 @@
         margin: 0;
         padding: 0;
       }
+      @font-face {
+        font-family: "BMJUA";
+        src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff")
+          format("woff");
+        font-weight: normal;
+        font-style: normal;
+      }
+      /* 폰트 적용 */
+      body {
+        font-family: "BMJUA", sans-serif !important;
+      }
+      button {
+        font-family: "BMJUA", sans-serif !important;
+      }
+      input {
+        font-family: "BMJUA", sans-serif !important;
+      }
+      select {
+        font-family: "BMJUA", sans-serif !important;
+      }
     </style>
     <meta charset="UTF-8" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CAREERFIT</title>
     <title>Kakao Map</title>
+
     <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=7f1fb0477dddf2f220f3b6232d340377&libraries=services"></script>
     <!-- FontAwsome -->
     <link
@@ -22,7 +43,7 @@
     <script>
       const global = globalThis; // global 객체를 globalThis로 설정
     </script>
-    
+
     <!-- 카카오 -->
     <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
   </head>
