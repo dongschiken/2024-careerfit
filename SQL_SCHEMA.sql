@@ -370,9 +370,8 @@ ALTER TABLE meal ADD INDEX (user_id);
 ALTER TABLE reply
 MODIFY parent_reply_id INT NULL;
 
-ALTER TABLE `meal_streak` ADD CONSTRAINT `PK_MEAL_STREAK` PRIMARY KEY (
-	`meal_streak_id`
-);
+ALTER TABLE meal_streak
+MODIFY meal_streak_id INT AUTO_INCREMENT PRIMARY KEY;
 
 ALTER TABLE `meal_streak` ADD CONSTRAINT `FK_user_TO_meal_streak_1` FOREIGN KEY (
 	`user_id`
@@ -380,3 +379,4 @@ ALTER TABLE `meal_streak` ADD CONSTRAINT `FK_user_TO_meal_streak_1` FOREIGN KEY 
 REFERENCES `user` (
 	`user_id`
 );
+

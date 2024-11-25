@@ -8,7 +8,7 @@
 		VALUES (#{userId}, #{date}, #{type}, #{img}, #{mealTime}, #{content}, #{fullness})
 	</insert>
 	
-	<select id="countMealRecord" parameterType="MealRecord">
+	<select id="countMealRecord" parameterType="MealRecord" resultType="int">
 		SELECT COUNT(*) FROM meal_record
 		WHERE date = #{date} and user_id = #{userId} and type = #{type}
 	</select>
@@ -74,5 +74,86 @@
 		GROUP BY 
 		    br.date, br.weight, br.skeletal_muscle, br.body_fat	
 	</select>
+	
+	<select id="countMealStreak" parameterType="MealRecord" resultType="int">
+		SELECT COUNT(*) 
+		FROM meal_streak
+		WHERE DATE = #{date} AND user_id = #{userId}
+	</select>
+	
+	<insert id="insertMealStreak" parameterType="map">
+    	INSERT INTO meal_streak (user_id, streak, morning, lunch, dinner, date)
+	    VALUES ( #{mealRecord.userId}, #{streak},
+	        <choose>
+	            <when test="mealRecord.type == '아침'">
+	                1
+	            </when>
+	            <otherwise>
+	                0
+	            </otherwise>
+	        </choose>,
+	        <choose>
+	            <when test="mealRecord.type == '점심'">
+	                1
+	            </when>
+	            <otherwise>
+	                0
+	            </otherwise>
+	        </choose>,
+	        <choose>
+	            <when test="mealRecord.type == '저녁'">
+	                1
+	            </when>
+	            <otherwise>
+	                0
+	            </otherwise>
+	        </choose>,
+	        #{mealRecord.date} )
+	</insert>
+
+	
+	<update id="updateMealStreak" parameterType="MealRecord">
+    	UPDATE meal_streak
+	    <set>
+	        <choose>
+	            <when test="type == '아침'">
+	                morning = 1
+	            </when>
+	            <when test="type == '점심'">
+	                lunch = 1
+	            </when>
+	            <when test="type == '저녁'">
+	                dinner = 1
+	            </when>
+	        </choose>
+	    </set>
+	    WHERE user_id = #{userId} AND date = #{date}
+	</update>
+	
+	
+	<select id="selectBeforeMealStreak" parameterType="MealRecord" resultType="Integer">
+	    SELECT streak
+	    FROM meal_streak
+	    WHERE user_id = #{userId}
+	      AND date = 
+	      <if test="date != null">
+	          DATE_SUB(#{date}, INTERVAL 1 DAY)
+	      </if>
+	</select>
+	
+		
+	<select id="selectMealStreakByUserId" parameterType="MealRecord" resultType="Integer">
+	    SELECT streak
+	    FROM meal_streak
+	    WHERE user_id = #{userId}
+	      AND date = #{date}
+	</select>
+	
+	<select id="selectTotalStreakByUserId" parameterType="int" resultType="int">
+		SELECT COUNT(*)
+		FROM meal_streak
+		WHERE user_id = #{userId}
+	</select>
+	
 	
 </mapper>

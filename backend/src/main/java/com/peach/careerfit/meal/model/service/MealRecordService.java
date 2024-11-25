@@ -13,4 +13,6 @@ public interface MealRecordService {
 	int removeMealRecord(int mealRecordId);
 	List<MealRecord> getMealRecordByUserId(MealRecord mealRecord);
 	List<MealBodyRecordResponse> getMealBodyRecordByUser(int userId);
+	Integer getMealStreakByUser(MealRecord mealRecord);
+	int getMealStreakTotal(int userId);
 }
