@@ -62,7 +62,7 @@ public class GptServiceImpl implements GptService {
 		}
 		GptRequest gptRequest = new GptRequest(MODEL, stringBuffer.toString(), "system");
 		gptChatHistoryService.saveMessage(redisKey, "system :" + createSystemMessage(
-				stringBuffer.toString() + "현재 날짜는" + LocalDateTime.now().plusDays(1).toString() + "야"));
+				stringBuffer.toString() + "현재 날짜는" + LocalDateTime.now().toString() + "야"));
 		GptResponse response = restTemplate.postForObject(API_URL, gptRequest, GptResponse.class);
 		return response;
 	}
