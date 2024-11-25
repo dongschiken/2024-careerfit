@@ -441,17 +441,41 @@ export default {
       }, 1000);
     },
     generateRandomNickname() {
-      const adjectives = ["활기찬", "강인한", "열정적인", "빠른", "힘찬"];
-      const nouns = ["챔피언", "트레이너", "에이스", "런너", "리프터"];
-      const randomAdjective =
-        adjectives[Math.floor(Math.random() * adjectives.length)];
-      const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
-      const randomNumber = Math.floor(Math.random() * 1000);
-      const generatedNickname = `${randomAdjective}${randomNoun}${randomNumber}`;
+ const firstWords = [
+   "열정가득", "기분좋은", "건강한", "힘찬", "활력넘치는", "튼튼한", "파워풀한", "에너지가득",
+   "단단한", "생기있는", "도전하는", "균형잡힌", "끈기있는", "의지만만", "활기찬", "탄탄한",
+   "자유로운", "꾸준한", "당당한", "빛나는", "열심히하는", "밝은", "즐거운", "리듬있는"
+ ];
 
-      this.formData.nickname = generatedNickname;
-      this.checkNicknameDuplicate();
-    },
+ const secondWords = [
+   "러너", "홈트러", "요가인", "운동가", "필라테스", "헬서", "플랭커", "점퍼",
+   "등산러", "수영인", "테니스인", "클라이머", "복서", "마라토너", "선수", "트레이너",
+   "피트니서", "스포터", "웨이터", "스트레처", "요기", "댄서", "운동인", "헬창"
+ ];
+
+ // 운동/건강 관련 이모지 대폭 추가
+ const emojis = [
+   "💪", "🏃", "🏋️‍♂️", "🧘‍♀️", "🤸‍♂️", "⛹️‍♂️", "🏊‍♂️", "🚴‍♂️",
+   "🎯", "⚡", "🔥", "✨", "🥊", "⛰️", "🎾", "🏸",
+   "🏃‍♀️", "🧘", "🤾", "🤼", "🤸", "🏋️", "🚵‍♂️", "⚽",
+   "🎱", "🎳", "🏉", "🥏", "🏓", "🪃", "🎽", "🌟",
+   "💫", "⭐", "🌈", "🌙", "☀️", "♥️", "💜", "💙"
+ ];
+
+ const randomFirst = firstWords[Math.floor(Math.random() * firstWords.length)];
+ const randomSecond = secondWords[Math.floor(Math.random() * secondWords.length)];
+ const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+
+ const patterns = [
+   `${randomEmoji}${randomFirst}${randomSecond}`,
+   `${randomFirst}${randomSecond}${randomEmoji}`,
+   `${randomEmoji}${randomFirst}${randomSecond}${randomEmoji}` // 이모지 2개 사용 패턴 추가
+ ];
+
+ const selectedPattern = patterns[Math.floor(Math.random() * patterns.length)];
+ this.formData.nickname = selectedPattern;
+ this.checkNicknameDuplicate();
+},
     async checkNicknameDuplicate() {
       // 오류 메시지 초기화
       this.errors.nickname = "";
