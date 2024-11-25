@@ -133,8 +133,9 @@ public class MealRecordRestController {
 			Map<String, Object> response = new HashMap<>();
 			response.put("streak", streak);
 			response.put("totalStreak", totalStreak);
+			System.out.println("response"+response);
 			if(streak == null) {
-				return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+				return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 			}
 			return ResponseEntity.status(HttpStatus.OK).body(response);
 		} catch (Exception e) {

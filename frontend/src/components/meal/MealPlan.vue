@@ -865,15 +865,16 @@ const getMealStreak = async () => {
     const response = await api.get(
       "/api/meal/record/streak" + `/${formattedDate}`
     );
-    if (response.status === 204) {
+    if (response.status === 202) {
       todayStreak.value = 0;
       totalStreak.value = response.data.totalStreak;
+      console.log(response);
     } else if (response.status === 200) {
       todayStreak.value = response.data.streak;
       totalStreak.value = response.data.totalStreak;
     }
   } catch (error) {
-    console.log(error);
+    alert("오류발생");
   }
 };
 
@@ -1502,10 +1503,10 @@ div:nth-child(3) > div.meal-type > div.meal-type-square {
 .less-mord-square > div > div.count-2,
 .less-mord-square > div > div.count-3,
 .less-mord-square > div > div.count-4 {
-  min-width: 1px;
-  max-width: 1vw;
-  min-height: 1vw;
-  max-height: 1vw;
+  min-width: 16px;
+  max-width: 16px;
+  min-height: 16px;
+  max-height: 16px;
   border-radius: 4px;
 }
 .less-mord-square > div > .less-more {
