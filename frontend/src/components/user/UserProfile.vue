@@ -156,7 +156,7 @@
                     <template v-if="message.userId !== currentUser.userId">
                       <div class="profile">
                         <img
-                          :src="message.profileUrl || defaultProfile"
+                          :src="getProfileImage(message.profileUrl)"
                           alt="프로필 이미지"
                           class="profile-img"
                         />
@@ -220,7 +220,6 @@ const selectedChatRoomId = ref(null);
 const selectedChatRoom = ref(null);
 const showChatRoomModal = ref(false);
 const newChatMessage = ref("");
-const defaultProfile = "/img/default-profile.png";
 const currentUser = ref(null);
 const messageContainer = ref(null);
 const isScrolledToBottom = ref(true);
@@ -228,6 +227,15 @@ const isScrolledToBottom = ref(true);
 const profileImage = computed(() => {
   return userStore.profileUrl || "/default-profile.png";
 });
+
+
+// 기본 이미지 경로 설정
+const defaultProfile = new URL("@/assets/img/default-profile.png", import.meta.url).href;
+
+// 프로필 이미지 확인 함수
+const getProfileImage = (profileUrl) => {
+  return profileUrl && profileUrl.trim() !== "" ? profileUrl : defaultProfile;
+};
 
 const initializeProfile = async () => {
   try {
@@ -390,7 +398,7 @@ const sendMessage = async () => {
     userId: currentUser.value.userId,
     message: newChatMessage.value.trim(),
     userNickname: currentUser.value.nickname,
-    userProfile: currentUser.value.profileUrl || defaultProfile,
+    userProfile: currentUser.value.profileUrl || '../../assets/img'+defaultProfile,
   };
 
   try {
