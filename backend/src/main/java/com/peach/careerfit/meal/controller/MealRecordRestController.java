@@ -1,7 +1,9 @@
 package com.peach.careerfit.meal.controller;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -73,9 +75,9 @@ public class MealRecordRestController {
 	public ResponseEntity<Object> registMealRecord(@RequestPart(name="mealRecord") MealRecord mealRecord, // JSON 데이터를 Java 객체로 받음
 												   @RequestPart(name="file", required = false) MultipartFile file,
 												   HttpServletRequest request) {
-		if(!mealRecord.getDate().equals(LocalDate.now().toString())) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-		}
+//		if(!mealRecord.getDate().equals(LocalDate.now().toString())) {
+//			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+//		}
 		ResponseTokenUser user = jwtResponse.extractTokenUser(request);
 		mealRecord.setUserId(user.getUserId());
 		
@@ -116,5 +118,28 @@ public class MealRecordRestController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원 식단기록 삭제 처리중 문제가 발생했습니다.");				
 		}
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).body("회원 식단기록이 삭제되었습니다.");
+	}
+	
+	@GetMapping("/streak/{date}")
+	public ResponseEntity<Object> getMealStreak(@PathVariable("date") String date, HttpServletRequest request) {
+		try {
+			ResponseTokenUser user = jwtResponse.extractTokenUser(request);
+			MealRecord mealRecord = MealRecord.builder().
+										userId(user.getUserId())
+										.date(date)
+										.build();
+			Integer streak = mealRecordService.getMealStreakByUser(mealRecord);
+			int totalStreak = mealRecordService.getMealStreakTotal(user.getUserId());
+			Map<String, Object> response = new HashMap<>();
+			response.put("streak", streak);
+			response.put("totalStreak", totalStreak);
+			if(streak == null) {
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+			}
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 }

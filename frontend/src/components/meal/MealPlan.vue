@@ -9,9 +9,19 @@
     </div>
     <div class="my-days-container">
       <div class="my-days-layout">
-        <div>
-          <img src="@/assets/img/task_check.png" />
-          <h3>식단 스트릭</h3>
+        <div class="my-days-header-group">
+          <div class="img-title-group">
+            <img src="@/assets/img/task_check.png" />
+            <h3>식단 스트릭</h3>
+          </div>
+          <div class="now-streak">
+            현재 {{ todayStreak }} 일
+            <img
+              v-if="todayStreak >= 2"
+              src="@/assets/img/fire-icon.png"
+              alt="불꽃 아이콘"
+            />
+          </div>
         </div>
         <div class="my-days">
           <div
@@ -43,7 +53,7 @@
           </div>
         </div>
         <div class="stric-footer">
-          <div>최대 연속 몇일 달성</div>
+          <div>2024년 식단 {{ totalStreak }}일 인증</div>
           <div class="less-mord-square">
             <div>
               <div class="less-more">1회</div>
@@ -130,7 +140,7 @@
         </div>
 
         <!-- 데이터가 있는 경우 -->
-        <div v-else>
+        <div class="data-meal-records" v-else>
           <div class="meal-card" v-for="(meal, index) in meals" :key="index">
             <div class="meal-type">
               <div>{{ meal.type }}</div>
@@ -197,6 +207,12 @@
                     <div>체중 {{ bodyRecords.weight }}kg</div>
                     <div>골격근량 {{ bodyRecords.skeletalMuscle }}kg</div>
                     <div>체지방률 {{ bodyRecords.bodyFat }}%</div>
+                    <div>
+                      <img
+                        class="body-record-img"
+                        :src="`http://localhost:8080/uploads/${bodyRecords.img}`"
+                      />
+                    </div>
                   </div>
                 </div>
                 <div class="condition-group">
@@ -472,6 +488,9 @@ const serverMyDays = ref([]);
 const router = useRouter();
 const days = ["일", "월", "화", "수", "목", "금", "토"];
 const myUser = ref({});
+const myStreak = ref({});
+const todayStreak = ref("");
+const totalStreak = ref("");
 // 기본 식단 데이터
 const meals = ref({});
 
@@ -580,7 +599,6 @@ const mealRecordRegist = async () => {
   if (selectedFile.value) {
     formData.append("file", selectedFile.value);
   }
-  myRecord();
   try {
     // 서버로 데이터 전송
     const response = await api.post("/api/meal/record", formData, {
@@ -591,6 +609,7 @@ const mealRecordRegist = async () => {
       alert("식단 기록 등록완료!");
       await myRecord();
       await getMealRecord();
+      await getMealStreak();
       closeMealModal();
     } else {
       alert("식단 기록 등록에 실패했습니다.");
@@ -599,10 +618,9 @@ const mealRecordRegist = async () => {
     if (error.response.status === 400) {
       alert("오늘이 아니면 식단을 등록할 수 없습니다.");
     } else if (error.response.status === 500) {
-      alert("동일한 식단 기록이 존재합니다.");
+      alert(mealRecord.type + "에 동일한 식단 기록이 존재합니다.");
       console.error("등록 오류:", error);
     }
-    closeMealModal();
   }
 };
 
@@ -837,6 +855,28 @@ const myRecord = async () => {
   }
 };
 
+const getMealStreak = async () => {
+  const currentDate = selectedDate.value || new Date();
+  const formattedDate = `${currentDate.getFullYear()}-${String(
+    currentDate.getMonth() + 1
+  ).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}`;
+
+  try {
+    const response = await api.get(
+      "/api/meal/record/streak" + `/${formattedDate}`
+    );
+    if (response.status === 204) {
+      todayStreak.value = 0;
+      totalStreak.value = response.data.totalStreak;
+    } else if (response.status === 200) {
+      todayStreak.value = response.data.streak;
+      totalStreak.value = response.data.totalStreak;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const getDayClass = (count, weight, skeletalMuscle, bodyFat) => {
   switch (count) {
     case 0:
@@ -864,11 +904,12 @@ const getUser = async () => {
   }
 };
 
-onMounted(() => {
+onMounted(async () => {
   const today = new Date(); // 오늘 날짜
-  myRecord();
-  selectDate(today);
-  getUser();
+  await myRecord();
+  await selectDate(today);
+  await getUser();
+  await getMealStreak();
 });
 </script>
 <style scoped>
@@ -1398,7 +1439,7 @@ div:nth-child(3) > div.meal-type > div.meal-type-square {
   margin-left: 52px;
   margin-top: 50px;
 }
-.my-days-layout > div > img {
+.my-days-layout > div > div > img {
   width: 25px;
   height: 25px;
 }
@@ -1407,7 +1448,7 @@ div:nth-child(3) > div.meal-type > div.meal-type-square {
   align-items: center;
   margin-bottom: 20px;
 }
-.my-days-layout > div > h3 {
+.my-days-layout > div > div > h3 {
   margin-left: 15px;
 }
 .tooltip {
@@ -1595,7 +1636,6 @@ div > div > div:nth-child(2) > p > b {
   display: flex;
   flex-direction: column;
   margin-left: 30px;
-  margin-top: 20px;
   min-height: 400px;
 }
 .body-record-layout > div > div > img {
@@ -1649,14 +1689,12 @@ div.container > div.meal-records > div {
   text-align: center;
 }
 div > div > div.container > div.meal-records > div {
-  margin-top: 8px;
-  margin-left: 22px;
   min-height: 395px;
   max-height: 393px;
 }
 .condition-group {
   display: flex;
-  margin-top: 56px;
+  margin-top: 38px;
 }
 .condition-group > div > img {
   min-width: 57px !important;
@@ -1679,5 +1717,39 @@ div.detailed-body-record
   min-width: 45px !important;
   max-height: 50px !important;
   margin-left: 28px;
+}
+.body-record-img {
+  width: 130px;
+  height: 130px;
+  border-radius: 8px;
+}
+div > div > div.container > div.meal-records > .no-data-meal-records {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 5px;
+  min-width: 474px;
+}
+div > div > div.container > div.meal-records > .data-meal-records {
+  margin-top: 8px;
+  margin-left: 22px;
+}
+.img-title-group {
+  display: flex;
+}
+.my-days-layout > .my-days-header-group {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+.now-streak {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+}
+.now-streak > img {
+  width: 20px;
+  height: 20px;
+  margin-left: 10px;
 }
 </style>
