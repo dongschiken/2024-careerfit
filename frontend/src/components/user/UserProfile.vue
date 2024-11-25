@@ -363,19 +363,20 @@ const loadChatRoomMessages = async (chatRoomId) => {
 const formatChatListDate = (date) => {
   if (!date) return "시간 정보 없음";
 
-  // 서버 시간(UTC)을 한국 시간(UTC+9)으로 변환
-  const d = new Date(date);
-  const utc = d.getTime() + d.getTimezoneOffset() * 60000;
-  const KR_TIME_DIFF = 9 * 60 * 60000;
-  const kr_curr = new Date(utc + KR_TIME_DIFF);
+  // UTC → -9시간 변환
+  const utcDate = new Date(date); // 입력값을 UTC 시간으로 생성
+  const MINUS_NINE_HOURS = -9 * 60 * 60 * 1000; // -9시간 (밀리초)
+  const adjustedDate = new Date(utcDate.getTime() + MINUS_NINE_HOURS); // UTC - 9시간
 
-  const ampm = kr_curr.getHours() >= 12 ? "오후" : "오전";
-  let hours = kr_curr.getHours() % 12;
+  // 시간 포맷팅
+  const ampm = adjustedDate.getHours() >= 12 ? "오후" : "오전";
+  let hours = adjustedDate.getHours() % 12;
   hours = hours || 12; // 0시는 12시로 표시
-  const minutes = String(kr_curr.getMinutes()).padStart(2, "0");
+  const minutes = String(adjustedDate.getMinutes()).padStart(2, "0");
 
   return `${ampm} ${hours}:${minutes}`;
 };
+
 
 const sendMessage = async () => {
   if (!newChatMessage.value.trim() || !selectedChatRoomId.value) return;
