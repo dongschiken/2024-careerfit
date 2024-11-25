@@ -15,4 +15,6 @@ public interface BoardService {
 	ResponseBoard getBoardById(int boardId, int userId);
 	int setBoardDeleteStatus(int boardId);
 	int setBoard(Board board, List<MultipartFile> files);
+	List<ResponseBoard> getBoardViewRank();
+	List<ResponseBoard> getBoardReplyRank();
 }

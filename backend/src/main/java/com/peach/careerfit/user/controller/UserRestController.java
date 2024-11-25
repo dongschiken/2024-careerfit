@@ -276,25 +276,30 @@ public class UserRestController {
 	@GetMapping("/user/current")
 	public ResponseEntity<User> getCurrentUser(HttpServletRequest request) {
 	    // JWT 토큰에서 사용자 정보 추출
-	    String token = jwtUtils.getAccessToken(request);
-	    if (token == null) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-	    }
+		try {
+			 String token = jwtUtils.getAccessToken(request);
+			    if (token == null) {
+			        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+			    }
 
-	    // 토큰에서 userId 추출
-	    int userId = jwtUtils.getUserIdFromToken(token);
+			    // 토큰에서 userId 추출
+			    int userId = jwtUtils.getUserIdFromToken(token);
 
-	    // userId로 사용자 정보 조회
-	    User user = userService.getUserById(userId);
-
-	    // 사용자 정보가 없으면 NOT_FOUND 반환
-	    if (user == null) {
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-	    }
-
-	    // 사용자 정보 반환
-	    return ResponseEntity.ok(user);
+			    // userId로 사용자 정보 조회
+			    User user = userService.getUserById(userId);
+			    System.out.println(userId);
+			    System.out.println(user);
+			    // 사용자 정보가 없으면 NOT_FOUND 반환
+			    if (user == null) {
+			        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+			    }
+			    // 사용자 정보 반환
+			    return ResponseEntity.ok(user);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	   
 	}
-
 
 }

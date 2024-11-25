@@ -43,10 +43,12 @@
                   <i class="fas fa-edit"></i>
                   내가 쓴 게시물
                 </button>
-                <button class="menu-button">
-                  <i class="fas fa-utensils"></i>
-                  나의 식단
-                </button>
+                <RouterLink to="/meal">
+                  <button class="menu-button">
+                    <i class="fas fa-utensils"></i>
+                    나의 식단
+                  </button>
+                </RouterLink>
                 <button class="menu-button" @click="handleMyChats">
                   <i class="fas fa-comment"></i>
                   내 채팅
@@ -376,7 +378,6 @@ const formatChatListDate = (date) => {
 
   return `${ampm} ${hours}:${minutes}`;
 };
-
 
 const sendMessage = async () => {
   if (!newChatMessage.value.trim() || !selectedChatRoomId.value) return;

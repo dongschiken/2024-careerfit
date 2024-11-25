@@ -155,5 +155,21 @@
 		WHERE user_id = #{userId}
 	</select>
 	
+	<select id="selectTotalStreakRank" resultType="ResponseMealStreakRank">
+		<![CDATA[
+		SELECT user_id, nickname, email, record_count, ranked.rank
+		FROM (
+		    SELECT 
+		        u.user_id, 
+		        u.nickname, 
+		        u.email, 
+		        COUNT(*) AS record_count,
+		        ROW_NUMBER() OVER (ORDER BY COUNT(*) DESC) AS `rank`
+		    FROM meal_streak ms JOIN user u ON u.user_id = ms.user_id
+		    GROUP BY u.user_id, u.nickname, u.email
+		) ranked
+		WHERE 'rank' <= 3;
+		]]>
+	</select>
 	
 </mapper>

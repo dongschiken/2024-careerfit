@@ -23,10 +23,25 @@
           </div>
         </div>
         <div class="ranking-container">
-          <div class="ranking-layout">
-            <div class="ranking-box">순위 1</div>
-            <div class="ranking-box">순위 2</div>
-            <div class="ranking-box">순위 3</div>
+          <div
+            class="ranking-layout"
+            v-for="mealStreak in mealStrakRank"
+            :key="mealStreak.rank"
+          >
+            <div class="ranking-box">
+              <img v-if="mealStreak.rank === 1" src="@/assets/img/gold.png" />
+              <img
+                v-else-if="mealStreak.rank === 2"
+                src="@/assets/img/silver.png"
+              />
+              <img v-else src="@/assets/img/bronze.png" />
+              <div>
+                <div class="user-nickname">{{ mealStreak.nickname }}님</div>
+                <div class="user-meal-streak">
+                  총 {{ mealStreak.recordCount }} 일 식단 기록 진행중 🔥
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <!-- AI 버튼을 클릭하면 모달을 여는 이벤트 연결 -->
@@ -76,89 +91,8 @@
         </div>
       </div>
       <div class="main-board-group">
-        <div class="comunity-group">
-          <div class="comunity-header">
-            <div class="comunity-header-text">
-              <router-link to="/board">커뮤니티</router-link>
-            </div>
-          </div>
-          <div v-for="n in 5" :key="n" class="main-board-content-group">
-            <div class="main-board-content-layout">
-              <div class="main-board-content-left">
-                <div class="profile-img">
-                  <img src="@/assets/img/snoopy.png" alt="" />
-                </div>
-                <div class="nickname">초대리</div>
-                <div class="material-icon">
-                  <img
-                    src="@/assets/img/edit_square_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
-                    alt=""
-                  />
-                </div>
-                <div class="date-time">6분 전</div>
-              </div>
-              <div class="main-board-content-right">
-                <div class="material-icon">
-                  <img
-                    src="@/assets/img/thumb_up_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
-                    alt=""
-                  />
-                  <div>24</div>
-                </div>
-                <div class="material-icon">
-                  <img
-                    src="@/assets/img/chat_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
-                    alt=""
-                  />
-                  <div>24</div>
-                </div>
-              </div>
-            </div>
-            <div class="contents">데이터 솔루션에 대해 들어보신분??</div>
-          </div>
-        </div>
-
-        <div class="comunity-group">
-          <div class="comunity-header">
-            <div class="comunity-header-text">
-              <router-link to="/board">커뮤니티</router-link>
-            </div>
-          </div>
-          <div v-for="n in 5" :key="n" class="main-board-content-group">
-            <div class="main-board-content-layout">
-              <div class="main-board-content-left">
-                <div class="profile-img">
-                  <img src="@/assets/img/snoopy.png" alt="" />
-                </div>
-                <div class="nickname">초대리</div>
-                <div class="material-icon">
-                  <img
-                    src="@/assets/img/edit_square_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
-                    alt=""
-                  />
-                </div>
-                <div class="date-time">6분 전</div>
-              </div>
-              <div class="main-board-content-right">
-                <div class="material-icon">
-                  <img
-                    src="@/assets/img/thumb_up_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
-                    alt=""
-                  />
-                  <div>24</div>
-                </div>
-                <div class="material-icon">
-                  <img
-                    src="@/assets/img/chat_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
-                    alt=""
-                  />
-                  <div>24</div>
-                </div>
-              </div>
-            </div>
-            <div class="contents">데이터 솔루션에 대해 들어보신분??</div>
-          </div>
-        </div>
+        <MainBoardLeft />
+        <MainBoardRight />
       </div>
       <!-- <div class="main-health-ranking-group">헬스장 랭킹</div> -->
     </div>
@@ -166,7 +100,7 @@
 </template>
 
 <script setup>
-import { ref, nextTick } from "vue";
+import { ref, nextTick, onMounted } from "vue";
 import api from "@/api/axiosInstance";
 import { marked } from "marked";
 import router from "@/router";
@@ -176,7 +110,12 @@ const messages = ref([]);
 const messageRefs = ref([]);
 const chatBody = ref(null);
 const isFirst = ref("true");
-// 모달 창 열기
+import MainBoardLeft from "./MainBoardLeft.vue";
+import MainBoardRight from "./MainBoardRight.vue";
+import ncapi from "@/api/noTokenAxiosInstance";
+
+const mealStrakRank = ref([]);
+
 const openChatbot = async () => {
   showModal.value = true;
   if (isFirst.value) {
@@ -304,317 +243,109 @@ const scrollToMessage = (index) => {
     chatBodyElement.scrollTop = targetMessage.offsetTop; // 메시지의 상단으로 스크롤 이동
   }
 };
+
+const getMealStreakRank = async () => {
+  try {
+    const response = await ncapi.get("/api/meal/record/streak/rank");
+    mealStrakRank.value = response.data;
+    console.log(mealStrakRank.value);
+  } catch (error) {
+    console.log(error);
+  }
+};
+onMounted(() => {
+  getMealStreakRank();
+});
 </script>
 
 <style lang="css" scoped>
 @import url(@/assets/css/main-content.css);
-.comunity-header-text > a {
-  text-decoration: none;
-  color: black;
+.ranking-container {
+  margin-top: 130px;
 }
-/* 모달 스타일 */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1001;
+.ranking-box > img {
+  min-width: 70px;
+  max-width: 70px;
+  min-height: 70px;
+  max-height: 70px;
 }
-
-.modal-content {
-  display: flex;
-  background: white;
-  flex-direction: column; /* 세로 방향 정렬 */
-  justify-content: space-between; /* 위아래 공간 분배 */
-  padding: 20px;
-  width: 700px;
-  max-height: 700px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.chat-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.close-btn {
-  background: #e0e0e0; /* 밝은 회색 배경 */
-  border: 1px solid #bdbdbd; /* 테두리를 약간 더 진한 회색으로 */
-  border-radius: 50%; /* 원형 모양 */
-  font-size: 16px;
-  font-weight: bold;
-  width: 36px; /* 버튼 크기 */
-  height: 36px;
-  display: flex;
-  justify-content: center; /* 텍스트 중앙 정렬 */
-  align-items: center;
-  cursor: pointer;
-  color: #757575; /* 텍스트 색상을 진한 회색으로 */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 은은한 그림자 */
-  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* 부드러운 효과 */
-}
-
-.close-btn:hover {
-  background: #bdbdbd; /* 호버 시 더 진한 회색 */
-  color: #ffffff; /* 텍스트를 흰색으로 */
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* 그림자 강조 */
-  transform: scale(1.05); /* 살짝 확대 */
-}
-
-.close-btn:active {
-  background: #9e9e9e; /* 클릭 시 어두운 회색 */
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.15); /* 그림자 줄임 */
-  transform: scale(0.95); /* 클릭감 */
-}
-.chat-body {
-  flex-grow: 1; /* 중간 영역 확장 */
-  max-height: 800px;
-  overflow-y: auto;
-  margin-bottom: 20px;
-}
-
-.chat-message {
-  padding: 8px;
-  margin-bottom: 5px;
-}
-
-.chat-message .message {
-  font-size: 14px;
-}
-
-.chat-input {
-  display: flex;
-  justify-content: space-between; /* 입력창과 버튼 간격 유지 */
-  align-items: center; /* 수직 정렬 */
-  margin-top: auto; /* 위쪽 여백 자동 */
-  padding-top: 10px;
-  border-top: 1px solid #ccc; /* 상단 경계선 */
-}
-
-.chat-input input {
-  width: 80%;
-  padding: 10px;
-  font-size: 14px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-}
-
-.chat-input button {
-  padding: 10px 15px;
-  font-size: 14px;
-  cursor: pointer;
-  border: none;
-  background-color: #ff7f32;
-  color: white;
-  border-radius: 4px;
-}
-
-.chat-message {
-  margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 8px;
-  max-width: 70%;
-  font-size: 14px;
-}
-
-.chat-message.user {
-  background-color: #d1f7c4; /* 사용자 메시지의 배경색 */
-  align-self: flex-end; /* 오른쪽 정렬 */
-  text-align: right;
-}
-
-.chat-message.assistance {
-  background-color: #f1f0f0; /* 봇 메시지의 배경색 */
-  align-self: flex-start; /* 왼쪽 정렬 */
-  text-align: left;
-}
-.chat-body {
+.ranking-box {
   display: flex;
   flex-direction: column;
-  gap: 10px; /* 메시지 간 간격 */
+  margin-top: 10px;
 }
-
-.chat-message {
-  white-space: pre-wrap; /* 줄바꿈을 유지 */
-  margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 8px;
-  font-size: 14px;
-  background-color: #f1f0f0; /* 봇 메시지 배경색 */
-}
-
-.chat-message.user {
-  background-color: #d1f7c4; /* 사용자 메시지 배경색 */
-  text-align: right;
-}
-
-.chat-message.assistance {
-  background-color: #f1f0f0;
-  align-self: flex-start;
-  color: #000000;
-}
-.mascot-follow {
-  position: absolute;
-  width: 100px; /* 마스코트 크기 */
-  height: 100px;
-  pointer-events: none; /* 마우스 이벤트가 마스코트에 걸리지 않도록 설정 */
-  transition: transform 0.1s ease-out; /* 부드러운 움직임 효과 */
-}
-
-.mascot-img {
-  width: 100%; /* 이미지 크기 조정 */
-  height: auto;
-  border-radius: 50%; /* 둥근 모양 (선택사항) */
-}
-.mascot-container {
-  position: relative;
-  width: 150px;
-  height: 150px;
-}
-
-.mascot {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.eye {
-  position: relative;
-  width: 40px;
-  height: 40px;
-  background: white;
-  border-radius: 50%;
+.user-meal-streak {
   display: flex;
   justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  border: 2px solid black;
-}
-
-.pupil {
-  position: absolute;
-  width: 15px;
-  height: 15px;
-  background: black;
-  border-radius: 50%;
-  transition: transform 0.05s linear; /* 부드럽게 이동 */
-}
-.main-intro-group {
-  display: flex;
-}
-.mascot > img {
   min-width: 300px;
+  max-width: 300px;
 }
-.mascot {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-.mascot-container {
-  width: 500px;
-  display: flex;
-  align-items: end;
-  height: 500px;
-}
-.mascot img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-/* 왼쪽 눈 */
-.left-eye {
-  position: absolute;
-  margin-top: 23px;
-  margin-left: 9px;
-  top: 45%; /* 이미지에서 눈의 세로 위치 */
-  left: 32%; /* 이미지에서 눈의 가로 위치 */
-  width: 42px;
-  height: 42px;
-  background: white;
-  border-radius: 50%;
+.user-nickname {
   display: flex;
   justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  border: 2px solid black;
-  z-index: 100;
-}
-/* 오른쪽 눈 */
-.right-eye {
-  position: absolute;
-  margin-top: 23px;
-  margin-right: 10px;
-  top: 45%; /* 이미지에서 눈의 세로 위치 */
-  left: 57%; /* 이미지에서 눈의 가로 위치 */
-  width: 42px;
-  height: 42px;
-  background: white;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  border: 2px solid black;
-}
-/* 눈동자 */
-.pupil {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  background: black;
-  border-radius: 50%;
-  transition: transform 0.05s linear;
+  min-width: 300px;
+  max-width: 300px;
 }
 
-.main-intro-group {
+.ranking-container {
+  margin-top: 50px; /* 전체 상단 여백 */
   display: flex;
-  flex-direction: column; /* 세로로 배치 */
-  align-items: center; /* 중앙 정렬 */
-}
-.main-intro-container {
-  display: flex;
-  gap: 80px;
-}
-.main-intro {
-  margin-left: 3rem;
-}
-.ranking-layout {
-  display: flex;
-  flex-direction: column; /* 세로로 배치 */
-  gap: 10px; /* 박스 간 간격 */
-  align-items: center; /* 중앙 정렬 */
-  min-width: 500px;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px; /* 랭킹 박스 간 간격 */
 }
 
 .ranking-box {
-  width: 90%; /* 적절한 너비 조정 */
-  height: 100px; /* 각 박스 높이 */
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
-  display: flex; /* 내부 텍스트 중앙 정렬 */
-  justify-content: center; /* 가로 중앙 정렬 */
-  align-items: center; /* 세로 중앙 정렬 */
-  font-size: 16px; /* 텍스트 크기 */
-  color: #333; /* 텍스트 색상 */
+  display: flex;
+  flex-direction: row; /* 수평 레이아웃 */
+  align-items: center;
+  border-radius: 15px; /* 둥근 모서리 */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
+  padding: 20px 30px;
+  width: 90%; /* 화면 폭에 맞춤 */
+  max-width: 600px; /* 최대 크기 제한 */
+  transition: transform 0.3s, box-shadow 0.3s; /* 호버 효과 */
 }
-.main-board-group {
-  margin-top: 200px;
+
+.ranking-box:hover {
+  transform: translateY(-5px); /* 호버 시 박스 위로 살짝 이동 */
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2); /* 호버 시 그림자 강조 */
 }
-p.message {
-  margin-left: 15px;
+
+.ranking-box img {
+  width: 80px;
+  height: 80px;
+  margin-right: 20px; /* 이미지와 텍스트 간격 */
+  border-radius: 50%; /* 이미지 둥글게 */
+  border: 3px solid #fff; /* 이미지 외곽 테두리 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 이미지 그림자 */
+}
+
+.ranking-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1; /* 텍스트 영역 확장 */
+}
+
+.ranking-info .user-nickname {
+  font-size: 20px; /* 닉네임 폰트 크기 */
+  font-weight: bold;
+  color: #333; /* 진한 텍스트 색상 */
+  margin-bottom: 5px;
+}
+
+.ranking-info .user-meal-streak {
+  font-size: 16px; /* 기록 텍스트 크기 */
+  color: #555; /* 중간 밝기의 색상 */
+}
+
+.ranking-rank {
+  font-size: 36px; /* 랭킹 숫자 크기 */
+  font-weight: bold;
+  color: #ff9800; /* 강조 색상 */
+  text-align: center;
+  align-self: flex-end; /* 숫자를 박스 끝으로 정렬 */
+  min-width: 60px; /* 최소 공간 확보 */
 }
 </style>

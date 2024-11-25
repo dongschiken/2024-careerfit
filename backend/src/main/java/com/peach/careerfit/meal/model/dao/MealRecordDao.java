@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.peach.careerfit.meal.model.dto.MealBodyRecordResponse;
 import com.peach.careerfit.meal.model.dto.MealRecord;
+import com.peach.careerfit.meal.model.dto.ResponseMealStreakRank;
 
 @Mapper
 public interface MealRecordDao {
@@ -22,4 +23,5 @@ public interface MealRecordDao {
 	Integer selectBeforeMealStreak(MealRecord mealRecord);
 	Integer selectMealStreakByUserId(MealRecord mealRecord);
 	int selectTotalStreakByUserId(int userId);
+	List<ResponseMealStreakRank> selectTotalStreakRank();
 }
