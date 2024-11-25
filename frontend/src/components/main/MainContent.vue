@@ -36,7 +36,10 @@
               />
               <img v-else src="@/assets/img/bronze.png" />
               <div>
-                <div class="user-nickname">{{ mealStreak.nickname }}님</div>
+                <div class="user-nickname">
+                  <b>{{ mealStreak.nickname }}</b
+                  >&nbsp;님
+                </div>
                 <div class="user-meal-streak">
                   총 {{ mealStreak.recordCount }} 일 식단 기록 진행중 🔥
                 </div>
@@ -125,7 +128,6 @@ const openChatbot = async () => {
       messages.value.push({ role: "assistance", content: botMessage });
     } catch (error) {
       console.error("Error sending message:", error);
-      ``;
     }
     isFirst.value = false;
   }
@@ -347,5 +349,22 @@ onMounted(() => {
   text-align: center;
   align-self: flex-end; /* 숫자를 박스 끝으로 정렬 */
   min-width: 60px; /* 최소 공간 확보 */
+}
+div.main-intro-container > div.main-intro > div:nth-child(1) > h2 {
+  font-size: 30px;
+}
+.main-intro-small {
+  font-size: 23px;
+}
+#chatbot > svg > text {
+  padding-bottom: 5px;
+}
+.user-nickname {
+  font-size: 25px;
+}
+.user-meal-streak {
+  margin-top: 5px;
+  margin-left: 8px;
+  font-size: 20px;
 }
 </style>

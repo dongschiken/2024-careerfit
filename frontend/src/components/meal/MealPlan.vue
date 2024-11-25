@@ -457,7 +457,6 @@
                     placeholder="체중이 늘었다."
                     v-model="additionalcontent"
                   ></textarea>
-                  {{ additionalcontent }}
                 </div>
                 <div class="body-modal-button-group">
                   <button @click="closeBodyModal" class="close-button">
@@ -597,7 +596,6 @@ const openChatbot = async () => {
       messages.value.push({ role: "assistance", content: botMessage });
     } catch (error) {
       console.error("Error sending message:", error);
-      ``;
     }
     isFirst.value = false;
   }
@@ -1311,6 +1309,8 @@ div.container > div.meal-records > div {
   text-align: center;
   min-width: 440px;
   max-width: 440px;
+  min-height: 83px;
+  max-height: 83px;
 }
 
 .tabs {
@@ -2003,5 +2003,14 @@ div > div > div.container > div.meal-records > .data-meal-records {
   background-color: #f1f0f0;
   align-self: flex-start;
   color: #000000;
+}
+.less-more {
+  display: flex;
+  align-items: center;
+}
+.body-less-mord {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

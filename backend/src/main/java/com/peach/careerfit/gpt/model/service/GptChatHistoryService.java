@@ -28,7 +28,6 @@ public class GptChatHistoryService {
         // 메시지 추가
         redisTemplate.opsForList().rightPush(key, message);
         Long size = redisTemplate.opsForList().size(key);
-        System.out.println(size);
         if (size != null && size > MAX_HISTORY) {
             redisTemplate.opsForList().trim(key, 0, MAX_HISTORY);
         }
@@ -41,7 +40,6 @@ public class GptChatHistoryService {
      */
     public void removeAllMessages(String userId) {
     	String key = "gpt_chat_history:" + userId;
-    	System.out.println(key);
     	redisTemplate.delete(key);
     }
     

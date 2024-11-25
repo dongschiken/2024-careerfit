@@ -41,7 +41,7 @@
                 src="@/assets/img/thumb_up_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png"
                 alt=""
               />
-              <div>24</div>
+              <div>0</div>
             </div>
             <div class="material-icon">
               <img src="@/assets/img/view.png" alt="" />
@@ -232,6 +232,19 @@ div.main-container
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* 약간의 그림자 */
   border-radius: 15px; /* 둥근 모서리 */
   padding: 25px;
+}
+.comunity-header-text > a {
+  font-size: 25px;
+}
+.contents {
+  font-size: 20px;
+}
+
+div.main-board-content-left > div.profile-img > div {
+  margin-left: 0px;
+}
+.nickname {
+  margin-left: 10px;
 }
 a {
   text-decoration: none;
