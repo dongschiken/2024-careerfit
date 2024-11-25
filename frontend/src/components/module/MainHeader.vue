@@ -54,6 +54,9 @@
 import { useUserStore } from "@/stores/userStore";
 import { RouterLink } from "vue-router";
 import { computed } from "vue";
+import KakaoAuthService from "@/services/kakaoAuthService";
+import axios from '@/api/noTokenAxiosInstance';
+import api from '@/api/axiosInstance';
 
 export default {
   name: "MainHeader",
@@ -61,16 +64,43 @@ export default {
     RouterLink,
   },
   setup() {
-    const userStore = useUserStore();
+
     const isLoggedIn = computed(() => {
       const token = sessionStorage.getItem("accessToken");
-      return token !== null; // 토큰이 존재하면 로그인된 상태
+      return token !== null;
     });
 
     const handleLogout = async () => {
-      await userStore.clearUser();
-      window.location.reload(); // 로그아웃 후 페이지 새로고침
+      try {
+        // Access Token과 Refresh Token 가져오기
+        const accessToken = sessionStorage.getItem("accessToken");
+        const refreshToken = sessionStorage.getItem("refreshToken");
+
+        if (!accessToken) {
+          alert("로그인된 상태가 아닙니다.");
+          return;
+        }
+
+        // 백엔드로 로그아웃 요청
+        await api.delete("/api/logout", {
+          data: {
+            accessToken: `Bearer ${accessToken}`, // "Bearer " 접두사 포함
+            refreshToken: refreshToken || null, // RefreshToken은 Optional
+          },
+        });
+
+        // 로그아웃 성공 시, 스토리지에서 토큰 삭제
+        sessionStorage.removeItem("accessToken");
+        sessionStorage.removeItem("refreshToken");
+
+        alert("로그아웃되었습니다.");
+        window.location.href = "/"; // 메인 페이지로 이동
+      } catch (error) {
+        console.error("로그아웃 실패:", error);
+        alert("로그아웃에 실패했습니다. 다시 시도해주세요.");
+      }
     };
+
 
     return {
       isLoggedIn,

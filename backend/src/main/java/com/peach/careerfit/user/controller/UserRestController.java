@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Map;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.peach.careerfit.auth.model.dto.TokenRequest;
@@ -27,39 +30,78 @@ import com.peach.careerfit.user.model.dto.ResponseTokenUser;
 import com.peach.careerfit.user.model.dto.User;
 import com.peach.careerfit.user.model.service.UserService;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:3000")
 public class UserRestController {
 
-	private final UserService userService;
-	private final RefreshTokenService refreshTokenService;
-	private final JwtUtils jwtUtils;
-	private final JwtResponse jwtResponse;
-	public UserRestController(UserService userService, RefreshTokenService refreshTokenService, JwtUtils jwtUtils, JwtResponse jwtResponse) {
-		this.userService = userService;
-		this.refreshTokenService = refreshTokenService;
-		this.jwtUtils = jwtUtils;
-		this.jwtResponse = jwtResponse;
-	}
-	
-	// 로그아웃
-	@DeleteMapping("/logout")
-	public ResponseEntity<Object> doLogout(@RequestBody TokenRequest tokenRequest) {
-		String refreshToken = tokenRequest.getRefreshToken();
-		System.out.println("refreshToken : " + refreshToken);
-	    String email = jwtUtils.getUserEmail(refreshToken);
-	    System.out.println(email);
-	    if (email == null) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
-	    }
-	    refreshTokenService.deleteRefreshToken(email);
-	    return ResponseEntity.ok().body("Logged out successfully");
-	}
+    private final UserService userService;
+    private final RefreshTokenService refreshTokenService;
+    private final JwtUtils jwtUtils;
+    private final JwtResponse jwtResponse;
+    private final RestTemplate restTemplate;
+
+    public UserRestController(UserService userService, RefreshTokenService refreshTokenService, JwtUtils jwtUtils, JwtResponse jwtResponse, RestTemplate restTemplate) {
+        this.userService = userService;
+        this.refreshTokenService = refreshTokenService;
+        this.jwtUtils = jwtUtils;
+        this.jwtResponse = jwtResponse;
+        this.restTemplate = restTemplate;
+    }
+
+    // 로그아웃
+    @DeleteMapping("/logout")
+    public ResponseEntity<Object> doLogout(@RequestBody TokenRequest tokenRequest) {
+        String accessToken = tokenRequest.getAccessToken();
+        String refreshToken = tokenRequest.getRefreshToken();
+        System.out.println(accessToken);
+        System.out.println(refreshToken);
+        // Access Token이 비어 있는 경우
+        if (accessToken == null || accessToken.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Access Token is missing");
+        }
+
+        // Access Token에서 Bearer 제거
+        if (accessToken.startsWith("Bearer ")) {
+            accessToken = accessToken.substring(7);
+        }
+
+        try {
+            if (jwtUtils.isKakaoToken(accessToken)) {
+            	System.out.println("카카오 로그아웃");
+                // 카카오 로그아웃 처리
+                HttpHeaders headers = new HttpHeaders();
+                headers.set("Authorization", "Bearer " + accessToken);
+
+                HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+                restTemplate.postForEntity("https://kapi.kakao.com/v1/user/logout", requestEntity, String.class);
+
+                return ResponseEntity.ok("Kakao logout successful");
+            } else {
+            	System.out.println("웹 로그아웃");
+                // 일반 JWT 로그아웃 처리
+                if (refreshToken == null || refreshToken.isEmpty()) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Refresh Token is missing");
+                }
+
+                // Refresh Token에서 사용자 이메일 추출
+                String email = jwtUtils.getUserEmail(refreshToken);
+                if (email == null) {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+                }
+
+                // Refresh Token 삭제
+                refreshTokenService.deleteRefreshToken(email);
+                return ResponseEntity.ok("JWT logout successful");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Logout failed");
+        }
+    }
+
 	
 	// 회원가입
 	@PostMapping("/join")

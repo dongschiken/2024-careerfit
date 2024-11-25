@@ -28,33 +28,31 @@ public class JwtFilter extends OncePerRequestFilter {
 
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-		// Authorization 헤더에서 JWT 토큰을 추출
-		String token = jwtUtils.getAccessToken(request);
-		try {
-			if (token != null && jwtUtils.validateToken(token)) {
-				// 토큰이 유효한지 검사
-				// JWT가 유효한 경우, 토큰에서 사용자 정보를 추출
-				String userEmail = jwtUtils.getUserEmail(token);
-				String role = jwtUtils.getRole(token);
-				// 사용자 정보를 CustomUserDetails 객체로 설정
-				User user = new User();
-				user.setEmail(userEmail);
-				user.setRole(role); // 사용자 역할 설정 (예: ROLE_USER)
-				CustomUserDetails customUserDetails = new CustomUserDetails(user);
+	   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+	            throws ServletException, IOException {
+	        String token = jwtUtils.getAccessToken(request);
 
-				// Authentication 객체를 생성하여 SecurityContext에 설정
-				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
-				SecurityContextHolder.getContext().setAuthentication(authentication);
-			}
-			// 다음 필터로 요청을 전달
-			filterChain.doFilter(request, response);
-		} catch (ExpiredJwtException e) {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 반환
-			response.getWriter().write("{\"error\": \"Access token expired\"}");
-		} catch (Exception e) {
-			response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403 반환
-			response.getWriter().write("{\"error\": \"Invalid token\"}");
-		}
-	}
+	        try {
+	            if (token != null && !jwtUtils.isKakaoToken(token) && jwtUtils.validateToken(token)) {
+	                String userEmail = jwtUtils.getUserEmail(token);
+	                String role = jwtUtils.getRole(token);
+
+	                User user = new User();
+	                user.setEmail(userEmail);
+	                user.setRole(role);
+
+	                CustomUserDetails customUserDetails = new CustomUserDetails(user);
+	                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+	                        customUserDetails, null, customUserDetails.getAuthorities());
+	                SecurityContextHolder.getContext().setAuthentication(authentication);
+	            }
+	            filterChain.doFilter(request, response);
+	        } catch (ExpiredJwtException e) {
+	            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+	            response.getWriter().write("{\"error\": \"Access token expired\"}");
+	        } catch (Exception e) {
+	            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+	            response.getWriter().write("{\"error\": \"Invalid token\"}");
+	        }
+	    }
 }
