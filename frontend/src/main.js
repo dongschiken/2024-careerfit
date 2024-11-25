@@ -23,3 +23,5 @@ function storeTokens(accessToken, refreshToken) {
   sessionStorage.setItem("accessToken", accessToken); // 세션 스토리지에 Access Token 저장
   document.cookie = `refreshToken=${refreshToken}; path=/; HttpOnly`; // 쿠키에 Refresh Token 저장
 }
+
+window.Kakao.init('3e511c8f07b3069625cd72c4f4505ecf'); // 실제 JavaScript 키로 교체

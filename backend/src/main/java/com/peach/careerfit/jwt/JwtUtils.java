@@ -151,5 +151,21 @@ public class JwtUtils {
                    .signWith(secretKey)
                    .compact();
     }
+    
+    public boolean isKakaoToken(String token) {
+    	   // 토큰이 null 또는 비어 있으면 카카오 토큰 아님
+        if (token == null || token.isEmpty()) {
+            return false;
+        }
+
+        // 카카오 토큰은 JWT와 달리 점(.)이 포함되지 않음
+        if (!token.contains(".")) {
+            return true;
+        }
+        
+        // 일반 JWT는 두 개의 점(.)을 포함
+        String[] parts = token.split("\\.");
+        return parts.length != 3; // 점(.)의 개수가 3이 아니면 카카오 토큰
+    }
 }
 

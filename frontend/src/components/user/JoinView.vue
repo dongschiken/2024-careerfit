@@ -282,6 +282,7 @@ export default {
       verificationMessage: "",
       timer: 0,
       timerInterval: null,
+      
     };
   },
   computed: {
@@ -602,6 +603,16 @@ export default {
 
       return isValid;
     },
+
+
+    // 카카오 로그인
+    handleKakaoLogin() {
+  const kakaoClientId = "YOUR_KAKAO_REST_API_KEY"; // 카카오 REST API 키
+  const redirectUri = "http://localhost:3000/kakao/callback"; // Redirect URI
+  const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${kakaoClientId}&redirect_uri=${redirectUri}&response_type=code`;
+  window.location.href = kakaoAuthUrl; // 카카오 로그인 페이지로 이동
+},
+
   },
 };
 </script>
