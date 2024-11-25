@@ -113,35 +113,41 @@
 	</select>
 
 	<select id="getMyChatRooms" resultType="ChatRoom">
-    SELECT DISTINCT
-        cr.chat_room_id AS chatRoomId,
-        cr.title,
-        cr.created_at AS createdAt,
-        cr.updated_at AS updatedAt,
-        cr.last_at AS lastAt,
-        cr.user_nickname AS userNickname,
-        cr.user_profile AS userProfile,
-        (
-            SELECT message
-            FROM chat_history ch
-            WHERE ch.chat_room_id = cr.chat_room_id
-            ORDER BY ch.send_date DESC
-            LIMIT 1
-        ) AS lastMessage,
-        (
-            SELECT COUNT(*)
-            FROM chat_history ch
-            WHERE ch.chat_room_id = cr.chat_room_id
-            AND ch.send_date > IFNULL((
-                SELECT cru.last_read_at
-                FROM chat_room_user cru
-                WHERE cru.chat_room_id = cr.chat_room_id
-                AND cru.user_id = #{userId}
-            ), '1970-01-01')
-        ) AS unreadCount
-    FROM chat_room cr
-    LEFT JOIN chat_room_user cru ON cr.chat_room_id = cru.chat_room_id
-    WHERE cru.user_id = #{userId}
-    ORDER BY cr.last_at DESC
-</select>
+		SELECT DISTINCT
+		cr.chat_room_id AS chatRoomId,
+		cr.title,
+		cr.created_at AS createdAt,
+		cr.updated_at AS updatedAt,
+		cr.last_at AS lastAt,
+		cr.user_nickname AS userNickname,
+		cr.user_profile AS userProfile,
+		(
+		SELECT message
+		FROM chat_history ch
+		WHERE ch.chat_room_id = cr.chat_room_id
+		ORDER BY ch.send_date DESC
+		LIMIT 1
+		) AS lastMessage,
+		(
+		SELECT COUNT(*)
+		FROM chat_history ch
+		WHERE ch.chat_room_id = cr.chat_room_id
+		AND ch.send_date > IFNULL((
+		SELECT cru.last_read_at
+		FROM chat_room_user cru
+		WHERE cru.chat_room_id = cr.chat_room_id
+		AND cru.user_id = #{userId}
+		), '1970-01-01')
+		) AS unreadCount
+		FROM chat_room cr
+		LEFT JOIN chat_room_user cru ON cr.chat_room_id = cru.chat_room_id
+		WHERE cru.user_id = #{userId}
+		ORDER BY cr.last_at DESC
+	</select>
+	
+	 <update id="updateLastReadAt">
+        UPDATE chat_room_user
+        SET last_read_at = NOW()
+        WHERE chat_room_id = #{chatRoomId} AND user_id = #{userId}
+    </update>
 </mapper>
