@@ -1,252 +1,208 @@
-<div align=center>
+<div align="center">
   <img width="300" alt="우리 로고 네모나게 기" src="">
-  <h2> 퇴근후 바쁜 직장인들을 위한 식단관리, 채팅 을 한곳에서 모두 할 수 있는곳!! </h2>
-<br>
-<br>
-  <br>
-  <br>
-  <strong>CAREERFIT</strong>은 온라인 어플리케이션으로
-  <br>
-  회원들에게 AI 식단관리 기능과, 채팅을 통해 다양한 사람들과 만날 수 있는 기능을 제공해주는 서비스입니다.
-  <br>
-  <br>
-
-</div>
-
-<br>
-<br>
-<br>
-<div align=left>
-
-# 메인화면
-
-## careerfit 마스코드 "마이구민"
-
-<img src="docs/마이구민.png" width="600"/>
-
-## 메인 페이지
-
-### 마이구민 아이트래킹
-
-  <table>
-    <tr>
-      <img src="docs/main-eye-tracking.gif" width="600" alt="select between template and custom"/>
-    </tr>
-  </table>
-    <br/>
-    <br/>
-
-### 마이구민 식단 추천
-
-  <table>
-    <tr>
-      <td>
-        <img src="docs/main-ai-chat-boy.gif" width="600" alt="ai-chat-bot-img uploading"/>
-      </td>
-    </tr>
-    <tr>
-      <td>
-      <h4>ai 식단 추천</h4>
-        <div>careerfit의 마스코트 chatbot 마이구민을 통해 식단이나, 운동을 추천받을 수 있습니다.</div>
-      </td>
-    </tr>
-  </table>
-
-  <br/>
-  <br/>
-
-## 게시판
-
-  <table>
-    <tr>
-      <td>
-        <h3>게시글 등록</h3> 
-        <p>글작성 버튼을 클릭하고 들어가서 카테고리, 제목, 내용, 사진을 입력해서 등록 버튼을 누르면 성공적으로 게시글이 작성됩니다.</p></td>
-      <td>
-        <h3>게시물 검색</h3> 
-        <p>검색어를 통해 내용, 제목, 회원의 닉네임을 통해 게시글을 검색합니다. 최신순, 조회순, 댓글순 등으로 조회할 수 있습니다.</p>
-      </td>
-    </tr>
-       <tr>
-      <td><img src="docs/board-write-board.gif"/></td>
-      <td><img src="docs/board-search-board.gif"></td>
-    <tr>
-    <tr>
-        <td>
-            <h3>게시물 상세</h3>
-            <p>게시물 상세화면으로 들어가서 게시물에 대한 내용을 보여줍니다. 만약 회원 본인이 작성한 게시물일 경우 수정, 삭제가 가능합니다.</p>
-        </td>
-    </tr>
-    <tr>
-      <td><img src="docs/earn-first.gif"/></td>
-    <tr>
-  </table>
-
-  <table>
-    <tr>
-      <td><strong>쿠폰을 커스터마이징한 경우 사용자가 설정한 스탬프 위치와 순서에 맞게</strong> 스탬프가 찍힙니다.</td>
-    </tr>
-    <tr>
-      <td><img src="docs/earn-stamp-1.gif" width="800" alt="earn stamp"/></td>
-    </tr>
-  </table>
-
-  <table>
-    <tr>
-      <td>적립하고자 하는 스탬프의 개수가 쿠폰 최대 스탬프 개수를 넘어가면 새 쿠폰을 발급하여 스탬프를 적립합니다.</td>
-    </tr>
-    <tr>
-      <td><img src="docs/earn-stamp-2.gif" width="800" alt="earn stamp"/></td>
-    </tr>
-  </table>
-
-  <br/>
-  <br/>
-
-## 카페 관리
-
-### 카페 정보 입력
-
-  <table>
-    <tr>
-      <td>
-        <p>카페의 상세 정보를 입력할 수 있습니다.</p>
-      </td>
-    </tr>
-    <tr>
-      <td><img src="docs/cafe-info.gif"/></td>
-    <tr>
-  </table>
-  <br/>
-  <br/>
-
-### 고객 관리
-
-  <table>
-    <tr>
-      <td>
-        <h3>고객 목록 필터링</h3>
-        <p>스탬프 크러쉬 서비스 가입(회원) / 미가입(임시), 최근 방문순, 리워드 순 등 필터링이 가능합니다.</p>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <img src="docs/customer-filter.gif" width="800"/>
-      </td>
-    </tr>
-  </table>
-
-  <br/>
-  <br/>
-  <br/>
-
-# 고객 모드
-
-## 보유 쿠폰 조회 기능
-
-  <table>
-    <tr>
-      <td width="300">
-        <h3>쿠폰 접기/펼치기</h3> 
-        <p>다수의 쿠폰이 존재할 때 쿠폰을 모아서 볼 수도 있고, 펼쳐서 볼 수도 있습니다.</p>
-      </td>
-      <td width="300">
-        <h3>쿠폰 & 카페 상세</h3> 
-        <p>쿠폰을 터치/클릭하여 해당 쿠폰을 발급한 카페에 대한 정보를 확인할 수 있습니다.</p>
-      </td>
-    </tr>
-    <tr>
-      <td align="center"><img src="docs/coupon-list.gif" width="250"/></td>
-      <td align="center"><img src="docs/coupon-info.gif" width="250"/></td>
-    </tr>
-    <tr>
-      <td width="300">
-        <h3>즐겨찾기 등록/해제</h3> 
-        <p>쿠폰 오른쪽 위의 별모양 아이콘을 눌러 카페 즐겨찾기 등록/해제할 수 있습니다.</p>
-      </td>
-      <td width="300">
-        <h3>즐겨찾기 모아보기</h3> 
-        <p>즐겨찾기한 쿠폰을 확인할 수 있습니다.</p>
-      </td>
-    </tr>
-    <tr>
-      <td align="center"><img src="docs/fav-toggle.gif" width="250"/></td>
-      <td align="center"><img src="docs/fav-toggle-1.gif" width="250"/></td>
-    </tr>
-    <tr>
-      <td>
-        <h3>마이 페이지</h3>
-        <p>마이 페이지에서 서비스 사용 내역 조회 및 회원 탈퇴 등의 기능을 제공합니다.</p>
-      </td>
-      <td>
-        <h3>스탬프 적립 내역</h3>
-        <p>스탬프를 적립한 카페와 스탬프 적립 개수, 적립 일자를 확인할 수 있습니다.</p>
-      </td>
-    </tr>
-    <tr>
-      <td align="center"><img src="docs/my-page.png" width="250"></td>
-      <td align="center"><img src="docs/earn-record.png" width="250"></td>
-    </tr>
-    <tr>
-      <td>
-        <h3>리워드 페이지</h3>
-        <p>보유한 리워드를 확인할 수 있는 페이지입니다.</p>
-      </td>
-    </tr>
-    <tr>
-      <td align="center"><img src="docs/my-reward.png" width="250"></td>
-    </tr>
-  </table>
-  
-  <br/>
-  <br/>
-  <br/>
-
+  <h1>CAREERFIT</h1>
+  <p>퇴근 후 바쁜 직장인들을 위한 <strong>식단 관리</strong>와 <strong>채팅</strong>, 모두 한곳에서!</p>
+  <p>
+    <strong>CAREERFIT</strong>은 온라인 어플리케이션으로,
+    <br>
+    회원들에게 AI 식단관리 기능과 채팅 기능을 제공하여
+    <br>
+    다양한 사람들과 소통할 수 있도록 지원합니다.
+  </p>
 </div>
 
 ---
 
-## 팀원 소개
+## 메인 화면
+
+### CAREERFIT 마스코트 "마이구민"
+
+<div align="start">
+  <img src="docs/마이구민.png" width="400" alt="마이구민 이미지"/>
+</div>
+
+---
+
+### 마이구민 아이트래킹
+
+<div align="start">
+  <img src="docs/main-eye-tracking.gif" width="600" alt="아이트래킹 기능"/>
+</div>
+
+### 마이구민의 식단 추천
+<div align="start">
+  <h4>AI 식단 추천</h4>
+  <p>CAREERFIT의 마스코트 Chatbot <strong>마이구민</strong>을 통해 식단과 운동을 추천받을 수 있습니다.</p>
+  <img src="docs/main-ai-chat-boy.gif" width="600">
+</div>
+
+
+<br>
+<br>
+<br>
+<br>
+
+## 게시판 기능
 
 <table>
   <tr>
-    <th style="text-align:center;">Backend</th>
-    <th style="text-align:center;">Backend</th>
-  </tr>
-  <tr>
-    <td style="text-align:center;">
-      <img src="" alt="여기에 우리 프로필 이미지" width="425px">
+    <td align="center" width="50%">
+      <h4>게시글 등록</h4>
+      <p>카테고리, 제목, 내용, 사진을 입력해 게시글을 등록할 수 있습니다.</p>
+      <img src="docs/board-write-board.gif" width="300">
     </td>
-    <td style="text-align:center;">
-      <img src="" alt="여기에 우리 프로필 이미지" width="425px">
-    </td>
-  </tr>
-  <tr>
-    <td style="text-align:center;" width="425px">
-      <a href="https://github.com/dongschiken">dongs</a> ✨
-    </td>
-    <td style="text-align:center;" width="425px">
-      <a href="https://github.com/KOOMINSEOK9">민석</a> 🐿️
-    </td>
-  </tr>
-  <tr>
-    <td style="text-align:center;" width="425px">팀원들이 본 동영은</td>
-    <td style="text-align:center;" width="425px">팀원들이 본 민석은</td>
-  </tr>
-  <tr>
-    <td>
-      안녕
-      <br>
-      하이
-    </td>
-    <td>
-      안녕
-      <br>
-      하이
+    <td align="center" width="50%">
+      <h4>게시물 검색</h4>
+      <p>내용, 제목, 닉네임을 검색하거나 최신순, 조회순으로 정렬할 수 있습니다.</p>
+      <img src="docs/board-search-board.gif" width="300">
     </td>
   </tr>
 </table>
 
-### 클라이언트 요청 흐름도
+<div align="center">
+  <h4>게시물 상세</h4>
+  <p>게시물 상세 화면에서 내용을 확인하고, 본인이 작성한 게시물은 수정/삭제할 수 있습니다.</p>
+  <img src="docs/board-search-board.gif" width="600">
+</div>
 
-<img src="" alt="클라이언트 요청 흐름도">
+<br>
+<br>
+<br>
+<br>
+
+## 댓글 기능
+
+<div align="start">
+  <h4>댓글 작성</h4>
+  <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
+  <img src="docs/reply-write-reply.gif" width="600">
+</div>
+
+<div align="start">
+  <h4>대댓글 작성</h4>
+  <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
+  <img src="docs/repy-write-rereply.gif" width="600">
+</div>
+
+<br>
+<br>
+<br>
+<br>
+
+## 식단관리
+
+<div align="start">
+  <h4>ai 추천 식단 등록</h4>
+  <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
+  <img src="docs/ai-meal-recomand-regist.gif" width="600">
+</div>
+
+<div align="start">
+  <h4>식단 기록 등록</h4>
+  <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
+  <img src="docs/meal-record-regist.gif" width="600">
+</div>
+
+<div align="start">
+  <h4>신체 기록 등록</h4>
+  <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
+  <img src="docs/body-record-regist.gif" width="600">
+</div>
+
+<div align="start">
+  <h4>식단 스트릭</h4>
+  <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
+  <img src="docs/meal-streak.gif" width="600">
+</div>
+
+<br>
+<br>
+<br>
+<br>
+
+## 메이트
+
+<div align="start">
+  <h4>지도 검색</h4>
+  <p>검색을 통해 원하는 장소를 찾을 수 있고, 반경 1, 3, 5km를 정해서 운동시설을 찾을 수 있다. 
+    <br>
+    또한 헬스장, 클라이밍, 공원 등의 카테고리를 검색해서 정확하게 원하는 운동 시설을 검색가능하다.
+  </p>
+  <img src="docs/board-search-board.gif" width="600">
+</div>
+
+<div align="start">
+  <h4>마커 채팅방</h4>
+  <p>지도의 마커에 현재 운동시설에 등록되어 있는 채팅방 목록을 볼 수 있다.</p>
+  <img src="docs/board-search-board.gif" width="600">
+</div>
+
+<div align="start">
+  <h4>채팅방 만들기</h4>
+  <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
+  <img src="docs/board-search-board.gif" width="600">
+</div>
+
+<div align="start">
+  <h4>여러명의 유저와 채팅하기</h4>
+  <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
+  <img src="docs/board-search-board.gif" width="600">
+</div>
+
+<br>
+<br>
+<br>
+<br>
+
+## 마이페이지
+
+<br>
+<br>
+<br>
+<br>
+
+## 팀원 소개
+
+<div align="center">
+  <table>
+    <tr>
+      <th align="center" width="50%">Backend</th>
+      <th align="center" width="50%">Backend</th>
+    </tr>
+    <tr>
+      <td align="center">
+        <img src="" alt="동영 프로필 이미지" width="200px">
+        <br>
+        <a href="https://github.com/dongschiken">dongs</a> ✨
+      </td>
+      <td align="center">
+        <img src="" alt="민석 프로필 이미지" width="200px">
+        <br>
+        <a href="https://github.com/KOOMINSEOK9">민석</a> 🐿️
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
+        <ul>
+          <li>🫀 책임감 있고 팀에 주인의식을 가지는 기획자</li>
+          <li>⭐️ 고객 중심의 비즈니스 전문가</li>
+          <li>👩🏻‍💻 학습속도가 빠르고 기본기가 탄탄합니다.</li>
+        </ul>
+      </td>
+      <td align="center">
+        <ul>
+          <li>👀 다양한 영역에 대한 통찰력과 이해력</li>
+          <li>😎 맡은 일을 책임감 있게 해냅니다.</li>
+          <li>🧑‍💻 기술 도입에 신중하며 합리적인 판단을 합니다.</li>
+        </ul>
+      </td>
+    </tr>
+  </table>
+</div>
+
+
+## 클라이언트 요청 흐름도
+
+<div align="center">
+  <img src="docs/client-flowchart.png" alt="클라이언트 요청 흐름도" width="600">
+</div>
