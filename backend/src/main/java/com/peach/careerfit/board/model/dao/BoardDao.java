@@ -23,4 +23,6 @@ public interface BoardDao {
 	int selectBoardsCount(BoardSearch boardSearch);
 	Integer getViewCount(int boardId);
 	int updateViewCount(@Param("boardId") int boardId, @Param("viewCount") int viewCount);
+	List<ResponseBoard> selectBoardViewRank();
+	List<ResponseBoard> selectBoardReplyRank();
 }

@@ -120,4 +120,32 @@ public class BoardRestController {
 		return ResponseEntity.status(HttpStatus.CREATED).body("리소스가 성공적으로 수정되었습니다.");
 	}
 
+	@GetMapping("/view-rank") 
+	public ResponseEntity<Object> getBoardViewRank() {
+		try {
+			List<ResponseBoard> response = boardService.getBoardViewRank();
+			if(response.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+			}else {
+				return ResponseEntity.status(HttpStatus.OK).body(response);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	@GetMapping("/reply-rank") 
+	public ResponseEntity<Object> getBoardReplyRank() {
+		try {
+			List<ResponseBoard> response = boardService.getBoardReplyRank();
+			if(response.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+			}else {
+				return ResponseEntity.status(HttpStatus.OK).body(response);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
 }

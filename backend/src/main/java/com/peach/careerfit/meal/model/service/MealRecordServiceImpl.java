@@ -10,6 +10,7 @@ import com.peach.careerfit.component.FileStorageComponent;
 import com.peach.careerfit.meal.model.dao.MealRecordDao;
 import com.peach.careerfit.meal.model.dto.MealBodyRecordResponse;
 import com.peach.careerfit.meal.model.dto.MealRecord;
+import com.peach.careerfit.meal.model.dto.ResponseMealStreakRank;
 
 @Service
 public class MealRecordServiceImpl implements MealRecordService {
@@ -76,6 +77,11 @@ public class MealRecordServiceImpl implements MealRecordService {
 	@Override
 	public int getMealStreakTotal(int userId) {
 		return mealRecordDao.selectTotalStreakByUserId(userId);
+	}
+
+	@Override
+	public List<ResponseMealStreakRank> getMealStreakRank() {
+		return mealRecordDao.selectTotalStreakRank();
 	}
 
 }

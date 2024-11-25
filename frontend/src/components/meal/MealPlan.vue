@@ -128,7 +128,7 @@
             현재 등록된 식단이 없습니다. <br /><b>careerfit</b>의 마스코트
             마이구민과 함께 만들러 가실까요??
           </p>
-          <div @click="openMealModal()" class="button meal-button">
+          <div @click="openChatbot" class="button meal-button">
             <img
               src="@/assets/img/panel-open.png"
               alt="plus"
@@ -138,7 +138,6 @@
             <img src="@/assets/img/마이구민.png" class="monitor-weight-img" />
           </div>
         </div>
-
         <!-- 데이터가 있는 경우 -->
         <div class="data-meal-records" v-else>
           <div class="meal-card" v-for="(meal, index) in meals" :key="index">
@@ -148,6 +147,33 @@
             </div>
             <div class="meal-details">{{ meal.details }}</div>
             <div class="nutrients">{{ meal.nutrients }}</div>
+          </div>
+        </div>
+      </div>
+      <div v-if="showModal" class="modal-overlay" @click="closeChatbot">
+        <div class="modal-content" @click.stop>
+          <div class="chat-header">
+            <h3>careerfit 식단관리사 마이구민입니다!</h3>
+            <button @click="closeChatbot" class="close-btn">X</button>
+          </div>
+          <div class="chat-body" ref="chatBody">
+            <div
+              v-for="(message, index) in messages"
+              :key="index"
+              :class="['chat-message', message.role]"
+              :ref="setMessageRef(index)"
+            >
+              <p v-html="message.content" class="message"></p>
+            </div>
+          </div>
+          <div class="chat-input">
+            <input
+              v-model="userMessage"
+              @keyup.enter="sendMessage"
+              type="text"
+              placeholder="메시지를 입력하세요..."
+            />
+            <button @click="sendMessage">전송</button>
           </div>
         </div>
       </div>
@@ -260,15 +286,6 @@
                 src="@/assets/img/monitor_weight.png"
                 class="monitor-weight-img"
               />
-            </div>
-            <div @click="openMealModal()" class="button meal-button">
-              <img
-                src="@/assets/img/panel-open.png"
-                alt="plus"
-                class="button-icon"
-              />
-              <div class="record-text">마이구민과 대화</div>
-              <img src="@/assets/img/마이구민.png" class="monitor-weight-img" />
             </div>
             <div @click="goBoardWrite()" class="button meal-button">
               <img
@@ -461,12 +478,20 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUpdated } from "vue";
+import { ref, computed, onMounted, onUpdated, nextTick } from "vue";
 import { useRouter } from "vue-router";
 import MainHeader from "@/components/module/MainHeader.vue";
 import MainFooter from "@/components/module/MainFooter.vue";
 import api from "@/api/axiosInstance";
 import { errorMessages } from "vue/compiler-sfc";
+import { marked } from "marked";
+
+const showModal = ref(false);
+const userMessage = ref("");
+const messages = ref([]);
+const messageRefs = ref([]);
+const chatBody = ref(null);
+const isFirst = ref("true");
 
 const currentYear = ref(new Date().getFullYear());
 const currentMonth = ref(new Date().getMonth());
@@ -556,6 +581,82 @@ const bodyRecordRegist = async () => {
     } else {
       alert("신체 기록 등록 중 문제가 발생했습니다.");
     }
+  }
+};
+
+const closeChatbot = () => {
+  showModal.value = false;
+};
+
+const openChatbot = async () => {
+  showModal.value = true;
+  if (isFirst.value) {
+    try {
+      const response = await api.post("/api/gpt/first");
+      const botMessage = response.data.choices[0].message.content;
+      messages.value.push({ role: "assistance", content: botMessage });
+    } catch (error) {
+      console.error("Error sending message:", error);
+      ``;
+    }
+    isFirst.value = false;
+  }
+};
+
+// 현재 메시지의 상단으로 이동
+const scrollToMessageTop = (index) => {
+  if (messageRefs.value[index]) {
+    const targetMessage = messageRefs.value[index];
+    const chatBodyElement = chatBody.value;
+
+    if (chatBodyElement) {
+      chatBodyElement.scrollTop = targetMessage.offsetTop; // 현재 메시지 상단으로 이동
+    }
+  }
+};
+
+// 메시지 전송
+const sendMessage = async () => {
+  if (userMessage.value.trim() === "") return;
+  const userMessageData = { role: "user", content: userMessage.value };
+  userMessage.value = "";
+  messages.value.push(userMessageData);
+  try {
+    const response = await api.post("/api/gpt", {
+      message: userMessageData.content,
+    });
+    const botMessage = {
+      role: "assistance",
+      content: response.data.choices[0].message.content,
+    };
+    // 메시지 추가 후 스크롤 이동
+    await nextTick();
+    scrollToMessage(messages.value.length - 1); // 마지막 메시지
+    // GPT 응답 처리
+    const botMessageContent = response.data.choices[0].message.content; // content 가져오기
+    const formattedBotMessageContent = marked(botMessageContent);
+    messages.value.push({
+      role: "assistant",
+      content: formattedBotMessageContent,
+    });
+    // 메시지 추가 후 스크롤 이동
+    await nextTick();
+    scrollToMessage(messages.value.length - 1); // 마지막 메시지
+  } catch (error) {
+    console.error("Error sending message:", error);
+  }
+};
+
+const scrollToMessage = (index) => {
+  const chatBodyElement = chatBody.value; // 채팅 컨테이너
+  if (messageRefs.value[index] && chatBodyElement) {
+    const targetMessage = messageRefs.value[index];
+    chatBodyElement.scrollTop = targetMessage.offsetTop; // 메시지의 상단으로 스크롤 이동
+  }
+};
+const setMessageRef = (index) => (el) => {
+  if (el) {
+    messageRefs.value[index] = el;
   }
 };
 
@@ -738,7 +839,7 @@ const getMealRecord = async () => {
     }
   } catch (error) {
     console.log(error);
-    alert("날짜에 해당하는 데이터를 가져오는 중 문제가 발생했습니다.");
+    alert("로그인 정보가 없습니다.");
   }
 };
 
@@ -771,7 +872,7 @@ const selectDate = async (date) => {
     getMealRecord(nowDate);
   } catch (error) {
     console.log(error);
-    alert("날짜에 해당하는 데이터를 가져오는 중 문제가 발생했습니다.");
+    alert("로그인 정보가 없습니다.");
   }
 };
 
@@ -865,15 +966,16 @@ const getMealStreak = async () => {
     const response = await api.get(
       "/api/meal/record/streak" + `/${formattedDate}`
     );
-    if (response.status === 204) {
+    if (response.status === 202) {
       todayStreak.value = 0;
       totalStreak.value = response.data.totalStreak;
+      console.log(response);
     } else if (response.status === 200) {
       todayStreak.value = response.data.streak;
       totalStreak.value = response.data.totalStreak;
     }
   } catch (error) {
-    console.log(error);
+    alert("오류발생");
   }
 };
 
@@ -1502,10 +1604,10 @@ div:nth-child(3) > div.meal-type > div.meal-type-square {
 .less-mord-square > div > div.count-2,
 .less-mord-square > div > div.count-3,
 .less-mord-square > div > div.count-4 {
-  min-width: 1px;
-  max-width: 1vw;
-  min-height: 1vw;
-  max-height: 1vw;
+  min-width: 16px;
+  max-width: 16px;
+  min-height: 16px;
+  max-height: 16px;
   border-radius: 4px;
 }
 .less-mord-square > div > .less-more {
@@ -1751,5 +1853,155 @@ div > div > div.container > div.meal-records > .data-meal-records {
   width: 20px;
   height: 20px;
   margin-left: 10px;
+}
+
+/* 모달 스타일 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+}
+
+.modal-content {
+  display: flex;
+  background: white;
+  flex-direction: column; /* 세로 방향 정렬 */
+  justify-content: space-between; /* 위아래 공간 분배 */
+  padding: 20px;
+  width: 700px;
+  max-height: 700px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.close-btn {
+  background: #e0e0e0; /* 밝은 회색 배경 */
+  border: 1px solid #bdbdbd; /* 테두리를 약간 더 진한 회색으로 */
+  border-radius: 50%; /* 원형 모양 */
+  font-size: 16px;
+  font-weight: bold;
+  width: 36px; /* 버튼 크기 */
+  height: 36px;
+  display: flex;
+  justify-content: center; /* 텍스트 중앙 정렬 */
+  align-items: center;
+  cursor: pointer;
+  color: #757575; /* 텍스트 색상을 진한 회색으로 */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 은은한 그림자 */
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* 부드러운 효과 */
+}
+
+.close-btn:hover {
+  background: #bdbdbd; /* 호버 시 더 진한 회색 */
+  color: #ffffff; /* 텍스트를 흰색으로 */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* 그림자 강조 */
+  transform: scale(1.05); /* 살짝 확대 */
+}
+
+.close-btn:active {
+  background: #9e9e9e; /* 클릭 시 어두운 회색 */
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.15); /* 그림자 줄임 */
+  transform: scale(0.95); /* 클릭감 */
+}
+.chat-body {
+  flex-grow: 1; /* 중간 영역 확장 */
+  max-height: 800px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.chat-message {
+  padding: 8px;
+  margin-bottom: 5px;
+}
+
+.chat-message .message {
+  font-size: 14px;
+}
+
+.chat-input {
+  display: flex;
+  justify-content: space-between; /* 입력창과 버튼 간격 유지 */
+  align-items: center; /* 수직 정렬 */
+  margin-top: auto; /* 위쪽 여백 자동 */
+  padding-top: 10px;
+  border-top: 1px solid #ccc; /* 상단 경계선 */
+}
+
+.chat-input input {
+  width: 80%;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.chat-input button {
+  padding: 10px 15px;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  background-color: #ff7f32;
+  color: white;
+  border-radius: 4px;
+}
+
+.chat-message {
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  max-width: 70%;
+  font-size: 14px;
+}
+
+.chat-message.user {
+  background-color: #d1f7c4; /* 사용자 메시지의 배경색 */
+  align-self: flex-end; /* 오른쪽 정렬 */
+  text-align: right;
+}
+
+.chat-message.assistance {
+  background-color: #f1f0f0; /* 봇 메시지의 배경색 */
+  align-self: flex-start; /* 왼쪽 정렬 */
+  text-align: left;
+}
+.chat-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* 메시지 간 간격 */
+}
+
+.chat-message {
+  white-space: pre-wrap; /* 줄바꿈을 유지 */
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #f1f0f0; /* 봇 메시지 배경색 */
+}
+
+.chat-message.user {
+  background-color: #d1f7c4; /* 사용자 메시지 배경색 */
+  text-align: right;
+}
+
+.chat-message.assistance {
+  background-color: #f1f0f0;
+  align-self: flex-start;
+  color: #000000;
 }
 </style>

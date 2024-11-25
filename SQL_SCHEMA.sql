@@ -380,3 +380,7 @@ REFERENCES `user` (
 	`user_id`
 );
 
+ALTER TABLE chat_room_user
+ADD COLUMN last_read_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+SELECT CONVERT_TZ(last_at, '+00:00', '+09:00') AS last_at_kst FROM chat_room;
