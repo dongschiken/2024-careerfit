@@ -31,7 +31,7 @@ public class JwtFilter extends OncePerRequestFilter {
 	   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 	            throws ServletException, IOException {
 	        String token = jwtUtils.getAccessToken(request);
-
+	        System.out.println("토큰을 가져오나??" + token);
 	        try {
 	            if (token != null && !jwtUtils.isKakaoToken(token) && jwtUtils.validateToken(token)) {
 	                String userEmail = jwtUtils.getUserEmail(token);

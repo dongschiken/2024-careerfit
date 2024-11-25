@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.ibatis.io.ResolverUtil.Test;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -34,7 +35,7 @@ public class GptServiceImpl implements GptService {
 	private final GptChatHistoryService gptChatHistoryService;
 	private final MealDao mealDao;
 
-	public GptServiceImpl(GptDao gptDao, RestTemplate restTemplate, GptChatHistoryService gptChatHistoryService,
+	public GptServiceImpl(GptDao gptDao, @Qualifier("openapiRestTemplate") RestTemplate restTemplate, GptChatHistoryService gptChatHistoryService,
 			RegexComponent regexComponent, MealDao mealDao) {
 		this.restTemplate = restTemplate;
 		this.gptDao = gptDao;

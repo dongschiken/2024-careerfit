@@ -75,6 +75,9 @@
             <div class="chat-room-info">
               <div class="chat-room-header">
                 <p class="chat-room-title">{{ room.title }}</p>
+                <div v-if="room.unreadCount > 0" class="unread-count">
+                  {{ room.unreadCount }}
+                </div>
               </div>
               <div class="chat-room-details">
                 <img
@@ -86,8 +89,8 @@
                   {{ room.creatorNickname ? room.creatorNickname : "익명" }}
                 </p>
                 <p class="chat-room-last">
-    {{ room.lastAt ? formatDate(room.lastAt) : "시간 없음" }}
-  </p>
+                  {{ room.lastAt ? formatDate(room.lastAt) : "시간 없음" }}
+                </p>
               </div>
             </div>
           </li>
@@ -147,8 +150,8 @@
       </div>
     </div>
 
- <!-- 가상 메이트 미션 모달 -->
- <div
+    <!-- 가상 메이트 미션 모달 -->
+    <div
       v-if="showAiMissionModal"
       class="ai-modal-overlay"
       @click.self="closeAiMissionModal"
@@ -173,9 +176,9 @@
         <!-- 추천 미션 -->
         <h4>추천 미션</h4>
         <div class="ai-mission">
-  <i class="fas fa-flag mission-icon"></i>
-  <span>{{ aiMission }}</span>
-</div>
+          <i class="fas fa-flag mission-icon"></i>
+          <span>{{ aiMission }}</span>
+        </div>
 
         <!-- 모달 버튼 -->
         <button @click="completeMission" class="mission-complete-button">
@@ -209,16 +212,26 @@
               message.userId === currentUser.userId ? 'self' : 'other',
               {
                 'continuous-message':
-                  index < getMessagesForChatRoom(selectedChatRoomId).length - 1 &&
-                  message.userId === getMessagesForChatRoom(selectedChatRoomId)[index + 1].userId
-              }
+                  index <
+                    getMessagesForChatRoom(selectedChatRoomId).length - 1 &&
+                  message.userId ===
+                    getMessagesForChatRoom(selectedChatRoomId)[index + 1]
+                      .userId,
+              },
             ]"
           >
             <div class="message-group">
-              <div 
-                v-if="message.userId !== currentUser.userId && 
-                  !(index < getMessagesForChatRoom(selectedChatRoomId).length - 1 &&
-                    message.userId === getMessagesForChatRoom(selectedChatRoomId)[index + 1].userId)" 
+              <div
+                v-if="
+                  message.userId !== currentUser.userId &&
+                  !(
+                    index <
+                      getMessagesForChatRoom(selectedChatRoomId).length - 1 &&
+                    message.userId ===
+                      getMessagesForChatRoom(selectedChatRoomId)[index + 1]
+                        .userId
+                  )
+                "
                 class="profile"
               >
                 <img
@@ -228,10 +241,17 @@
                 />
               </div>
               <div class="message-content">
-                <span 
-                  v-if="message.userId !== currentUser.userId && 
-                    !(index < getMessagesForChatRoom(selectedChatRoomId).length - 1 &&
-                      message.userId === getMessagesForChatRoom(selectedChatRoomId)[index + 1].userId)" 
+                <span
+                  v-if="
+                    message.userId !== currentUser.userId &&
+                    !(
+                      index <
+                        getMessagesForChatRoom(selectedChatRoomId).length - 1 &&
+                      message.userId ===
+                        getMessagesForChatRoom(selectedChatRoomId)[index + 1]
+                          .userId
+                    )
+                  "
                   class="nickname"
                 >
                   {{ message.userNickname || "익명" }}
@@ -537,9 +557,9 @@ export default {
       this.newChatRoomTitle = "";
     },
     isContinuousMessage(index) {
-  const messages = this.getMessagesForChatRoom(this.selectedChatRoomId);
-  return index > 0 && messages[index - 1].userId === messages[index].userId;
-},
+      const messages = this.getMessagesForChatRoom(this.selectedChatRoomId);
+      return index > 0 && messages[index - 1].userId === messages[index].userId;
+    },
     async createChatRoom() {
       if (!this.newChatRoomTitle.trim()) {
         alert("채팅방 제목을 입력하세요.");
@@ -622,20 +642,22 @@ export default {
       const message = JSON.parse(payload.body);
       const chatRoomId = message.chatRoomId;
       if (!this.messages[chatRoomId]) {
-    this.messages[chatRoomId] = [];
-  }
-  this.messages[chatRoomId] = [message, ...this.messages[chatRoomId]];
+        this.messages[chatRoomId] = [];
+      }
+      this.messages[chatRoomId] = [message, ...this.messages[chatRoomId]];
 
-  // chatRoomsByPlace의 lastAt 업데이트
-  const placeId = this.selectedPlace?.id;
-  const chatRoom = this.chatRoomsByPlace[placeId]?.find(
-    (room) => room.chatRoomId === chatRoomId
-  );
-  if (chatRoom) {
-    const serverDate = new Date(message.sendDate);
-    const correctedDate = new Date(serverDate.getTime() + 9 * 60 * 60 * 1000); // UTC -> KST
-    chatRoom.lastAt = correctedDate.toISOString();
-  }
+      // chatRoomsByPlace의 lastAt 업데이트
+      const placeId = this.selectedPlace?.id;
+      const chatRoom = this.chatRoomsByPlace[placeId]?.find(
+        (room) => room.chatRoomId === chatRoomId
+      );
+      if (chatRoom) {
+        const serverDate = new Date(message.sendDate);
+        const correctedDate = new Date(
+          serverDate.getTime() + 9 * 60 * 60 * 1000
+        ); // UTC -> KST
+        chatRoom.lastAt = correctedDate.toISOString();
+      }
     },
     sendMessage() {
       if (!this.newChatMessage.trim() || !this.isConnected) return;
@@ -656,13 +678,13 @@ export default {
       );
 
       const now = new Date();
-  const placeId = this.selectedPlace.id;
-  const chatRoom = this.chatRoomsByPlace[placeId]?.find(
-    (room) => room.chatRoomId === this.selectedChatRoomId
-  );
-  if (chatRoom) {
-    chatRoom.lastAt = now.toISOString(); // 현재 시간을 갱신
-  }
+      const placeId = this.selectedPlace.id;
+      const chatRoom = this.chatRoomsByPlace[placeId]?.find(
+        (room) => room.chatRoomId === this.selectedChatRoomId
+      );
+      if (chatRoom) {
+        chatRoom.lastAt = now.toISOString(); // 현재 시간을 갱신
+      }
 
       this.newChatMessage = "";
     },
@@ -709,9 +731,8 @@ export default {
       }
 
       // 클라이밍 관련 키워드
-      if (placeName.includes("클라이밍") ||
-      placeName.includes("암벽") 
-    ) return "클라이밍";
+      if (placeName.includes("클라이밍") || placeName.includes("암벽"))
+        return "클라이밍";
 
       // 공원 관련 키워드
       if (placeName.includes("공원")) return "공원";
@@ -755,23 +776,21 @@ export default {
       return this.messages[chatRoomId] || [];
     },
     formatDate(date) {
-  if (!date) return "시간 없음";
+      if (!date) return "시간 없음";
 
-  const serverDate = new Date(date);
+      const serverDate = new Date(date);
 
-  // 9시간 감소 (서버 시간에서 9시간 이전으로 조정)
-  const correctedDate = new Date(serverDate.getTime() - 9 * 60 * 60 * 1000); // 9시간 빼기
+      // 9시간 감소 (서버 시간에서 9시간 이전으로 조정)
+      const correctedDate = new Date(serverDate.getTime() - 9 * 60 * 60 * 1000); // 9시간 빼기
 
-  // 원하는 포맷으로 시간 출력 (예: YYYY-MM-DD HH:mm)
-  return `${correctedDate.getFullYear()}-${
-    correctedDate.getMonth() + 1
-  }-${correctedDate.getDate()} ${correctedDate.getHours()}:${correctedDate
-    .getMinutes()
-    .toString()
-    .padStart(2, "0")}`;
-}
-
-
+      // 원하는 포맷으로 시간 출력 (예: YYYY-MM-DD HH:mm)
+      return `${correctedDate.getFullYear()}-${
+        correctedDate.getMonth() + 1
+      }-${correctedDate.getDate()} ${correctedDate.getHours()}:${correctedDate
+        .getMinutes()
+        .toString()
+        .padStart(2, "0")}`;
+    },
   },
 };
 </script>
@@ -807,7 +826,7 @@ export default {
 }
 
 .search-input:focus {
-  border-color: #FF7D29;
+  border-color: #ff7d29;
   box-shadow: 0 4px 12px rgba(255, 125, 41, 0.15);
   outline: none;
 }
@@ -817,7 +836,7 @@ export default {
   font-size: 16px;
   font-weight: 600;
   color: white;
-  background: linear-gradient(45deg, #FF7D29, #FFBF78);
+  background: linear-gradient(45deg, #ff7d29, #ffbf78);
   border: none;
   border-radius: 16px;
   cursor: pointer;
@@ -856,7 +875,7 @@ export default {
 }
 
 .radius-select:hover {
-  border-color: #FFBF78;
+  border-color: #ffbf78;
   background-color: #fff8f3;
 }
 
@@ -874,7 +893,7 @@ export default {
   font-size: 15px;
   font-weight: 600;
   color: white;
-  background: linear-gradient(45deg, #FF7D29, #FFBF78);
+  background: linear-gradient(45deg, #ff7d29, #ffbf78);
   border: none;
   border-radius: 12px;
   cursor: pointer;
@@ -891,7 +910,6 @@ export default {
   background: linear-gradient(45deg, #ff8a3d, #ffc686);
   transform: scale(1.05);
 }
-
 
 /* 지도 컨테이너 */
 .map-container {
@@ -990,7 +1008,7 @@ export default {
 }
 
 .chat-rooms::-webkit-scrollbar-thumb {
-  background: #FF7D29;
+  background: #ff7d29;
   border-radius: 10px;
 }
 
@@ -1008,7 +1026,7 @@ export default {
 .chat-room-item:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(255, 125, 41, 0.15);
-  border-color: #FFBF78;
+  border-color: #ffbf78;
 }
 
 .chat-room-info {
@@ -1049,7 +1067,7 @@ export default {
   margin-top: auto;
   font-weight: 600;
   color: white;
-  background: linear-gradient(45deg, #FF7D29, #FFBF78);
+  background: linear-gradient(45deg, #ff7d29, #ffbf78);
   border: none;
   border-radius: 16px;
   cursor: pointer;
@@ -1101,7 +1119,7 @@ export default {
 }
 
 .chat-room-input:focus {
-  border-color: #FF7D29;
+  border-color: #ff7d29;
   box-shadow: 0 0 0 3px rgba(255, 125, 41, 0.1);
   outline: none;
 }
@@ -1124,7 +1142,7 @@ export default {
 }
 
 .create-room-buttons .create-room-button {
-  background: linear-gradient(45deg, #FF7D29, #FFBF78);
+  background: linear-gradient(45deg, #ff7d29, #ffbf78);
   color: white;
   border: none;
   box-shadow: 0 4px 12px rgba(255, 125, 41, 0.2);
@@ -1132,8 +1150,8 @@ export default {
 
 .create-room-buttons .close-button {
   background: white;
-  color: #FF7D29;
-  border: 2px solid #FF7D29;
+  color: #ff7d29;
+  border: 2px solid #ff7d29;
 }
 
 .create-room-buttons button:hover {
@@ -1173,7 +1191,7 @@ export default {
 }
 
 .modal-buttons button:first-child {
-  background: linear-gradient(45deg, #FF7D29, #FFBF78);
+  background: linear-gradient(45deg, #ff7d29, #ffbf78);
   color: white;
   border: none;
   box-shadow: 0 4px 12px rgba(255, 125, 41, 0.2);
@@ -1181,8 +1199,8 @@ export default {
 
 .modal-buttons button:last-child {
   background: white;
-  color: #FF7D29;
-  border: 2px solid #FF7D29;
+  color: #ff7d29;
+  border: 2px solid #ff7d29;
 }
 
 .modal-buttons button:hover {
@@ -1275,7 +1293,7 @@ export default {
 /* 연속된 메시지의 말풍선 모서리 조정 */
 .message-wrapper.self .message-bubble {
   border-top-right-radius: 12px;
-  background: linear-gradient(45deg, #FF7D29, #FFBF78);
+  background: linear-gradient(45deg, #ff7d29, #ffbf78);
   color: white;
   border-top-right-radius: 0; /* 오른쪽 위 모서리만 뾰족하게 */
 }
@@ -1344,14 +1362,14 @@ export default {
 
 .chat-input input:focus {
   outline: none;
-  border-color: #FF7D29;
+  border-color: #ff7d29;
   background: white;
   box-shadow: 0 0 0 3px rgba(255, 125, 41, 0.1);
 }
 
 .chat-input button {
   padding: 12px 24px;
-  background: linear-gradient(45deg, #FF7D29, #FFBF78);
+  background: linear-gradient(45deg, #ff7d29, #ffbf78);
   color: white;
   border: none;
   border-radius: 20px;
@@ -1382,7 +1400,7 @@ export default {
 }
 
 .chat-messages::-webkit-scrollbar-thumb {
-  background: #FF7D29;
+  background: #ff7d29;
   border-radius: 10px;
 }
 
@@ -1479,7 +1497,6 @@ export default {
   }
 }
 
-
 /* AI 미션 모달 스타일 */
 .ai-modal-overlay {
   position: fixed;
@@ -1487,7 +1504,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.2));
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.2));
   backdrop-filter: blur(5px);
   display: flex;
   justify-content: center;
@@ -1501,7 +1518,7 @@ export default {
   border-radius: 24px;
   padding: 40px 30px;
   text-align: center;
-  box-shadow: 0 15px 35px rgba(50,50,93,0.1), 0 5px 15px rgba(0,0,0,0.07);
+  box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
   position: relative;
 }
 
@@ -1510,7 +1527,7 @@ export default {
   height: 120px;
   border-radius: 50%;
   border: 6px solid #fff;
-  box-shadow: 0 4px 12px rgba(255,125,41,0.3);
+  box-shadow: 0 4px 12px rgba(255, 125, 41, 0.3);
   object-fit: cover;
   position: absolute;
   top: -60px;
@@ -1544,7 +1561,7 @@ export default {
   color: #495057;
   line-height: 1.6;
   margin-bottom: 30px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
 /* 미션 섹션 */
@@ -1555,7 +1572,6 @@ export default {
   margin: 0 0 15px;
 }
 
-
 .ai-mission {
   background: linear-gradient(45deg, #ffa94d, #ffcb5a);
   color: #662d00;
@@ -1564,7 +1580,7 @@ export default {
   font-size: 1.3rem;
   font-weight: 600;
   margin-bottom: 30px;
-  box-shadow: 0 4px 12px rgba(255,169,77,0.3);
+  box-shadow: 0 4px 12px rgba(255, 169, 77, 0.3);
   position: relative;
   overflow: hidden;
   position: relative;
@@ -1653,7 +1669,7 @@ export default {
 .mission-complete-button {
   background: linear-gradient(45deg, #ff922b, #ffa04d);
   color: #fff;
-  box-shadow: 0 4px 12px rgba(255,146,43,0.3);
+  box-shadow: 0 4px 12px rgba(255, 146, 43, 0.3);
 }
 
 .ai-close-button {
@@ -1662,7 +1678,7 @@ export default {
 
 .mission-complete-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(255,146,43,0.35);
+  box-shadow: 0 6px 18px rgba(255, 146, 43, 0.35);
 }
 
 .ai-close-button:hover {
@@ -1691,7 +1707,7 @@ export default {
     width: 90%;
     padding: 60px 25px 35px;
   }
-  
+
   .ai-modal h3 {
     margin-top: 20px;
   }

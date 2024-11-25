@@ -97,6 +97,7 @@ public class ChatRoomController {
 	            return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 참여한 채팅방입니다.");
 	        }
 	        chatRoomService.joinChatRoom(chatRoomId, new ChatRoomUserRequest(user.getUserId()));
+	        chatRoomService.updateLastReadAt(chatRoomId, user.getUserId());
 	        return ResponseEntity.status(HttpStatus.CREATED).body("채팅방 참여 성공");
 	    } catch (Exception e) {
 	        e.printStackTrace();
@@ -193,6 +194,14 @@ public class ChatRoomController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 	    }
 	}
-
+	@PostMapping("/chat-room/{chat_room_id}/read")
+	public ResponseEntity<Void> markAsRead(@PathVariable("chat_room_id") int chatRoomId, HttpServletRequest request) {
+	    ResponseTokenUser user = jwtResponse.extractTokenUser(request);
+	    if (user == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+	    }
+	    chatRoomService.updateLastReadAt(chatRoomId, user.getUserId());
+	    return ResponseEntity.ok().build();
+	}
 
 }

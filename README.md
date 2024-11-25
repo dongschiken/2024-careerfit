@@ -17,7 +17,7 @@
 
 ### CAREERFIT 마스코트 "마이구민"
 
-<div align="center">
+<div align="start">
   <img src="docs/마이구민.png" width="400" alt="마이구민 이미지"/>
 </div>
 
@@ -25,25 +25,34 @@
 
 ### 마이구민 아이트래킹
 
-<div align="center">
+<div align="start">
   <img src="docs/main-eye-tracking.gif" width="600" alt="아이트래킹 기능"/>
-  <h3>AI 식단 추천</h3>
-  <p>CAREERFIT의 마스코트 Chatbot <strong>마이구민</strong>을 통해 식단과 운동을 추천받을 수 있습니다.</p>
 </div>
 
----
+### 마이구민의 식단 추천
+<div align="start">
+  <h4>AI 식단 추천</h4>
+  <p>CAREERFIT의 마스코트 Chatbot <strong>마이구민</strong>을 통해 식단과 운동을 추천받을 수 있습니다.</p>
+  <img src="docs/main-ai-chat-boy.gif" width="600">
+</div>
+
+
+<br>
+<br>
+<br>
+<br>
 
 ## 게시판 기능
 
 <table>
   <tr>
     <td align="center" width="50%">
-      <h3>게시글 등록</h3>
+      <h4>게시글 등록</h4>
       <p>카테고리, 제목, 내용, 사진을 입력해 게시글을 등록할 수 있습니다.</p>
       <img src="docs/board-write-board.gif" width="300">
     </td>
     <td align="center" width="50%">
-      <h3>게시물 검색</h3>
+      <h4>게시물 검색</h4>
       <p>내용, 제목, 닉네임을 검색하거나 최신순, 조회순으로 정렬할 수 있습니다.</p>
       <img src="docs/board-search-board.gif" width="300">
     </td>
@@ -51,12 +60,106 @@
 </table>
 
 <div align="center">
-  <h3>게시물 상세</h3>
+  <h4>게시물 상세</h4>
   <p>게시물 상세 화면에서 내용을 확인하고, 본인이 작성한 게시물은 수정/삭제할 수 있습니다.</p>
-  <img src="docs/earn-first.gif" width="600">
+  <img src="docs/board-search-board.gif" width="600">
 </div>
 
----
+<br>
+<br>
+<br>
+<br>
+
+## 댓글 기능
+
+<div align="start">
+  <h4>댓글 작성</h4>
+  <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
+  <img src="docs/reply-write-reply.gif" width="600">
+</div>
+
+<div align="start">
+  <h4>대댓글 작성</h4>
+  <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
+  <img src="docs/repy-write-rereply.gif" width="600">
+</div>
+
+<br>
+<br>
+<br>
+<br>
+
+## 식단관리
+
+<div align="start">
+  <h4>ai 추천 식단 등록</h4>
+  <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
+  <img src="docs/ai-meal-recomand-regist.gif" width="600">
+</div>
+
+<div align="start">
+  <h4>식단 기록 등록</h4>
+  <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
+  <img src="docs/meal-record-regist.gif" width="600">
+</div>
+
+<div align="start">
+  <h4>신체 기록 등록</h4>
+  <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
+  <img src="docs/body-record-regist.gif" width="600">
+</div>
+
+<div align="start">
+  <h4>식단 스트릭</h4>
+  <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
+  <img src="docs/meal-streak.gif" width="600">
+</div>
+
+<br>
+<br>
+<br>
+<br>
+
+## 메이트
+
+<div align="start">
+  <h4>지도 검색</h4>
+  <p>검색을 통해 원하는 장소를 찾을 수 있고, 반경 1, 3, 5km를 정해서 운동시설을 찾을 수 있다. 
+    <br>
+    또한 헬스장, 클라이밍, 공원 등의 카테고리를 검색해서 정확하게 원하는 운동 시설을 검색가능하다.
+  </p>
+  <img src="docs/board-search-board.gif" width="600">
+</div>
+
+<div align="start">
+  <h4>마커 채팅방</h4>
+  <p>지도의 마커에 현재 운동시설에 등록되어 있는 채팅방 목록을 볼 수 있다.</p>
+  <img src="docs/board-search-board.gif" width="600">
+</div>
+
+<div align="start">
+  <h4>채팅방 만들기</h4>
+  <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
+  <img src="docs/board-search-board.gif" width="600">
+</div>
+
+<div align="start">
+  <h4>여러명의 유저와 채팅하기</h4>
+  <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
+  <img src="docs/board-search-board.gif" width="600">
+</div>
+
+<br>
+<br>
+<br>
+<br>
+
+## 마이페이지
+
+<br>
+<br>
+<br>
+<br>
 
 ## 팀원 소개
 
@@ -97,7 +200,6 @@
   </table>
 </div>
 
----
 
 ## 클라이언트 요청 흐름도
 

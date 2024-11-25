@@ -110,6 +110,9 @@
                 >
                   <div>
                     <p>{{ room.title }}</p>
+                    <div v-if="room.unreadCount > 0" class="unread-count">
+                      {{ room.unreadCount }}
+                    </div>
                     <p>{{ room.lastMessage || "최근 메시지가 없습니다." }}</p>
                     <p>
                       {{
@@ -1042,4 +1045,3 @@ body {
   }
 }
 </style>
-2번째

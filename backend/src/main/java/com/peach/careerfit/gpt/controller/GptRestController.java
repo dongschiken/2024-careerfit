@@ -34,13 +34,18 @@ public class GptRestController {
 
 	// 처음 gpt 페이지를 오픈하면 안녕하세요 ~~ 하는 gpt를 받아와야함
 	@PostMapping("/first")
-	public ResponseEntity<Object> initialGpt(HttpServletRequest request) {
-		ResponseTokenUser user = jwtResponse.extractTokenUser(request);
-		GptResponse response = gptService.initailGpt(user.getUserId());
-		if(response == null) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body("읽어올 프롬프트 파일이 없습니다.");
+	public ResponseEntity<Object> initialGpt(HttpServletRequest request) { 
+		try {
+			ResponseTokenUser user = jwtResponse.extractTokenUser(request);
+			GptResponse response = gptService.initailGpt(user.getUserId());
+			if(response == null) {
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("읽어올 프롬프트 파일이 없습니다.");
+			}
+			return ResponseEntity.ok(response);			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
-		return ResponseEntity.ok(response);
 	}
 	
 	
@@ -57,7 +62,6 @@ public class GptRestController {
 		Map<String, Object> map = gptService.registAndRequestGpt(user.getUserId(), prompt);
 		GptResponse response = (GptResponse) map.get("response");
 		int status = (int) map.get("status");
-		System.out.println(status);
 		if(status > 0) {
 			return ResponseEntity.status(HttpStatus.CREATED).body(response);
 		}
