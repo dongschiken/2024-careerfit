@@ -52,7 +52,7 @@ const routes = [
     path: "/meal",
     name: "meal",
     component: MealPlan,
-    meta: { requiresAuth: true },
+    // meta: { requiresAuth: true },
   },
   {
     path: "/board/detail/:boardId",

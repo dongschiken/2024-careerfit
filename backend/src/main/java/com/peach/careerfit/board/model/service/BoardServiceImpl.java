@@ -91,5 +91,23 @@ public class BoardServiceImpl implements BoardService {
 			boardDao.insertBoardImgs(boardImgs);
 		return status;
 	}
+
+	@Override
+	public List<ResponseBoard> getBoardViewRank() {
+		List<ResponseBoard> boards =  boardDao.selectBoardViewRank();
+		for (ResponseBoard board : boards) {
+			board.setViewCount(viewCountService.getViewCount(board.getBoardId()));
+		}
+		return boards;
+	}
+	
+	@Override
+	public List<ResponseBoard> getBoardReplyRank() {
+		List<ResponseBoard> boards =  boardDao.selectBoardReplyRank();
+		for (ResponseBoard board : boards) {
+			board.setViewCount(viewCountService.getViewCount(board.getBoardId()));
+		}
+		return boards;
+	}
 	
 }

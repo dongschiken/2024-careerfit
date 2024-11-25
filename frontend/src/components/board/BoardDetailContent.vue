@@ -206,8 +206,8 @@ onMounted(() => {
   margin-top: 10px;
   min-width: 500px;
   max-width: 500px;
-  min-height: 300px;
-  max-height: 300px;
+  min-height: 333px;
+  max-height: 333px;
   height: auto;
   border-radius: 8px;
 }

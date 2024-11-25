@@ -76,7 +76,7 @@ public class SecurityConfig  {
         http.authorizeHttpRequests((auth) -> auth
         		.requestMatchers("/", "/index", "/main", "/chat/**", "/error" , "/main", "/api/user/**", "/api/chat-rooms/**", "/api/chat-room/**", "/auth/**", "/api/check-nickname", "/resource/**").permitAll()
         		.requestMatchers(HttpMethod.GET,"/api/token-user", "/api/board/**", "/uploads/**",
-        				"/api/board/category", "/api/reply/**").permitAll()
+        				"/api/board/category", "/api/reply/**", "api/meal/record/streak/rank").permitAll()
         		.requestMatchers(HttpMethod.POST, "/api/refresh-token", "/api/join").permitAll()
         		.requestMatchers(HttpMethod.DELETE, "/api/logout").permitAll()
                 .requestMatchers("/assets/**", "/js/**", "/img/**").permitAll() // 정적 리소스 접근 허용

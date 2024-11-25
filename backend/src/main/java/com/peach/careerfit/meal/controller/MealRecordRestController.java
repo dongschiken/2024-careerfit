@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.peach.careerfit.jwt.JwtResponse;
 import com.peach.careerfit.meal.model.dto.MealBodyRecordResponse;
 import com.peach.careerfit.meal.model.dto.MealRecord;
+import com.peach.careerfit.meal.model.dto.ResponseMealStreakRank;
 import com.peach.careerfit.meal.model.service.MealRecordService;
 import com.peach.careerfit.user.model.dto.ResponseTokenUser;
 
@@ -138,6 +139,21 @@ public class MealRecordRestController {
 				return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 			}
 			return ResponseEntity.status(HttpStatus.OK).body(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
+	@GetMapping("/streak/rank")
+	public ResponseEntity<Object> getMealStreakRank() {
+		try {
+			List<ResponseMealStreakRank> response = mealRecordService.getMealStreakRank();
+			if(response.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("회원들의 랭킹 식단 데이터가 없습니다.");
+			}else {
+				return ResponseEntity.status(HttpStatus.OK).body(response);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
