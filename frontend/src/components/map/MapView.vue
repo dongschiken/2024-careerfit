@@ -1,4 +1,3 @@
-```vue
 <template>
   <div>
     <MainHeader />
@@ -1290,6 +1289,7 @@ export default {
   padding: 8px 12px;
   border-radius: 12px;
   font-size: 0.95rem;
+  width: fit-content;
   line-height: 1.4;
   max-width: 100%;
   word-break: break-word;
@@ -1716,5 +1716,9 @@ export default {
   .ai-modal h3 {
     margin-top: 20px;
   }
+}
+
+.message-bubble {
+  margin-left: 0px !important;
 }
 </style>
