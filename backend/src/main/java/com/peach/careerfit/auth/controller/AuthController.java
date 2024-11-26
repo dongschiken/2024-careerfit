@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://192.168.210.52:3000")
 public class AuthController {
 
 	@Autowired

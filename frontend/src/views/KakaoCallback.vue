@@ -1,4 +1,3 @@
-
 <template>
   <div>
     <p>카카오 로그인 처리 중...</p>
@@ -14,14 +13,16 @@ export default {
     // URL에서 'code' 파라미터 가져오기
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get("code");
-    console.log(code)
+    console.log(code);
 
     if (code) {
       try {
         // 백엔드에 'code'를 전달하여 토큰 발급 요청
-        const response = await axios.post("http://localhost:8080/auth/kakao/callback", { code });
+        const response = await axios.post(
+          "http://192.168.210.52:8080/auth/kakao/callback",
+          { code }
+        );
 
-        
         const { accessToken, refreshToken } = response.data;
 
         // Access Token과 Refresh Token 저장

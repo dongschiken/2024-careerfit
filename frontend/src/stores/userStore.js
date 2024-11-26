@@ -13,8 +13,8 @@ export const useUserStore = defineStore({
     email: null,
     accessToken: sessionStorage.getItem("accessToken") || "",
     refreshToken: sessionStorage.getItem("refreshToken") || "",
-    REST_API: "http://localhost:8080/api",
-    HOST: "http://localhost:8080",
+    REST_API: "http://192.168.210.52:8080/api",
+    HOST: "http://192.168.210.52:8080",
     loading: false,
   }),
 
@@ -43,12 +43,15 @@ export const useUserStore = defineStore({
       sessionStorage.removeItem("accessToken");
       this.accessToken = "";
       try {
-        const response = await api.delete("http://localhost:8080/api/logout", {
-          data: { refreshToken },
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await api.delete(
+          "http://192.168.210.52:8080/api/logout",
+          {
+            data: { refreshToken },
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         if (response.status === 200) {
           this.accessToken = "";
           this.refreshToken = "";

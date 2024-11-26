@@ -2,7 +2,7 @@
   <div>
     <HeaderView />
     <MainContent />
-    <div style="min-height: 1500px"></div>
+    <div style="min-height: 140px"></div>
     <FooterView />
   </div>
 </template>

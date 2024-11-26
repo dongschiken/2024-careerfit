@@ -249,7 +249,7 @@ const getBoard = async (boardId) => {
 const processBoardImages = () => {
   if (board.value.boardImgs) {
     for (const img of board.value.boardImgs) {
-      const fileUrl = `http://localhost:8080/uploads/${img.path}${img.systemName}`;
+      const fileUrl = `http://192.168.210.52:8080/uploads/${img.path}${img.systemName}`;
       fetch(fileUrl)
         .then((res) => res.blob()) // 이미지 데이터를 Blob으로 변환
         .then((blob) => {
