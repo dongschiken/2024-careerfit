@@ -17,7 +17,7 @@ export const useChatStore = defineStore("chat", {
       if (!this.messages[chatRoomId]) {
         this.messages[chatRoomId] = [];
       }
-      this.messages[chatRoomId].push(message);
+      this.messages[chatRoomId] = [message, ...this.messages[chatRoomId]];
     },
 
     // 채팅방 메시지 초기화

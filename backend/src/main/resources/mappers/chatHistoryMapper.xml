@@ -36,7 +36,7 @@
 		       END AS time_ago
 		FROM chat_history ch JOIN user u ON u.user_id = ch.send_user_id
 		WHERE chat_room_id = #{chatRoomId}
-		ORDER BY send_date DESC
+		ORDER BY send_date ASC
 		]]>
 	</select>
 

@@ -3,18 +3,14 @@ package com.peach.careerfit.board.model.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.peach.careerfit.board.model.service.BoardService;
-import com.peach.careerfit.user.model.dto.User;
-
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
+//@Builder
 @NoArgsConstructor
-@AllArgsConstructor
+//@AllArgsConstructor
 public class Board {
 	private int boardId;
 	private int userId;

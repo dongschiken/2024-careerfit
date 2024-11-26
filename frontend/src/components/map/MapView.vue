@@ -316,7 +316,6 @@ export default {
       messages: {},
       newChatMessage: "",
       isConnected: false,
-
       characters: {
         헬스장: {
           name: "근육맨 메이트",
@@ -625,7 +624,7 @@ export default {
         const response = await api.get(`/api/chat-room/${chatRoomId}/history`);
         this.messages = {
           ...this.messages,
-          [chatRoomId]: response.data || [],
+          [chatRoomId]: (response.data || []).reverse(),
         };
         console.log(this.messages);
       } catch (error) {
@@ -1287,6 +1286,7 @@ export default {
 .message-content {
   display: flex;
   flex-direction: column;
+  margin-left: 0px !important;
 }
 
 /* 말풍선 스타일 조정 */
@@ -1322,7 +1322,6 @@ export default {
 
 .message-wrapper.other.continuous-message .message-bubble {
   border-top-left-radius: 12px;
-  margin-left: 48px;
 }
 
 .nickname {
