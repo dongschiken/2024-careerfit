@@ -234,7 +234,7 @@
                 class="profile"
               >
                 <img
-                        src="@/assets/img/default-profile.png"
+                  src="@/assets/img/default-profile.png"
                   alt="프로필 이미지"
                   class="profile-img"
                 />
@@ -292,8 +292,10 @@ export default {
   },
   data() {
     return {
-      defaultUserImage: new URL("@/assets/img/default-profile.png", import.meta.url)
-        .href,
+      defaultUserImage: new URL(
+        "@/assets/img/default-profile.png",
+        import.meta.url
+      ).href,
       currentUser: null,
       map: null,
       markers: [],
@@ -314,7 +316,7 @@ export default {
       messages: {},
       newChatMessage: "",
       isConnected: false,
-    
+
       characters: {
         헬스장: {
           name: "근육맨 메이트",
@@ -427,7 +429,10 @@ export default {
       }
     },
     handleImageError(event) {
-      event.target.src = new URL("@/assets/img/default-profile.png", import.meta.url).href;
+      event.target.src = new URL(
+        "@/assets/img/default-profile.png",
+        import.meta.url
+      ).href;
     },
     initMap() {
       const mapContainer = document.getElementById("map");
@@ -622,7 +627,7 @@ export default {
           ...this.messages,
           [chatRoomId]: response.data || [],
         };
-        console.log(this.messages)
+        console.log(this.messages);
       } catch (error) {
         console.error("채팅 메시지 로드 실패:", error);
         alert("채팅 메시지를 불러오는 중 오류가 발생했습니다.");

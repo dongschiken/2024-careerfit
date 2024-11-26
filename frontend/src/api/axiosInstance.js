@@ -1,6 +1,6 @@
 import axios from "axios";
 const api = axios.create({
-  baseURL: "http://localhost:8080", // 백엔드의 기본 API URL로 설정
+  baseURL: "http://192.168.210.52:8080", // 백엔드의 기본 API URL로 설정
   headers: {
     "Content-Type": "application/json",
   },
@@ -44,7 +44,7 @@ api.interceptors.response.use(
       try {
         // 리프레시 토큰을 이용해 새로운 액세스 토큰 요청
         const response = await axios.post(
-          "http://localhost:8080/api/refresh-token", // 상대경로로 변경
+          "http://192.168.210.52:8080/api/refresh-token", // 상대경로로 변경
           {
             refreshToken,
           },

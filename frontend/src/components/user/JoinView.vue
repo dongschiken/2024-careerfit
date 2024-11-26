@@ -282,7 +282,6 @@ export default {
       verificationMessage: "",
       timer: 0,
       timerInterval: null,
-      
     };
   },
   computed: {
@@ -441,41 +440,121 @@ export default {
       }, 1000);
     },
     generateRandomNickname() {
- const firstWords = [
-   "열정가득", "기분좋은", "건강한", "힘찬", "활력넘치는", "튼튼한", "파워풀한", "에너지가득",
-   "단단한", "생기있는", "도전하는", "균형잡힌", "끈기있는", "의지만만", "활기찬", "탄탄한",
-   "자유로운", "꾸준한", "당당한", "빛나는", "열심히하는", "밝은", "즐거운", "리듬있는"
- ];
+      const firstWords = [
+        "열정가득",
+        "기분좋은",
+        "건강한",
+        "힘찬",
+        "활력넘치는",
+        "튼튼한",
+        "파워풀한",
+        "에너지가득",
+        "단단한",
+        "생기있는",
+        "도전하는",
+        "균형잡힌",
+        "끈기있는",
+        "의지만만",
+        "활기찬",
+        "탄탄한",
+        "자유로운",
+        "꾸준한",
+        "당당한",
+        "빛나는",
+        "열심히하는",
+        "밝은",
+        "즐거운",
+        "리듬있는",
+      ];
 
- const secondWords = [
-   "러너", "홈트러", "요가인", "운동가", "필라테스", "헬서", "플랭커", "점퍼",
-   "등산러", "수영인", "테니스인", "클라이머", "복서", "마라토너", "선수", "트레이너",
-   "피트니서", "스포터", "웨이터", "스트레처", "요기", "댄서", "운동인", "헬창"
- ];
+      const secondWords = [
+        "러너",
+        "홈트러",
+        "요가인",
+        "운동가",
+        "필라테스",
+        "헬서",
+        "플랭커",
+        "점퍼",
+        "등산러",
+        "수영인",
+        "테니스인",
+        "클라이머",
+        "복서",
+        "마라토너",
+        "선수",
+        "트레이너",
+        "피트니서",
+        "스포터",
+        "웨이터",
+        "스트레처",
+        "요기",
+        "댄서",
+        "운동인",
+        "헬창",
+      ];
 
- // 운동/건강 관련 이모지 대폭 추가
- const emojis = [
-   "💪", "🏃", "🏋️‍♂️", "🧘‍♀️", "🤸‍♂️", "⛹️‍♂️", "🏊‍♂️", "🚴‍♂️",
-   "🎯", "⚡", "🔥", "✨", "🥊", "⛰️", "🎾", "🏸",
-   "🏃‍♀️", "🧘", "🤾", "🤼", "🤸", "🏋️", "🚵‍♂️", "⚽",
-   "🎱", "🎳", "🏉", "🥏", "🏓", "🪃", "🎽", "🌟",
-   "💫", "⭐", "🌈", "🌙", "☀️", "♥️", "💜", "💙"
- ];
+      // 운동/건강 관련 이모지 대폭 추가
+      const emojis = [
+        "💪",
+        "🏃",
+        "🏋️‍♂️",
+        "🧘‍♀️",
+        "🤸‍♂️",
+        "⛹️‍♂️",
+        "🏊‍♂️",
+        "🚴‍♂️",
+        "🎯",
+        "⚡",
+        "🔥",
+        "✨",
+        "🥊",
+        "⛰️",
+        "🎾",
+        "🏸",
+        "🏃‍♀️",
+        "🧘",
+        "🤾",
+        "🤼",
+        "🤸",
+        "🏋️",
+        "🚵‍♂️",
+        "⚽",
+        "🎱",
+        "🎳",
+        "🏉",
+        "🥏",
+        "🏓",
+        "🪃",
+        "🎽",
+        "🌟",
+        "💫",
+        "⭐",
+        "🌈",
+        "🌙",
+        "☀️",
+        "♥️",
+        "💜",
+        "💙",
+      ];
 
- const randomFirst = firstWords[Math.floor(Math.random() * firstWords.length)];
- const randomSecond = secondWords[Math.floor(Math.random() * secondWords.length)];
- const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+      const randomFirst =
+        firstWords[Math.floor(Math.random() * firstWords.length)];
+      const randomSecond =
+        secondWords[Math.floor(Math.random() * secondWords.length)];
+      const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
 
- const patterns = [
-   `${randomEmoji}${randomFirst}${randomSecond}`,
-   `${randomFirst}${randomSecond}${randomEmoji}`,
-   `${randomEmoji}${randomFirst}${randomSecond}${randomEmoji}` // 이모지 2개 사용 패턴 추가
- ];
+      const patterns = [
+        `${randomEmoji}${randomFirst}${randomSecond}`,
+        `${randomFirst}${randomSecond}${randomEmoji}`,
+        `${randomEmoji}${randomFirst}${randomSecond}${randomEmoji}`, // 이모지 2개 사용 패턴 추가
+      ];
 
- const selectedPattern = patterns[Math.floor(Math.random() * patterns.length)];
- this.formData.nickname = selectedPattern;
- this.checkNicknameDuplicate();
-},
+      const selectedPattern =
+        patterns[Math.floor(Math.random() * patterns.length)];
+      this.formData.nickname = selectedPattern;
+      this.checkNicknameDuplicate();
+    },
     async checkNicknameDuplicate() {
       // 오류 메시지 초기화
       this.errors.nickname = "";
@@ -564,7 +643,7 @@ export default {
         });
         console.log("회원가입 성공:", response);
         alert("회원가입이 완료되었습니다!");
-        window.location.href = "http://localhost:3000/user/login";
+        window.location.href = "http://192.168.210.52:3000/user/login";
       } catch (error) {
         if (error.response) {
           console.error("회원가입 실패 - 서버 응답 에러:", error.response.data);
@@ -628,15 +707,13 @@ export default {
       return isValid;
     },
 
-
     // 카카오 로그인
     handleKakaoLogin() {
-  const kakaoClientId = "YOUR_KAKAO_REST_API_KEY"; // 카카오 REST API 키
-  const redirectUri = "http://localhost:3000/kakao/callback"; // Redirect URI
-  const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${kakaoClientId}&redirect_uri=${redirectUri}&response_type=code`;
-  window.location.href = kakaoAuthUrl; // 카카오 로그인 페이지로 이동
-},
-
+      const kakaoClientId = "YOUR_KAKAO_REST_API_KEY"; // 카카오 REST API 키
+      const redirectUri = "http://192.168.210.52:3000/kakao/callback"; // Redirect URI
+      const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${kakaoClientId}&redirect_uri=${redirectUri}&response_type=code`;
+      window.location.href = kakaoAuthUrl; // 카카오 로그인 페이지로 이동
+    },
   },
 };
 </script>
