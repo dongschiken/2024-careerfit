@@ -110,9 +110,7 @@
                 >
                   <div>
                     <p>{{ room.title }}</p>
-                    <div v-if="room.unreadCount > 0" class="unread-count">
-                      {{ room.unreadCount }}
-                    </div>
+                    <div v-if="room.unreadCount > 0" class="unread-count"></div>
                     <p>{{ room.lastMessage || "최근 메시지가 없습니다." }}</p>
                     <p>
                       {{
@@ -228,9 +226,11 @@ const profileImage = computed(() => {
   return userStore.profileUrl || "/default-profile.png";
 });
 
-
 // 기본 이미지 경로 설정
-const defaultProfile = new URL("@/assets/img/default-profile.png", import.meta.url).href;
+const defaultProfile = new URL(
+  "@/assets/img/default-profile.png",
+  import.meta.url
+).href;
 
 // 프로필 이미지 확인 함수
 const getProfileImage = (profileUrl) => {
@@ -252,7 +252,7 @@ const initializeProfile = async () => {
     console.error("사용자 정보 로드 실패:", error);
     if (error.response?.status === 401) {
       await userStore.clearUser();
-      router.push("/login");
+      router.push("/user/login");
     }
   } finally {
     loading.value = false;
@@ -398,7 +398,8 @@ const sendMessage = async () => {
     userId: currentUser.value.userId,
     message: newChatMessage.value.trim(),
     userNickname: currentUser.value.nickname,
-    userProfile: currentUser.value.profileUrl || '../../assets/img'+defaultProfile,
+    userProfile:
+      currentUser.value.profileUrl || "../../assets/img" + defaultProfile,
   };
 
   try {
@@ -470,8 +471,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-
-html, 
+html,
 body {
   background: #fff5ec;
   margin: 0;
@@ -503,9 +503,8 @@ body {
   margin: -60px auto 0; /* 상단 여백을 음수값으로 주어 위로 올림 */
 }
 
-
 .profile-header {
-  background: linear-gradient(45deg, #FF7D29, #FFBF78);
+  background: linear-gradient(45deg, #ff7d29, #ffbf78);
   padding: 25px;
   text-align: center;
 }
@@ -548,7 +547,7 @@ body {
   position: absolute;
   bottom: 5px;
   right: 5px;
-  background: linear-gradient(45deg, #FF7D29, #FFBF78);
+  background: linear-gradient(45deg, #ff7d29, #ffbf78);
   color: white;
   border: none;
   border-radius: 50%;
@@ -584,7 +583,7 @@ body {
 
 .edit-button {
   padding: 12px 24px;
-  background: linear-gradient(45deg, #FF7D29, #FFBF78);
+  background: linear-gradient(45deg, #ff7d29, #ffbf78);
   color: white;
   border: none;
   border-radius: 12px;
@@ -604,7 +603,7 @@ body {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(2, 1fr); /* 2열로 균등하게 나누기 */
-  grid-template-rows: repeat(2, 1fr);    /* 2행으로 균등하게 나누기 */
+  grid-template-rows: repeat(2, 1fr); /* 2행으로 균등하게 나누기 */
   gap: 20px;
   margin-top: 30px;
   padding: 0 20px;
@@ -641,20 +640,24 @@ body {
 }
 
 .menu-button::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(45deg, rgba(255, 125, 41, 0.1), rgba(255, 191, 120, 0.1));
+  background: linear-gradient(
+    45deg,
+    rgba(255, 125, 41, 0.1),
+    rgba(255, 191, 120, 0.1)
+  );
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
 .menu-button:hover {
   transform: translateY(-3px);
-  border-color: #FFBF78;
+  border-color: #ffbf78;
   box-shadow: 0 8px 20px rgba(255, 125, 41, 0.15);
 }
 
@@ -663,7 +666,7 @@ body {
 }
 
 .menu-button i {
-  color: #FF7D29;
+  color: #ff7d29;
   font-size: 1.4rem;
   transition: transform 0.3s ease;
 }
@@ -719,9 +722,8 @@ body {
   background: #f1f1f1;
 }
 
-
 .chat-messages::-webkit-scrollbar-thumb {
-  background: #FF7D29;
+  background: #ff7d29;
   border-radius: 10px;
 }
 
@@ -747,7 +749,8 @@ body {
 
 .message-group {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
+  flex-direction: column;
 }
 
 .message-wrapper.self .message-group {
@@ -756,6 +759,8 @@ body {
 
 .profile {
   margin: 0 10px;
+  display: flex;
+  flex-direction: column;
 }
 
 .message-wrapper.self .profile {
@@ -791,7 +796,7 @@ body {
 }
 
 .message-wrapper.self .message-bubble {
-  background: linear-gradient(45deg, #FF7D29, #FFBF78);
+  background: linear-gradient(45deg, #ff7d29, #ffbf78);
   color: white;
   border-top-right-radius: 0;
 }
@@ -832,14 +837,14 @@ body {
 
 .chat-input input:focus {
   outline: none;
-  border-color: #FF7D29;
+  border-color: #ff7d29;
   background: white;
   box-shadow: 0 0 0 3px rgba(255, 125, 41, 0.1);
 }
 
 .chat-input button {
   padding: 12px 24px;
-  background: linear-gradient(45deg, #FF7D29, #FFBF78);
+  background: linear-gradient(45deg, #ff7d29, #ffbf78);
   color: white;
   border: none;
   border-radius: 20px;
@@ -903,7 +908,7 @@ body {
   color: #2d3748;
   margin-bottom: 20px;
   text-align: center;
-  border-bottom: 2px solid #FF7D29;
+  border-bottom: 2px solid #ff7d29;
   padding-bottom: 15px;
 }
 
@@ -925,7 +930,7 @@ body {
 }
 
 .modal-content ul::-webkit-scrollbar-thumb {
-  background: #FF7D29;
+  background: #ff7d29;
   border-radius: 10px;
 }
 
@@ -944,7 +949,7 @@ body {
 .modal-content li:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(255, 125, 41, 0.15);
-  border-color: #FFBF78;
+  border-color: #ffbf78;
 }
 
 .modal-content li > div {
@@ -1002,7 +1007,7 @@ body {
 }
 
 .modal-content ul::-webkit-scrollbar-thumb {
-  background: #FF7D29;
+  background: #ff7d29;
   border-radius: 10px;
 }
 
@@ -1037,7 +1042,6 @@ body {
     transform: translateY(0);
   }
 }
-
 
 @media (max-width: 768px) {
   .page-wrapper {

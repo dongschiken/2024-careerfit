@@ -202,7 +202,10 @@
               v-for="(meal, index) in detailedMeals"
               :key="index"
             >
-              <img :src="`http://192.168.210.52:8080/uploads/${meal.img}`" />
+              <img
+                v-if="meal.img !== null && meal.img.trim() !== ''"
+                :src="`http://192.168.210.52:8080/uploads/${meal.img}`"
+              />
               <div class="meal-info">
                 <div>
                   <div class="meal-type-text">{{ meal.type }}</div>
@@ -235,6 +238,7 @@
                     <div>체지방률 {{ bodyRecords.bodyFat }}%</div>
                     <div>
                       <img
+                        v-if="bodyRecords.img !== null"
                         class="body-record-img"
                         :src="`http://192.168.210.52:8080/uploads/${bodyRecords.img}`"
                       />
@@ -2021,5 +2025,10 @@ div.container
   > div.chat-message.user
   > p {
   margin-top: 0px;
+}
+
+.message > ol {
+  padding-left: 60px !important;
+  min-width: 400px;
 }
 </style>

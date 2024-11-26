@@ -26,11 +26,13 @@ const routes = [
     path: "/user/login",
     name: "login",
     component: LoginView,
+    meta: { requiresAuth: true }, // 인증 필요 표시
   },
   {
     path: "/user/join",
     name: "join",
     component: JoinView,
+    meta: { requiresAuth: true }, // 인증 필요 표시
   },
   {
     path: "/user/mypage", // 마이페이지 라우트 추가
@@ -69,7 +71,7 @@ const routes = [
   {
     path: "/oauth/callback/kakao",
     name: "KakaoCallback",
-    component: KakaoCallback ,
+    component: KakaoCallback,
   },
 ];
 
