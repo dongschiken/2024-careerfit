@@ -39,7 +39,7 @@
             @click="getBoardDetail(board.boardId)"
             class="obj-img"
             v-if="mainImage(board)"
-            :src="`http://localhost:8080/uploads/${mainImage(board).path}${
+            :src="`http://192.168.210.52:8080/uploads/${mainImage(board).path}${
               mainImage(board).systemName
             }`"
             alt="Board Image"

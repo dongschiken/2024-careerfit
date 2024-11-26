@@ -48,7 +48,7 @@
     >
       <img
         class="board-image"
-        :src="`http://localhost:8080/uploads/${image.path}${image.systemName}`"
+        :src="`http://192.168.210.52:8080/uploads/${image.path}${image.systemName}`"
       />
     </div>
   </div>
@@ -97,7 +97,7 @@ const getBoard = async (boardId) => {
 
 // 프로필 이미지 경로
 const profileUrl = board.profileUrl
-  ? `http://localhost:8080/uploads/${board.profileUrl}`
+  ? `http://192.168.210.52:8080/uploads/${board.profileUrl}`
   : null;
 
 // 이미지 배경 스타일

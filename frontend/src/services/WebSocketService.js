@@ -14,7 +14,7 @@ class WebSocketService {
         return;
       }
 
-      const socket = new SockJS("http://localhost:8080/chat");
+      const socket = new SockJS("http://192.168.210.52:8080/chat");
       this.stompClient = Stomp.over(socket);
       this.stompClient.debug = null;
 

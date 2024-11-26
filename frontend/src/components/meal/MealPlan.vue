@@ -202,7 +202,7 @@
               v-for="(meal, index) in detailedMeals"
               :key="index"
             >
-              <img :src="`http://localhost:8080/uploads/${meal.img}`" />
+              <img :src="`http://192.168.210.52:8080/uploads/${meal.img}`" />
               <div class="meal-info">
                 <div>
                   <div class="meal-type-text">{{ meal.type }}</div>
@@ -236,7 +236,7 @@
                     <div>
                       <img
                         class="body-record-img"
-                        :src="`http://localhost:8080/uploads/${bodyRecords.img}`"
+                        :src="`http://192.168.210.52:8080/uploads/${bodyRecords.img}`"
                       />
                     </div>
                   </div>
@@ -2012,5 +2012,14 @@ div > div > div.container > div.meal-records > .data-meal-records {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+div.container
+  > div.modal-overlay
+  > div
+  > div.chat-body
+  > div.chat-message.user
+  > p {
+  margin-top: 0px;
 }
 </style>

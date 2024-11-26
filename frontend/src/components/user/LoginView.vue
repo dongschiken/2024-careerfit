@@ -31,10 +31,16 @@
             /></span>
             회원가입
           </button>
-          <button id="kakaoLoginBtn" class="form-element btn-kakao-login" @click="handleKakaoLogin">
-  <span class="btn-icon"><img src="@/assets/kakao-icon.png" alt="카카오 로그인 아이콘"/></span>
-  카카오 로그인
-</button>
+          <button
+            id="kakaoLoginBtn"
+            class="form-element btn-kakao-login"
+            @click="handleKakaoLogin"
+          >
+            <span class="btn-icon"
+              ><img src="@/assets/kakao-icon.png" alt="카카오 로그인 아이콘"
+            /></span>
+            카카오 로그인
+          </button>
         </div>
       </div>
       <div class="reserve">ⓒ (주)peach Corp. All rights reserved.</div>
@@ -51,7 +57,7 @@ export default {
   setup() {
     const userStore = useUserStore();
     return {
-      userStore
+      userStore,
     };
   },
   data() {
@@ -88,43 +94,43 @@ export default {
       this.$router.push("/user/join");
     },
 
-
     handleKakaoLogin() {
-    const KAKAO_CLIENT_ID = "41c1a6b4b4c21c5909d57e7a96073a47";
-    const REDIRECT_URI = encodeURIComponent("http://localhost:3000/oauth/callback/kakao");
-    // scope 파라미터는 앱에서 설정된 동의항목만 포함해야 합니다
-    const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${KAKAO_CLIENT_ID}&redirect_uri=${REDIRECT_URI}`;
-    window.location.href = KAKAO_AUTH_URL;
-},
-  
- 
-async getKakaoUserInfo(accessToken) {
-    try {
-      const response = await window.Kakao.API.request({
-        url: '/v2/user/me',
-        success: (response) => {
-          console.log(response);
-          // 사용자 정보를 저장하거나 처리하는 로직 추가
-          alert(`안녕하세요, ${response.kakao_account.profile.nickname}님!`);
-        },
-        fail: (error) => {
-          console.error(error);
-          alert('사용자 정보를 가져오는데 실패했습니다.');
-        },
-      });
-    } catch (error) {
-      console.error('API 요청 중 오류 발생:', error);
-    }
-  },
+      const KAKAO_CLIENT_ID = "41c1a6b4b4c21c5909d57e7a96073a47";
+      const REDIRECT_URI = encodeURIComponent(
+        "http://192.168.210.52:3000/oauth/callback/kakao"
+      );
+      // scope 파라미터는 앱에서 설정된 동의항목만 포함해야 합니다
+      const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${KAKAO_CLIENT_ID}&redirect_uri=${REDIRECT_URI}`;
+      window.location.href = KAKAO_AUTH_URL;
+    },
 
-  main() {
-    this.$router.push("/");
-  },
+    async getKakaoUserInfo(accessToken) {
+      try {
+        const response = await window.Kakao.API.request({
+          url: "/v2/user/me",
+          success: (response) => {
+            console.log(response);
+            // 사용자 정보를 저장하거나 처리하는 로직 추가
+            alert(`안녕하세요, ${response.kakao_account.profile.nickname}님!`);
+          },
+          fail: (error) => {
+            console.error(error);
+            alert("사용자 정보를 가져오는데 실패했습니다.");
+          },
+        });
+      } catch (error) {
+        console.error("API 요청 중 오류 발생:", error);
+      }
+    },
 
-  storeTokens(accessToken, refreshToken) {
-    this.userStore.setTokens(accessToken, refreshToken);
+    main() {
+      this.$router.push("/");
+    },
+
+    storeTokens(accessToken, refreshToken) {
+      this.userStore.setTokens(accessToken, refreshToken);
+    },
   },
-  }
 };
 </script>
 

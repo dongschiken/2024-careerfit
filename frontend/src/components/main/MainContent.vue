@@ -265,6 +265,9 @@ onMounted(() => {
 .ranking-container {
   margin-top: 130px;
 }
+li {
+  margin-left: 30px;
+}
 .ranking-box > img {
   min-width: 70px;
   max-width: 70px;
