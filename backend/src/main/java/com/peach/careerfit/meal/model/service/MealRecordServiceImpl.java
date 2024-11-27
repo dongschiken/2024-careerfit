@@ -25,10 +25,9 @@ public class MealRecordServiceImpl implements MealRecordService {
 
 	@Override
 	public int registMealRecord(MealRecord mealRecord, MultipartFile file) {
-//		if(mealRecordDao.countMealRecord(mealRecord) > 0) {
-//			return 0;
-//		}
-		System.out.println("여기는");
+		if(mealRecordDao.countMealRecord(mealRecord) > 0) {
+			return 0;
+		}
 		if(mealRecordDao.countMealStreak(mealRecord) == 0) {
 			// 인서트
 			Integer streak = mealRecordDao.selectBeforeMealStreak(mealRecord);
