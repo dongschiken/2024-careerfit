@@ -203,7 +203,7 @@
               :key="index"
             >
               <img
-                v-if="meal.img !== null && meal.img.trim() !== ''"
+                v-if="meal.img"
                 :src="`http://192.168.210.52:8080/uploads/${meal.img}`"
               />
               <div class="meal-info">
@@ -238,7 +238,7 @@
                     <div>체지방률 {{ bodyRecords.bodyFat }}%</div>
                     <div>
                       <img
-                        v-if="bodyRecords.img !== null"
+                        v-if="bodyRecords.img"
                         class="body-record-img"
                         :src="`http://192.168.210.52:8080/uploads/${bodyRecords.img}`"
                       />
@@ -1879,7 +1879,7 @@ div > div > div.container > div.meal-records > .data-meal-records {
   flex-direction: column; /* 세로 방향 정렬 */
   justify-content: space-between; /* 위아래 공간 분배 */
   padding: 20px;
-  width: 700px;
+  width: 500px;
   max-height: 700px;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);

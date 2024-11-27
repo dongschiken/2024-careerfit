@@ -76,9 +76,9 @@ public class MealRecordRestController {
 	public ResponseEntity<Object> registMealRecord(@RequestPart(name="mealRecord") MealRecord mealRecord, // JSON 데이터를 Java 객체로 받음
 												   @RequestPart(name="file", required = false) MultipartFile file,
 												   HttpServletRequest request) {
-//		if(!mealRecord.getDate().equals(LocalDate.now().toString())) {
-//			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-//		}
+		if(!mealRecord.getDate().equals(LocalDate.now().toString())) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
 		ResponseTokenUser user = jwtResponse.extractTokenUser(request);
 		mealRecord.setUserId(user.getUserId());
 		
