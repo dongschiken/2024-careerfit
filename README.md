@@ -80,7 +80,7 @@
 <div align="start">
   <h4>대댓글 작성</h4>
   <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
-  <img src="docs/repy-write-rereply.gif" width="600">
+  <img src="docs/reply-write-rereply.gif" width="600">
 </div>
 
 <br>
@@ -92,25 +92,25 @@
 
 <div align="start">
   <h4>ai 추천 식단 등록</h4>
-  <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
-  <img src="docs/ai-meal-recomand-regist.gif" width="600">
+  <p>AI 챗봇을 이용해서 식단을 추천받아서 내 식단으로 등록합니다.</p>
+  <img src="docs/meal-gpt-meal-record.gif" width="600">
 </div>
 
 <div align="start">
   <h4>식단 기록 등록</h4>
-  <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
+  <p>내가 직접먹은 식단 기록을 등록합니다.</p>
   <img src="docs/meal-record-regist.gif" width="600">
 </div>
 
 <div align="start">
   <h4>신체 기록 등록</h4>
-  <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
+  <p>하루하루 신체를 기록해서 내 몸무게 의 변화를 측정합니다.</p>
   <img src="docs/body-record-regist.gif" width="600">
 </div>
 
 <div align="start">
   <h4>식단 스트릭</h4>
-  <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
+  <p>식단, 신체 시록을 등록하면 자동적으로 식단 스트릭이 쌓입니다.</p>
   <img src="docs/meal-streak.gif" width="600">
 </div>
 
@@ -127,25 +127,25 @@
     <br>
     또한 헬스장, 클라이밍, 공원 등의 카테고리를 검색해서 정확하게 원하는 운동 시설을 검색가능하다.
   </p>
-  <img src="docs/board-search-board.gif" width="600">
+  <img src="docs/map-search.gif" width="600">
 </div>
 
 <div align="start">
   <h4>마커 채팅방</h4>
-  <p>지도의 마커에 현재 운동시설에 등록되어 있는 채팅방 목록을 볼 수 있다.</p>
-  <img src="docs/board-search-board.gif" width="600">
+  <p>지도의 마커에 현재 운동시설에 등록되어 있는 채팅방 목록을 볼 수 있습니다.</p>
+  <img src="docs/chat-search-map.gif" width="600">
 </div>
 
 <div align="start">
   <h4>채팅방 만들기</h4>
-  <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
-  <img src="docs/board-search-board.gif" width="600">
+  <p>내가 원하는 장소에 채팅방을 만들어서 다른 유저들과 채팅하고, 약속, 모임을 만듭니다.</p>
+  <img src="docs/chat-room-make.gif" width="600">
 </div>
 
 <div align="start">
   <h4>여러명의 유저와 채팅하기</h4>
-  <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
-  <img src="docs/board-search-board.gif" width="600">
+  <p>여러회원들과의 멀티 채팅 기능을 통해서 많은 사람들과 운동에 대한 의견을 나누고, 함께 할 수 있습니다.</p>
+  <img src="docs/chat-user-chat.gif" width="600">
 </div>
 
 <br>
@@ -170,12 +170,12 @@
     </tr>
     <tr>
       <td align="center">
-        <img src="" alt="동영 프로필 이미지" width="200px">
+        <img src="동영.png" alt="동영 프로필 이미지" width="200px">
         <br>
         <a href="https://github.com/dongschiken">dongs</a> ✨
       </td>
       <td align="center">
-        <img src="" alt="민석 프로필 이미지" width="200px">
+        <img src="민석이형.png" alt="민석 프로필 이미지" width="200px">
         <br>
         <a href="https://github.com/KOOMINSEOK9">민석</a> 🐿️
       </td>
