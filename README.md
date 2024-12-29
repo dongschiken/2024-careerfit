@@ -176,8 +176,8 @@
 <div align="center">
   <table>
     <tr>
-      <th align="center" width="50%">Backend</th>
-      <th align="center" width="50%">Backend</th>
+      <th align="center" width="53%">Backend</th>
+      <th align="center" width="53%">Backend</th>
     </tr>
     <tr>
       <td align="center">
