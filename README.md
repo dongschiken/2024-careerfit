@@ -176,8 +176,8 @@
 <div align="center">
   <table>
     <tr>
-      <th align="center" width="53%">Backend</th>
-      <th align="center" width="53%">Backend</th>
+      <th align="center" width="50%">Backend</th>
+      <th align="center" width="50%">Backend</th>
     </tr>
     <tr>
       <td align="center">
@@ -203,7 +203,7 @@
         <ul>
           <li>👀 다양한 영역에 대한 통찰력과 이해력</li>
           <li>😎 맡은 일을 책임감 있게 해냅니다.</li>
-          <li>🧑‍💻 기술 도입에 신중하며 합리적 판단을 합니다.</li>
+          <li>🧑‍💻 기술 도입에 신중하며 합리적인 판단능력</li>
         </ul>
       </td>
     </tr>
