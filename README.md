@@ -1,5 +1,4 @@
 <div align="center">
-  <img width="300" alt="우리 로고 네모나게 기" src="">
   <h1>CAREERFIT</h1>
   <p>퇴근 후 바쁜 직장인들을 위한 <strong>식단 관리</strong>와 <strong>채팅</strong>, 모두 한곳에서!</p>
   <p>
