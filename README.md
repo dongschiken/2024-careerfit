@@ -170,12 +170,12 @@
     </tr>
     <tr>
       <td align="center">
-        <img src="docs/동영.png" alt="동영 프로필 이미지" width="200px">
+        <img src="docs/동영.png" alt="동영 프로필 이미지" width="200px" height="300px">
         <br>
         <a href="https://github.com/dongschiken">dongs</a> ✨
       </td>
       <td align="center">
-        <img src="docs/민석이형.png" alt="민석 프로필 이미지" width="200px">
+        <img src="docs/민석이형.png" alt="민석 프로필 이미지" width="200px" height="300px">
         <br>
         <a href="https://github.com/KOOMINSEOK9">민석</a> 🐿️
       </td>
