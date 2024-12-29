@@ -61,7 +61,7 @@
 <div align="center">
   <h4>게시물 상세</h4>
   <p>게시물 상세 화면에서 내용을 확인하고, 본인이 작성한 게시물은 수정/삭제할 수 있습니다.</p>
-  <img src="docs/board-search-board.gif" width="600">
+  <img src="docs/board-detail-board.gif" width="600">
 </div>
 
 <br>
@@ -154,6 +154,17 @@
 <br>
 
 ## 마이페이지
+<div align="start">
+  <h4>프로필 업데이트</h4>
+  <p>회원이 자신의 프로필 정보를 수정할 수 있습니다.</p>
+  <img src="docs/mypage-chat-user-history.gif" width="600">
+</div>
+
+<div align="start">
+  <h4>채팅방 목록 보기</h4>
+  <p>자신이 만든 채팅방 목록을 확인하고, 바로바로 채팅을 할 수 있습니다.</p>
+  <img src="docs/mypage-update-profile.gif" width="600">
+</div>
 
 <br>
 <br>
