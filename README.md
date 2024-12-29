@@ -170,7 +170,7 @@
     </tr>
     <tr>
       <td align="center">
-        <img src="docs.동영.png" alt="동영 프로필 이미지" width="200px">
+        <img src="docs/동영.png" alt="동영 프로필 이미지" width="200px">
         <br>
         <a href="https://github.com/dongschiken">dongs</a> ✨
       </td>
