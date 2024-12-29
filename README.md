@@ -80,7 +80,7 @@
 <div align="start">
   <h4>대댓글 작성</h4>
   <p>댓글을 작성해서 댓글 쓰기 버튼을 클릭하면 내가 쓴 댓글이 등록된다..</p>
-  <img src="docs/reply-write-rereply.gif" width="600">
+  <img src="docs/reply-wirte-rereply.gif" width="600">
 </div>
 
 <br>
