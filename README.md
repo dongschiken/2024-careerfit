@@ -157,13 +157,13 @@
 <div align="start">
   <h4>프로필 업데이트</h4>
   <p>회원이 자신의 프로필 정보를 수정할 수 있습니다.</p>
-  <img src="docs/mypage-chat-user-history.gif" width="600">
+  <img src="docs/mypage-update-profile.gif" width="600">
 </div>
 
 <div align="start">
   <h4>채팅방 목록 보기</h4>
   <p>자신이 만든 채팅방 목록을 확인하고, 바로바로 채팅을 할 수 있습니다.</p>
-  <img src="docs/mypage-update-profile.gif" width="600">
+    <img src="docs/mypage-chat-user-history.gif" width="600">
 </div>
 
 <br>
